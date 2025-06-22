@@ -2,7 +2,7 @@ package com.gym.crm.app.domain.model;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class Training {
@@ -10,6 +10,6 @@ public class Training {
     private int traineeId;
     private String trainingName;
     private TrainingType trainingType;
-    private LocalDateTime trainingDate;
+    private LocalDate trainingDate;
     private int trainingDuration;
 }

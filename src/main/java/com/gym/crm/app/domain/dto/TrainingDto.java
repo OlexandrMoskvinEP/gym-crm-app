@@ -2,7 +2,8 @@ package com.gym.crm.app.domain.dto;
 
 import com.gym.crm.app.domain.model.TrainingType;
 import lombok.Data;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Data
 public class TrainingDto {
@@ -10,6 +11,6 @@ public class TrainingDto {
     private int traineeId;
     private String trainingName;
     private TrainingType trainingType;
-    private LocalDateTime trainingDate;
+    private LocalDate trainingDate;
     private int trainingDuration;
 }

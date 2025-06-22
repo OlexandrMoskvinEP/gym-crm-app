@@ -6,9 +6,10 @@ import lombok.Data;
 @Data
 public class TrainerDto {
     private String firstName;
-    private String secondName;
+    private String lastName;
     private String username;
     private String password;
     private boolean isActive;
-    private TrainingType specialisation;
+    private TrainingType specialization;
+    private int UserId;
 }
