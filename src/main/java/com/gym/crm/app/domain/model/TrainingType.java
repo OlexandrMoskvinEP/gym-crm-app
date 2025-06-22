@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class TrainingType {
-    private int typeId;
     private String trainingTypeName;
 }
