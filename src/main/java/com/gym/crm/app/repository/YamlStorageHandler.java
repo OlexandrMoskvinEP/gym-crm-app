@@ -2,6 +2,7 @@ package com.gym.crm.app.repository;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
@@ -12,9 +13,9 @@ import java.util.Map;
 
 @Component
 public class YamlStorageHandler {
-
-    @Value("${storage.file}")
+      @Value("${storage.file}")
     private String STORAGE_FILE_NAME;
+    @Getter
     private Map<String, Object> dataBase;
 
     @PostConstruct
