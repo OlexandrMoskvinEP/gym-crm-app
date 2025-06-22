@@ -4,3 +4,6 @@ server:
 project:
   name: "Gym CRM"
   version: "1.0"
+
+storage:
+  file: src/main/resources/storage.yml
