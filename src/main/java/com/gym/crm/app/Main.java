@@ -9,7 +9,6 @@ public class Main {
     public static void main(String[] args) throws LifecycleException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(AppConfig.class);
-        System.out.println("Spring starts!");
         context.close();
     }
 }
