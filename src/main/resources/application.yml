@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+project:
+  name: "Gym CRM"
+  version: "1.0"
