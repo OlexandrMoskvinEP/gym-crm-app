@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.yaml.snakeyaml.Yaml;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,11 @@ public class AppConfig {
     @Bean
     public Map<String, Training> trainingStorage() {
         return new HashMap<>();
+    }
+
+    @Bean
+    public SecureRandom secureRandom(){
+        return new SecureRandom();
     }
 
 }
