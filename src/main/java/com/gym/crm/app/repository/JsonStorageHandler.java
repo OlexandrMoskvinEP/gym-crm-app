@@ -11,12 +11,13 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JSONStorageHandler {
+public class JsonStorageHandler {
     @Value("${storage.file}")
     private String STORAGE_FILE_PATH;
     @Autowired

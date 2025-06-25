@@ -18,8 +18,8 @@ public class AppConfig {
     @Bean
     public ObjectMapper objectMapper(){
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule()); // поддержка LocalDate
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // сохраняем даты как строки
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
     }
 }

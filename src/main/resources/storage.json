@@ -1,11 +1,22 @@
 {
-  "tng" : { },
+  "tng" : {
+    "training1" : {
+      "trainerId" : 1,
+      "traineeId" : 123,
+      "trainingName" : "Morning strength training",
+      "trainingType" : {
+        "trainingTypeName" : "hard rock training"
+      },
+      "trainingDate" : "2025-06-25",
+      "trainingDuration" : 60
+    }
+  },
   "trn" : {
     "trainer1" : {
       "firstName" : "John",
       "lastName" : "Smith",
-      "username" : null,
-      "password" : null,
+      "username" : "John.Smith",
+      "password" : "Abc123XyZ!",
       "active" : true,
       "specialization" : {
         "trainingTypeName" : "fitness"
@@ -17,8 +28,8 @@
     "trainee1" : {
       "firstName" : "Alice",
       "lastName" : "Brown",
-      "username" : null,
-      "password" : null,
+      "username" : "Alice.Brown",
+      "password" : "Zxc987Qwe!",
       "active" : true,
       "dateOfBirth" : "1990-12-12",
       "address" : null,
