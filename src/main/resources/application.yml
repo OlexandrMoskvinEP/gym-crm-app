@@ -6,4 +6,4 @@ project:
   version: "1.0"
 
 storage:
-  file: src/main/resources/storage.yml
+  file: src/main/resources/storage.json

@@ -1,0 +1,28 @@
+{
+  "tng" : { },
+  "trn" : {
+    "trainer1" : {
+      "firstName" : "John",
+      "lastName" : "Smith",
+      "username" : null,
+      "password" : null,
+      "active" : true,
+      "specialization" : {
+        "trainingTypeName" : "fitness"
+      },
+      "userId" : 123
+    }
+  },
+  "tee" : {
+    "trainee1" : {
+      "firstName" : "Alice",
+      "lastName" : "Brown",
+      "username" : null,
+      "password" : null,
+      "active" : true,
+      "dateOfBirth" : "1990-12-12",
+      "address" : null,
+      "userId" : 456
+    }
+  }
+}
