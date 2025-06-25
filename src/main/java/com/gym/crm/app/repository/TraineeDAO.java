@@ -6,40 +6,41 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class TraineeDAO implements TraineeRepository {
-    private JsonStorageHandler storage;
+    private Map<String, Trainee> storage;
 
     @Autowired
-    public void setStorage(JsonStorageHandler storage) {
-        this.storage = storage;
+    public void setTrainerStorage(Map<String, Trainee> traineeStorage) {
+        this.storage = traineeStorage;
     }
 
     @Override
     public List<Trainee> findAll() {
-        return new ArrayList<>(storage.getTraineeStorage().values());
+        return new ArrayList<>(storage.values());
     }
 
     @Override
     public Trainee save(Trainee trainee) {
         String key = trainee.getUsername();
-        if (storage.getTraineeStorage().containsKey(key)) {
+        if (storage.containsKey(key)) {
             throw new RuntimeException("Entity already exists!");
         }
-        storage.getTraineeStorage().put(key, trainee);
+        storage.put(key, trainee);
         return trainee;
     }
 
     @Override
     public Optional<Trainee> findByUserName(String userName) {
-        Trainee trainee = storage.getTraineeStorage().get(userName);
+        Trainee trainee = storage.get(userName);
         return Optional.ofNullable(trainee);
     }
 
     @Override
     public void deleteByUserName(String userName) {
-        storage.getTraineeStorage().remove(userName);
+        storage.remove(userName);
     }
 }

@@ -19,12 +19,6 @@ public class Main {
 
         System.out.println("Start project: " + project + " " + version);
 
-        JsonStorageHandler storageHandler = context.getBean(JsonStorageHandler.class);
-
-        System.out.println("Trainees loaded: " + storageHandler.getTraineeStorage().size());
-        System.out.println("Trainers loaded: " + storageHandler.getTrainerStorage().size());
-        System.out.println("Trainings loaded: " + storageHandler.getTrainingStorage().size());
-
         TrainingRepository trainingRepo = context.getBean(TrainingRepository.class);
         TrainerRepository trainerRepo = context.getBean(TrainerRepository.class);
         TraineeRepository traineeRepo = context.getBean(TraineeRepository.class);

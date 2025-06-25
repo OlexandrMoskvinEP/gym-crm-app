@@ -7,20 +7,21 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
 public class TrainingDAO implements TrainingRepository {
-    private JsonStorageHandler storage;
+    private Map<String, Training> storage;
 
     @Autowired
-    public void setStorage(JsonStorageHandler storage) {
-        this.storage = storage;
+    public void setTrainerStorage(Map<String, Training> trainingStorage) {
+        this.storage = trainingStorage;
     }
 
     @Override
     public List<Training> findAll() {
-        return new ArrayList<>(storage.getTrainingStorage().values());
+        return new ArrayList<>(storage.values());
     }
 
     @Override
@@ -59,12 +60,12 @@ public class TrainingDAO implements TrainingRepository {
             throw new RuntimeException("Entity already exists!");
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
-        storage.getTrainingStorage().put(key, training);
+        storage.put(key, training);
     }
 
     @Override
     public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         String key = trainerId + traineeId + date.toString();
-        storage.getTrainingStorage().remove(key);
+        storage.remove(key);
     }
 }

@@ -20,20 +20,32 @@ import java.util.Map;
 public class JsonStorageHandler {
     @Value("${storage.file}")
     private String STORAGE_FILE_PATH;
-    @Autowired
     private ObjectMapper objectMapper;
-
     private final Map<String, Object> globalStorage = new HashMap<>();
-    @Getter
-    private final Map<String, Trainer> trainerStorage = new HashMap<>();
-    @Getter
-    private final Map<String, Trainee> traineeStorage = new HashMap<>();
-    @Getter
-    private final Map<String, Training> trainingStorage = new HashMap<>();
+    private  Map<String, Trainer> trainerStorage;
+    private  Map<String, Trainee> traineeStorage;
+    private  Map<String, Training> trainingStorage;
 
     private static final String NS_TRAINER = "trn";
     private static final String NS_TRAINEE = "tee";
     private static final String NS_TRAINING = "tng";
+
+    @Autowired
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+    @Autowired
+    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
+        this.trainerStorage = trainerStorage;
+    }
+    @Autowired
+    public void setTraineeStorage(Map<String, Trainee> traineeStorage) {
+        this.traineeStorage = traineeStorage;
+    }
+    @Autowired
+    public void setTrainingStorage(Map<String, Training> trainingStorage) {
+        this.trainingStorage = trainingStorage;
+    }
 
     @PostConstruct
     public void init() {
