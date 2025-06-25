@@ -13,5 +13,5 @@ public class TraineeDto {
     private boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
-    private int UserId;
+    private int userId;
 }
