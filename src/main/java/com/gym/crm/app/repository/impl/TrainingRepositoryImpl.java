@@ -1,7 +1,7 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.exception.AlreadyExistUsernameException;
+import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     private Map<String, Training> trainingStorage;
 
     @Autowired
-    public void setTrainerStorage(CommonStorage commonStorage) {
-        this.trainingStorage = commonStorage.getTrainingStorage();
+    public void setTrainerStorage(Map<String, Training> storage) {
+        this.trainingStorage = storage;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public void save(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
-            throw new AlreadyExistUsernameException("Entity already exists!");
+            throw new DuplicateUsernameException("Entity already exists!");
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
         trainingStorage.put(key, training);

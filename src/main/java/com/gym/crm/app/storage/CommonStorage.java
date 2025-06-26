@@ -14,48 +14,36 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINEE;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINER;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
+
 @Getter
 @Component
 public class CommonStorage {
-    private HashMap<String, Object> storage;
+    private final Map<Namespace, Map<String, ?>> storage = new HashMap<>();
 
-    private Map<String, Trainer> trainerStorage;
-    private Map<String, Trainee> traineeStorage;
-    private Map<String, Training> trainingStorage;
-
-    private JsonStorageHandler jsonStorageHandler;
+    private final JsonStorageHandler jsonStorageHandler;
 
     @Autowired
-    public void setJsonStorageHandler(JsonStorageHandler jsonStorageHandler) {
+    public CommonStorage(Map<String, Trainer> trainerStorage,
+                         Map<String, Trainee> traineeStorage,
+                         Map<String, Training> trainingStorage,
+                         JsonStorageHandler jsonStorageHandler) {
+        this.storage.put(TRAINER, trainerStorage);
+        this.storage.put(TRAINEE, traineeStorage);
+        this.storage.put(TRAINING, trainingStorage);
         this.jsonStorageHandler = jsonStorageHandler;
     }
 
-    @Autowired
-    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
-        this.trainerStorage = trainerStorage;
-    }
-
-    @Autowired
-    public void setTraineeStorage(Map<String, Trainee> traineeStorage) {
-        this.traineeStorage = traineeStorage;
-    }
-
-    @Autowired
-    public void setTrainingStorage(Map<String, Training> trainingStorage) {
-        this.trainingStorage = trainingStorage;
-    }
-
     @PostConstruct
-    public void init() {
-        storage = jsonStorageHandler.loadRawStorage();
-
-        trainerStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINER.name(), Trainer.class));
-        traineeStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINEE.name(), Trainee.class));
-        trainingStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINING.name(), Training.class));
+    public void init() throws UnacceptableOperationException {
+        Map<Namespace, Map<String, ?>> loadedDataFromFile = jsonStorageHandler.loadEntitiesFromFile();
+        storage.putAll(loadedDataFromFile);
     }
 
     @PreDestroy
     public void shutdown() throws UnacceptableOperationException {
-        jsonStorageHandler.save(trainerStorage, traineeStorage, trainingStorage);
+        jsonStorageHandler.save(storage);
     }
 }
