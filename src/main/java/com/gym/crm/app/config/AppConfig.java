@@ -20,10 +20,12 @@ import java.util.Map;
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class AppConfig {
     @Bean
-    public ObjectMapper objectMapper(){
+    public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
+
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         return mapper;
     }
 

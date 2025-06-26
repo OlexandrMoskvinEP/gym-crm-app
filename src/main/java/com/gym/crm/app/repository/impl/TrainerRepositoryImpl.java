@@ -1,7 +1,9 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.exception.AlreadyExistException;
+import com.gym.crm.app.exception.AlreadyExistUsernameException;
+import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,39 +14,39 @@ import java.util.Optional;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
-    private Map<String, Trainer> storage;
+    private Map<String, Trainer> trainerStorage;
 
     @Autowired
-    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
-        this.storage = trainerStorage;
+    public void setTrainerStorage(CommonStorage commonStorage) {
+        this.trainerStorage = commonStorage.getTrainerStorage();
     }
 
     @Override
     public List<Trainer> findAll() {
-        return new ArrayList<>(storage.values());
+        return new ArrayList<>(trainerStorage.values());
     }
 
     @Override
     public Trainer save(Trainer trainer) {
         String key = trainer.getUsername();
 
-        if (storage.containsKey(key)) {
-            throw new AlreadyExistException("Entity already exists!");
+        if (trainerStorage.containsKey(key)) {
+            throw new AlreadyExistUsernameException("Entity already exists!");
         }
-        storage.put(key, trainer);
+        trainerStorage.put(key, trainer);
 
         return trainer;
     }
 
     @Override
     public Optional<Trainer> findByUserName(String userName) {
-        Trainer trainer = storage.get(userName);
+        Trainer trainer = trainerStorage.get(userName);
 
         return Optional.ofNullable(trainer);
     }
 
     @Override
     public void deleteByUserName(String userName) {
-        storage.remove(userName);
+        trainerStorage.remove(userName);
     }
 }

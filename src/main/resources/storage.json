@@ -5,50 +5,50 @@
       "lastName" : "Green",
       "username" : "Eva.Green",
       "password" : "Poi098!We",
-      "active" : true,
       "dateOfBirth" : "1992-07-03",
       "address" : "Park Lane 5",
-      "userId" : 105
+      "userId" : 105,
+      "active" : true
     },
     "trainee4" : {
       "firstName" : "David",
       "lastName" : "Lee",
       "username" : "David.Lee",
       "password" : "Xyz321$Tf",
-      "active" : true,
       "dateOfBirth" : "1995-11-10",
       "address" : null,
-      "userId" : 104
+      "userId" : 104,
+      "active" : true
     },
     "trainee3" : {
       "firstName" : "Carol",
       "lastName" : "Johnson",
       "username" : "Carol.Johnson",
       "password" : "Ytr789#Rr",
-      "active" : false,
       "dateOfBirth" : "1988-08-15",
       "address" : "2nd Avenue",
-      "userId" : 103
+      "userId" : 103,
+      "active" : false
     },
     "trainee2" : {
       "firstName" : "Bob",
       "lastName" : "Miller",
       "username" : "Bob.Miller",
       "password" : "Pwd456Xy!",
-      "active" : true,
       "dateOfBirth" : "1993-05-20",
       "address" : "Main Street 1",
-      "userId" : 102
+      "userId" : 102,
+      "active" : true
     },
     "trainee1" : {
       "firstName" : "Alice",
       "lastName" : "Brown",
       "username" : "Alice.Brown",
       "password" : "Zxc987Qwe!",
-      "active" : true,
       "dateOfBirth" : "1990-12-12",
       "address" : null,
-      "userId" : 101
+      "userId" : 101,
+      "active" : true
     }
   },
   "TRAINER" : {
@@ -57,55 +57,55 @@
       "lastName" : "Taylor",
       "username" : "Sophie.Taylor",
       "password" : "S0ph!e456",
-      "active" : true,
       "specialization" : {
         "trainingTypeName" : "aerobics"
       },
-      "userId" : 204
+      "userId" : 204,
+      "active" : true
     },
     "trainer3" : {
       "firstName" : "Michael",
       "lastName" : "Green",
       "username" : "Michael.Green",
       "password" : "MmM222@Bb",
-      "active" : false,
       "specialization" : {
         "trainingTypeName" : "crossfit"
       },
-      "userId" : 203
+      "userId" : 203,
+      "active" : false
     },
     "trainer2" : {
       "firstName" : "Linda",
       "lastName" : "White",
       "username" : "Linda.White",
       "password" : "XxX111!Aa",
-      "active" : true,
       "specialization" : {
         "trainingTypeName" : "yoga"
       },
-      "userId" : 202
+      "userId" : 202,
+      "active" : true
     },
     "trainer1" : {
       "firstName" : "John",
       "lastName" : "Smith",
       "username" : "John.Smith",
       "password" : "Abc123XyZ!",
-      "active" : true,
       "specialization" : {
         "trainingTypeName" : "fitness"
       },
-      "userId" : 201
+      "userId" : 201,
+      "active" : true
     },
     "trainer5" : {
       "firstName" : "Mark",
       "lastName" : "Black",
       "username" : "Mark.Black",
       "password" : "MkBl789*",
-      "active" : true,
       "specialization" : {
         "trainingTypeName" : "pilates"
       },
-      "userId" : 205
+      "userId" : 205,
+      "active" : true
     }
   },
   "TRAINING" : {

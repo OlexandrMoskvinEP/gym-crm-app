@@ -17,6 +17,8 @@ import java.util.Map;
 @Getter
 @Component
 public class CommonStorage {
+    private HashMap<String, Object> storage;
+
     private Map<String, Trainer> trainerStorage;
     private Map<String, Trainee> traineeStorage;
     private Map<String, Training> trainingStorage;
@@ -45,11 +47,11 @@ public class CommonStorage {
 
     @PostConstruct
     public void init() {
-        HashMap<String, Object> raw = jsonStorageHandler.loadRawStorage();
+        storage = jsonStorageHandler.loadRawStorage();
 
-        trainerStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINER.name(), Trainer.class));
-        traineeStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINEE.name(), Trainee.class));
-        trainingStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINING.name(), Training.class));
+        trainerStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINER.name(), Trainer.class));
+        traineeStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINEE.name(), Trainee.class));
+        trainingStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINING.name(), Training.class));
     }
 
     @PreDestroy
