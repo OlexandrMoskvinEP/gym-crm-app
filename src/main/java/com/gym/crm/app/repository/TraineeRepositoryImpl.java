@@ -1,6 +1,7 @@
 package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.exception.AlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class TraineeDAO implements TraineeRepository {
+public class TraineeRepositoryImpl implements TraineeRepository {
     private Map<String, Trainee> storage;
 
     @Autowired
@@ -26,16 +27,19 @@ public class TraineeDAO implements TraineeRepository {
     @Override
     public Trainee save(Trainee trainee) {
         String key = trainee.getUsername();
+
         if (storage.containsKey(key)) {
-            throw new RuntimeException("Entity already exists!");
+            throw new AlreadyExistException("Entity already exists!");
         }
         storage.put(key, trainee);
+
         return trainee;
     }
 
     @Override
     public Optional<Trainee> findByUserName(String userName) {
         Trainee trainee = storage.get(userName);
+
         return Optional.ofNullable(trainee);
     }
 

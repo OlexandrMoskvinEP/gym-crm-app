@@ -1,7 +1,6 @@
 package com.gym.crm.app;
 
 import com.gym.crm.app.config.AppConfig;
-import com.gym.crm.app.repository.JsonStorageHandler;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;

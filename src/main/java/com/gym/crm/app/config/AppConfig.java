@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.yaml.snakeyaml.Yaml;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.Map;
 @ComponentScan(basePackages = "com.gym.crm.app")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class AppConfig {
-
     @Bean
     public ObjectMapper objectMapper(){
         ObjectMapper mapper = new ObjectMapper();
@@ -28,6 +26,7 @@ public class AppConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
     }
+
     @Bean
     public Map<String, Trainer> trainerStorage() {
         return new HashMap<>();
@@ -42,5 +41,4 @@ public class AppConfig {
     public Map<String, Training> trainingStorage() {
         return new HashMap<>();
     }
-
 }
