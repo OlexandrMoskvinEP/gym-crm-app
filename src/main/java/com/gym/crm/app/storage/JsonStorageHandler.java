@@ -26,7 +26,7 @@ public class JsonStorageHandler {
         this.objectMapper = objectMapper;
     }
 
-    public HashMap<String, Object> loadRawStorage() {
+    public Map<String,Map<String, ?>> loadRawStorage() {
         try (InputStream input = new FileInputStream(storageFile)) {
             return objectMapper.readValue(input, new TypeReference<>() {
             });
@@ -35,7 +35,7 @@ public class JsonStorageHandler {
         }
     }
 
-    public <T> Map<String, T> parseSection(Map<String, Object> raw, String key, Class<T> clazz) {
+    public <T> Map<String, T> parseSection(Map<String, Map<String,?>> raw, String key, Class<T> clazz) {
         Map<String, T> result = new HashMap<>();
         Object rawSection = raw.get(key);
 

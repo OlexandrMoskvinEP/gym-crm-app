@@ -8,46 +8,31 @@ import com.gym.crm.app.storage.JsonStorageHandler.Namespace;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Component
 public class CommonStorage {
-    private HashMap<String, Object> storage;
+    private Map<String, Map<String, ?>>storage;
 
-    private Map<String, Trainer> trainerStorage;
-    private Map<String, Trainee> traineeStorage;
-    private Map<String, Training> trainingStorage;
+    private final Map<String, Trainer> trainerStorage;
+    private final Map<String, Trainee> traineeStorage;
+    private final Map<String, Training> trainingStorage;
 
-    private JsonStorageHandler jsonStorageHandler;
+    private final JsonStorageHandler jsonStorageHandler;
 
-    @Autowired
-    public void setJsonStorageHandler(JsonStorageHandler jsonStorageHandler) {
-        this.jsonStorageHandler = jsonStorageHandler;
-    }
-
-    @Autowired
-    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
+    public CommonStorage(Map<String, Trainer> trainerStorage, Map<String, Trainee> traineeStorage, Map<String, Training> trainingStorage, JsonStorageHandler jsonStorageHandler) {
         this.trainerStorage = trainerStorage;
-    }
-
-    @Autowired
-    public void setTraineeStorage(Map<String, Trainee> traineeStorage) {
         this.traineeStorage = traineeStorage;
-    }
-
-    @Autowired
-    public void setTrainingStorage(Map<String, Training> trainingStorage) {
         this.trainingStorage = trainingStorage;
+        this.jsonStorageHandler = jsonStorageHandler;
     }
 
     @PostConstruct
     public void init() {
-        storage = jsonStorageHandler.loadRawStorage();
+        storage =  jsonStorageHandler.loadRawStorage();
 
         trainerStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINER.name(), Trainer.class));
         traineeStorage.putAll(jsonStorageHandler.parseSection(storage, Namespace.TRAINEE.name(), Trainee.class));

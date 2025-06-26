@@ -1,7 +1,7 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.exception.AlreadyExistUsernameException;
+import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         String key = trainee.getUsername();
 
         if (traineeStorage.containsKey(key)) {
-            throw new AlreadyExistUsernameException("Entity already exists!");
+            throw new DuplicateUsernameException("Entity already exists!");
         }
         traineeStorage.put(key, trainee);
 
