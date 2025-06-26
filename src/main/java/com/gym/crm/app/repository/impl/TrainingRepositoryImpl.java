@@ -1,9 +1,12 @@
 package com.gym.crm.app.repository.impl;
 
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import com.gym.crm.app.storage.JsonStorageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +21,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     private Map<String, Training> trainingStorage;
 
     @Autowired
-    public void setTrainerStorage(Map<String, Training> storage) {
-        this.trainingStorage = storage;
+    public void setTrainingStorage(CommonStorage commonStorage) {
+        this.trainingStorage = commonStorage.getTrainingStorage();
     }
 
     @Override

@@ -109,16 +109,6 @@
     }
   },
   "TRAINING" : {
-    "training1" : {
-      "trainerId" : 201,
-      "traineeId" : 101,
-      "trainingName" : "Morning Cardio",
-      "trainingType" : {
-        "trainingTypeName" : "fitness"
-      },
-      "trainingDate" : "2025-06-25",
-      "trainingDuration" : 60
-    },
     "training3" : {
       "trainerId" : 203,
       "traineeId" : 103,
@@ -158,6 +148,16 @@
       },
       "trainingDate" : "2025-06-28",
       "trainingDuration" : 40
+    },
+    "training1" : {
+      "trainerId" : 201,
+      "traineeId" : 101,
+      "trainingName" : "Morning Cardio",
+      "trainingType" : {
+        "trainingTypeName" : "fitness"
+      },
+      "trainingDate" : "2025-06-25",
+      "trainingDuration" : 60
     }
   }
 }

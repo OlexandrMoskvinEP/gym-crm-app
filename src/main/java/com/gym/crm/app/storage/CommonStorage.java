@@ -36,14 +36,38 @@ public class CommonStorage {
         this.jsonStorageHandler = jsonStorageHandler;
     }
 
+    @SuppressWarnings("unchecked")
     @PostConstruct
-    public void init() throws UnacceptableOperationException {
-        Map<Namespace, Map<String, ?>> loadedDataFromFile = jsonStorageHandler.loadEntitiesFromFile();
-        storage.putAll(loadedDataFromFile);
+    public void init() {
+        Map<Namespace, Map<String, ?>> loaded = jsonStorageHandler.loadEntitiesFromFile();
+
+        ((Map<String, Trainer>) storage.get(Namespace.TRAINER))
+                .putAll((Map<String, Trainer>) loaded.get(Namespace.TRAINER));
+
+        ((Map<String, Trainee>) storage.get(Namespace.TRAINEE))
+                .putAll((Map<String, Trainee>) loaded.get(Namespace.TRAINEE));
+
+        ((Map<String, Training>) storage.get(Namespace.TRAINING))
+                .putAll((Map<String, Training>) loaded.get(Namespace.TRAINING));
     }
 
     @PreDestroy
     public void shutdown() throws UnacceptableOperationException {
         jsonStorageHandler.save(storage);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Trainer> getTrainerStorage() {
+        return (Map<String, Trainer>) storage.get(Namespace.TRAINER);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Trainee> getTraineeStorage() {
+        return (Map<String, Trainee>) storage.get(Namespace.TRAINEE);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Training> getTrainingStorage() {
+        return (Map<String, Training>) storage.get(Namespace.TRAINING);
     }
 }

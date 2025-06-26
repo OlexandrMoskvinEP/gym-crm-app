@@ -17,8 +17,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private Map<String, Trainer> trainerStorage;
 
     @Autowired
-    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
-        this.trainerStorage = trainerStorage;
+       public void setTrainerStorage(CommonStorage commonStorage) {
+        this.trainerStorage = commonStorage.getTrainerStorage();
     }
 
     @Override

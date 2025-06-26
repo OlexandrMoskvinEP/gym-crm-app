@@ -17,8 +17,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     private Map<String, Trainee> traineeStorage;
 
     @Autowired
-    public void setTraineeStorage(Map<String, Trainee> storage) {
-        this.traineeStorage = storage;
+    public void setTraineeStorage(CommonStorage commonStorage) {
+        this.traineeStorage = commonStorage.getTraineeStorage();
     }
 
     @Override
