@@ -1,17 +1,90 @@
 {
-  "tng" : {
-    "training1" : {
-      "trainerId" : 1,
-      "traineeId" : 123,
-      "trainingName" : "Morning strength training",
-      "trainingType" : {
-        "trainingTypeName" : "hard rock training"
-      },
-      "trainingDate" : "2025-06-25",
-      "trainingDuration" : 60
+  "TRAINEE" : {
+    "trainee5" : {
+      "firstName" : "Eva",
+      "lastName" : "Green",
+      "username" : "Eva.Green",
+      "password" : "Poi098!We",
+      "active" : true,
+      "dateOfBirth" : "1992-07-03",
+      "address" : "Park Lane 5",
+      "userId" : 105
+    },
+    "trainee4" : {
+      "firstName" : "David",
+      "lastName" : "Lee",
+      "username" : "David.Lee",
+      "password" : "Xyz321$Tf",
+      "active" : true,
+      "dateOfBirth" : "1995-11-10",
+      "address" : null,
+      "userId" : 104
+    },
+    "trainee3" : {
+      "firstName" : "Carol",
+      "lastName" : "Johnson",
+      "username" : "Carol.Johnson",
+      "password" : "Ytr789#Rr",
+      "active" : false,
+      "dateOfBirth" : "1988-08-15",
+      "address" : "2nd Avenue",
+      "userId" : 103
+    },
+    "trainee2" : {
+      "firstName" : "Bob",
+      "lastName" : "Miller",
+      "username" : "Bob.Miller",
+      "password" : "Pwd456Xy!",
+      "active" : true,
+      "dateOfBirth" : "1993-05-20",
+      "address" : "Main Street 1",
+      "userId" : 102
+    },
+    "trainee1" : {
+      "firstName" : "Alice",
+      "lastName" : "Brown",
+      "username" : "Alice.Brown",
+      "password" : "Zxc987Qwe!",
+      "active" : true,
+      "dateOfBirth" : "1990-12-12",
+      "address" : null,
+      "userId" : 101
     }
   },
-  "trn" : {
+  "TRAINER" : {
+    "trainer4" : {
+      "firstName" : "Sophie",
+      "lastName" : "Taylor",
+      "username" : "Sophie.Taylor",
+      "password" : "S0ph!e456",
+      "active" : true,
+      "specialization" : {
+        "trainingTypeName" : "aerobics"
+      },
+      "userId" : 204
+    },
+    "trainer3" : {
+      "firstName" : "Michael",
+      "lastName" : "Green",
+      "username" : "Michael.Green",
+      "password" : "MmM222@Bb",
+      "active" : false,
+      "specialization" : {
+        "trainingTypeName" : "crossfit"
+      },
+      "userId" : 203
+    },
+    "trainer2" : {
+      "firstName" : "Linda",
+      "lastName" : "White",
+      "username" : "Linda.White",
+      "password" : "XxX111!Aa",
+      "active" : true,
+      "specialization" : {
+        "trainingTypeName" : "yoga"
+      },
+      "userId" : 202
+    },
     "trainer1" : {
       "firstName" : "John",
       "lastName" : "Smith",
@@ -21,19 +94,70 @@
       "specialization" : {
         "trainingTypeName" : "fitness"
       },
-      "userId" : 123
+      "userId" : 201
+    },
+    "trainer5" : {
+      "firstName" : "Mark",
+      "lastName" : "Black",
+      "username" : "Mark.Black",
+      "password" : "MkBl789*",
+      "active" : true,
+      "specialization" : {
+        "trainingTypeName" : "pilates"
+      },
+      "userId" : 205
     }
   },
-  "tee" : {
-    "trainee1" : {
-      "firstName" : "Alice",
-      "lastName" : "Brown",
-      "username" : "Alice.Brown",
-      "password" : "Zxc987Qwe!",
-      "active" : true,
-      "dateOfBirth" : "1990-12-12",
-      "address" : null,
-      "userId" : 456
+  "TRAINING" : {
+    "training3" : {
+      "trainerId" : 203,
+      "traineeId" : 103,
+      "trainingName" : "Power Crossfit",
+      "trainingType" : {
+        "trainingTypeName" : "crossfit"
+      },
+      "trainingDate" : "2025-06-27",
+      "trainingDuration" : 50
+    },
+    "training2" : {
+      "trainerId" : 202,
+      "traineeId" : 102,
+      "trainingName" : "Evening Yoga",
+      "trainingType" : {
+        "trainingTypeName" : "yoga"
+      },
+      "trainingDate" : "2025-06-26",
+      "trainingDuration" : 45
+    },
+    "training5" : {
+      "trainerId" : 205,
+      "traineeId" : 105,
+      "trainingName" : "Pilates Flow",
+      "trainingType" : {
+        "trainingTypeName" : "pilates"
+      },
+      "trainingDate" : "2025-06-29",
+      "trainingDuration" : 55
+    },
+    "training4" : {
+      "trainerId" : 204,
+      "traineeId" : 104,
+      "trainingName" : "Light Aerobics",
+      "trainingType" : {
+        "trainingTypeName" : "aerobics"
+      },
+      "trainingDate" : "2025-06-28",
+      "trainingDuration" : 40
+    },
+    "training1" : {
+      "trainerId" : 201,
+      "traineeId" : 101,
+      "trainingName" : "Morning Cardio",
+      "trainingType" : {
+        "trainingTypeName" : "fitness"
+      },
+      "trainingDate" : "2025-06-25",
+      "trainingDuration" : 60
     }
   }
 }

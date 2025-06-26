@@ -1,6 +1,7 @@
 package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.exception.AlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
-public class TrainingDAO implements TrainingRepository {
+public class TrainingRepositoryImpl implements TrainingRepository {
     private Map<String, Training> storage;
 
     @Autowired
@@ -57,7 +58,7 @@ public class TrainingDAO implements TrainingRepository {
     @Override
     public void save(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
-            throw new RuntimeException("Entity already exists!");
+            throw new AlreadyExistException("Entity already exists!");
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
         storage.put(key, training);
@@ -66,6 +67,7 @@ public class TrainingDAO implements TrainingRepository {
     @Override
     public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         String key = trainerId + traineeId + date.toString();
+
         storage.remove(key);
     }
 }
