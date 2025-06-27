@@ -1,7 +1,8 @@
-package com.gym.crm.app.service;
+package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.repository.TrainingRepository;
+import com.gym.crm.app.service.TrainingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class TrainingServiceImpl implements TrainingService{
+public class TrainingServiceImpl implements TrainingService {
     private TrainingRepository trainingRepository;
     private ModelMapper modelMapper;
 

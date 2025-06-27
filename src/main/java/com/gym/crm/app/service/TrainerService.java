@@ -11,7 +11,7 @@ public interface TrainerService {
 
     TrainerDto addTrainer(TrainerDto trainerDto);
 
-    TrainerDto updateTrainerByUsername(String username);
+    TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto);
 
     void deleteTrainerByUsername(String username);
 }

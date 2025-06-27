@@ -64,6 +64,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
         trainingStorage.put(key, training);
+        return trainingStorage.get(key);
     }
 
     @Override
