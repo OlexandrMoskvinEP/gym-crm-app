@@ -36,19 +36,24 @@ public class CommonStorage {
         this.jsonStorageHandler = jsonStorageHandler;
     }
 
-    @SuppressWarnings("unchecked")
     @PostConstruct
     public void init() {
-        Map<Namespace, Map<String, ?>> loaded = jsonStorageHandler.loadEntitiesFromFile();
+        Map<Namespace, Map<String, ?>> loadedDataFromFile = jsonStorageHandler.loadEntitiesFromFile();
+        storage.putAll(loadedDataFromFile);
 
-        ((Map<String, Trainer>) storage.get(Namespace.TRAINER))
-                .putAll((Map<String, Trainer>) loaded.get(Namespace.TRAINER));
+        mergeStorageData(TRAINER, loadedDataFromFile);
+        mergeStorageData(TRAINEE, loadedDataFromFile);
+        mergeStorageData(TRAINING, loadedDataFromFile);
+    }
 
-        ((Map<String, Trainee>) storage.get(Namespace.TRAINEE))
-                .putAll((Map<String, Trainee>) loaded.get(Namespace.TRAINEE));
+    @SuppressWarnings("unchecked")
+    private <T> void mergeStorageData(Namespace namespace, Map<Namespace, Map<String, ?>> loadedDataFromFile) {
+        Map<String, T> storageData = (Map<String, T>) storage.get(namespace);
+        Map<String, T> loadedData = (Map<String, T>) loadedDataFromFile.get(namespace);
 
-        ((Map<String, Training>) storage.get(Namespace.TRAINING))
-                .putAll((Map<String, Training>) loaded.get(Namespace.TRAINING));
+        if (storageData != null && loadedData != null) {
+            storageData.putAll(loadedData);
+        }
     }
 
     @PreDestroy
@@ -58,16 +63,16 @@ public class CommonStorage {
 
     @SuppressWarnings("unchecked")
     public Map<String, Trainer> getTrainerStorage() {
-        return (Map<String, Trainer>) storage.get(Namespace.TRAINER);
+        return (Map<String, Trainer>) storage.get(TRAINER);
     }
 
     @SuppressWarnings("unchecked")
     public Map<String, Trainee> getTraineeStorage() {
-        return (Map<String, Trainee>) storage.get(Namespace.TRAINEE);
+        return (Map<String, Trainee>) storage.get(TRAINEE);
     }
 
     @SuppressWarnings("unchecked")
     public Map<String, Training> getTrainingStorage() {
-        return (Map<String, Training>) storage.get(Namespace.TRAINING);
+        return (Map<String, Training>) storage.get(TRAINING);
     }
 }
