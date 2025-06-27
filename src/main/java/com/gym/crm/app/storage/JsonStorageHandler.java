@@ -14,10 +14,14 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINEE;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINER;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
+
 @Component
 public class JsonStorageHandler {
-    @Value("${storage.file}")
-    private String storageFile;
+    @Value("${storage.filePath}")
+    private String storageFilePath;
 
     private ObjectMapper objectMapper;
 
@@ -26,8 +30,23 @@ public class JsonStorageHandler {
         this.objectMapper = objectMapper;
     }
 
-    public HashMap<String, Object> loadRawStorage() {
-        try (InputStream input = new FileInputStream(storageFile)) {
+    public Map<Namespace, Map<String, ?>> loadEntitiesFromFile() {
+        Map<String, Object> fileStorage = loadRawStorage();
+
+        Map<String, Trainer> trainers = parseSection(fileStorage, TRAINER.name(), Trainer.class);
+        Map<String, Trainee> trainees = parseSection(fileStorage, TRAINEE.name(), Trainee.class);
+        Map<String, Training> trainings = parseSection(fileStorage, TRAINING.name(), Training.class);
+
+        Map<Namespace, Map<String, ?>> loadedData = new HashMap<>();
+        loadedData.put(TRAINER, trainers);
+        loadedData.put(TRAINEE, trainees);
+        loadedData.put(TRAINING, trainings);
+
+        return loadedData;
+    }
+
+    private HashMap<String, Object> loadRawStorage() {
+        try (InputStream input = new FileInputStream(storageFilePath)) {
             return objectMapper.readValue(input, new TypeReference<>() {
             });
         } catch (IOException e) {
@@ -49,16 +68,14 @@ public class JsonStorageHandler {
         return result;
     }
 
-    public void save(Map<String, Trainer> trainers,
-                     Map<String, Trainee> trainees,
-                     Map<String, Training> trainings) throws UnacceptableOperationException {
+    public void save(Map<Namespace, Map<String, ?>> storage) throws UnacceptableOperationException {
         Map<String, Object> toWrite = new HashMap<>();
 
-        toWrite.put(Namespace.TRAINER.name(), trainers);
-        toWrite.put(Namespace.TRAINEE.name(), trainees);
-        toWrite.put(Namespace.TRAINING.name(), trainings);
+        toWrite.put(TRAINER.name(), storage.get(TRAINER));
+        toWrite.put(TRAINEE.name(), storage.get(TRAINEE));
+        toWrite.put(TRAINING.name(), storage.get(TRAINING));
 
-        try (Writer writer = new FileWriter(storageFile)) {
+        try (Writer writer = new FileWriter(storageFilePath)) {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, toWrite);
         } catch (IOException e) {
             throw new UnacceptableOperationException("Error occurred while try to write into the file!");

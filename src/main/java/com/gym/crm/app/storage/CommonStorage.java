@@ -14,46 +14,60 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINEE;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINER;
+import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
+
 @Getter
 @Component
 public class CommonStorage {
-    private Map<String, Trainer> trainerStorage;
-    private Map<String, Trainee> traineeStorage;
-    private Map<String, Training> trainingStorage;
+    private final Map<Namespace, Map<String, ?>> storage = new HashMap<>();
 
-    private JsonStorageHandler jsonStorageHandler;
+    private final JsonStorageHandler jsonStorageHandler;
 
     @Autowired
-    public void setJsonStorageHandler(JsonStorageHandler jsonStorageHandler) {
+    public CommonStorage(Map<String, Trainer> trainerStorage,
+                         Map<String, Trainee> traineeStorage,
+                         Map<String, Training> trainingStorage,
+                         JsonStorageHandler jsonStorageHandler) {
+        this.storage.put(TRAINER, trainerStorage);
+        this.storage.put(TRAINEE, traineeStorage);
+        this.storage.put(TRAINING, trainingStorage);
         this.jsonStorageHandler = jsonStorageHandler;
     }
 
-    @Autowired
-    public void setTrainerStorage(Map<String, Trainer> trainerStorage) {
-        this.trainerStorage = trainerStorage;
-    }
-
-    @Autowired
-    public void setTraineeStorage(Map<String, Trainee> traineeStorage) {
-        this.traineeStorage = traineeStorage;
-    }
-
-    @Autowired
-    public void setTrainingStorage(Map<String, Training> trainingStorage) {
-        this.trainingStorage = trainingStorage;
-    }
-
+    @SuppressWarnings("unchecked")
     @PostConstruct
     public void init() {
-        HashMap<String, Object> raw = jsonStorageHandler.loadRawStorage();
+        Map<Namespace, Map<String, ?>> loaded = jsonStorageHandler.loadEntitiesFromFile();
 
-        trainerStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINER.name(), Trainer.class));
-        traineeStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINEE.name(), Trainee.class));
-        trainingStorage.putAll(jsonStorageHandler.parseSection(raw, Namespace.TRAINING.name(), Training.class));
+        ((Map<String, Trainer>) storage.get(Namespace.TRAINER))
+                .putAll((Map<String, Trainer>) loaded.get(Namespace.TRAINER));
+
+        ((Map<String, Trainee>) storage.get(Namespace.TRAINEE))
+                .putAll((Map<String, Trainee>) loaded.get(Namespace.TRAINEE));
+
+        ((Map<String, Training>) storage.get(Namespace.TRAINING))
+                .putAll((Map<String, Training>) loaded.get(Namespace.TRAINING));
     }
 
     @PreDestroy
     public void shutdown() throws UnacceptableOperationException {
-        jsonStorageHandler.save(trainerStorage, traineeStorage, trainingStorage);
+        jsonStorageHandler.save(storage);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Trainer> getTrainerStorage() {
+        return (Map<String, Trainer>) storage.get(Namespace.TRAINER);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Trainee> getTraineeStorage() {
+        return (Map<String, Trainee>) storage.get(Namespace.TRAINEE);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Training> getTrainingStorage() {
+        return (Map<String, Training>) storage.get(Namespace.TRAINING);
     }
 }

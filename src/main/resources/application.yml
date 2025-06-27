@@ -6,4 +6,4 @@ project:
   version: "1.0"
 
 storage:
-  file: src/main/resources/storage.json
+  filePath: src/main/resources/storage.json

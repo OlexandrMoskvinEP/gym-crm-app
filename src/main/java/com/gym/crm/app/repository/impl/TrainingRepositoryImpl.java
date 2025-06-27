@@ -1,7 +1,12 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.exception.AlreadyExistException;
+import com.gym.crm.app.exception.DuplicateUsernameException;
+import com.gym.crm.app.repository.TrainingRepository;
+import com.gym.crm.app.storage.CommonStorage;
+import com.gym.crm.app.storage.JsonStorageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,16 +18,16 @@ import java.util.stream.Collectors;
 
 @Repository
 public class TrainingRepositoryImpl implements TrainingRepository {
-    private Map<String, Training> storage;
+    private Map<String, Training> trainingStorage;
 
     @Autowired
-    public void setTrainerStorage(Map<String, Training> trainingStorage) {
-        this.storage = trainingStorage;
+    public void setTrainingStorage(CommonStorage commonStorage) {
+        this.trainingStorage = commonStorage.getTrainingStorage();
     }
 
     @Override
     public List<Training> findAll() {
-        return new ArrayList<>(storage.values());
+        return new ArrayList<>(trainingStorage.values());
     }
 
     @Override
@@ -58,16 +63,16 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public void save(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
-            throw new AlreadyExistException("Entity already exists!");
+            throw new DuplicateUsernameException("Entity already exists!");
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
-        storage.put(key, training);
+        trainingStorage.put(key, training);
     }
 
     @Override
     public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         String key = trainerId + traineeId + date.toString();
 
-        storage.remove(key);
+        trainingStorage.remove(key);
     }
 }
