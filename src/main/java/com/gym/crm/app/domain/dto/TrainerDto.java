@@ -11,5 +11,5 @@ public class TrainerDto {
     private String password;
     private boolean isActive;
     private TrainingType specialization;
-    private int UserId;
+    private int userId;
 }
