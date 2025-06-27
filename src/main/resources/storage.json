@@ -109,6 +109,16 @@
     }
   },
   "TRAINING" : {
+    "9752025-06-28" : {
+      "trainerId" : 321,
+      "traineeId" : 654,
+      "trainingName" : "Pokatushka",
+      "trainingType" : {
+        "trainingTypeName" : "Cycling"
+      },
+      "trainingDate" : "2025-06-28",
+      "trainingDuration" : 120
+    },
     "training1" : {
       "trainerId" : 201,
       "traineeId" : 101,
