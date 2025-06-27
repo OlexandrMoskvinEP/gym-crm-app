@@ -20,8 +20,6 @@ public class PasswordGenerator {
 
     private final AtomicInteger traineeCounter = new AtomicInteger(1);
     private final AtomicInteger trainerCounter = new AtomicInteger(1);
-    private final AtomicInteger trainingCounter = new AtomicInteger(1);
-
 
     public int generateTraineeId() {
         return traineeCounter.getAndIncrement();
@@ -29,10 +27,6 @@ public class PasswordGenerator {
 
     public int generateTrainerId() {
         return trainerCounter.getAndIncrement();
-    }
-
-    public int generateTrainingId() {
-        return trainingCounter.getAndIncrement();
     }
 
     public String generatePassword() {
