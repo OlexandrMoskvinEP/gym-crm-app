@@ -11,7 +11,7 @@ public interface TraineeRepository {
 
     Trainee save(Trainee trainer);
 
-    Optional<Trainee> findByUserName(String userName);
+    Optional<Trainee> findByUsername(String username);
 
     void deleteByUserName(String userName);
 }

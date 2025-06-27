@@ -39,8 +39,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Optional<Trainee> findByUserName(String userName) {
-        Trainee trainee = traineeStorage.get(userName);
+    public Optional<Trainee> findByUsername(String username) {
+        Trainee trainee = traineeStorage.get(username);
 
         return Optional.ofNullable(trainee);
     }

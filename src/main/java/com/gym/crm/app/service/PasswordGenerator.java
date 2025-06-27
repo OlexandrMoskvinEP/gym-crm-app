@@ -23,16 +23,16 @@ public class PasswordGenerator {
     private final AtomicInteger trainingCounter = new AtomicInteger(1);
 
 
-    public String generateTraineeId() {
-        return "Trainee-" + traineeCounter.getAndIncrement();
+    public int generateTraineeId() {
+        return traineeCounter.getAndIncrement();
     }
 
     public int generateTrainerId() {
         return trainerCounter.getAndIncrement();
     }
 
-    public String generateTrainingId() {
-        return "Training-" + trainingCounter.getAndIncrement();
+    public int generateTrainingId() {
+        return trainingCounter.getAndIncrement();
     }
 
     public String generatePassword() {

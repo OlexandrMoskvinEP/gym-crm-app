@@ -78,7 +78,6 @@ public class TrainerServiceImpl implements TrainerService {
     public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
         Trainer entityToUpdate = trainerRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        entityToUpdate.setUsername(trainerDto.getUsername());
         entityToUpdate.setFirstName(trainerDto.getFirstName());
         entityToUpdate.setLastName(trainerDto.getLastName());
         entityToUpdate.setSpecialization(trainerDto.getSpecialization());
@@ -91,6 +90,8 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public void deleteTrainerByUsername(String username) {
-        trainerRepository.deleteByUserName(username);
+        if (trainerRepository.findByUsername(username).isEmpty()) {
+            throw new EntityNotFoundException("Trainer not found!");
+        }
     }
 }
