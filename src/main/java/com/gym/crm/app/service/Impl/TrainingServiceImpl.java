@@ -1,6 +1,7 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
+import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
@@ -33,8 +33,8 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDto> getAllTrainings() {
         return trainingRepository.findAll()
                 .stream()
-                .map(t -> modelMapper.map(t, TrainingDto.class))
-                .collect(Collectors.toList());
+                .map(training -> modelMapper.map(training, TrainingDto.class))
+                .toList();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TrainingServiceImpl implements TrainingService {
             throw new EntityNotFoundException("Training not found!");
         }
         return trainings.stream()
-                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
     }
 
@@ -57,7 +57,7 @@ public class TrainingServiceImpl implements TrainingService {
             throw new EntityNotFoundException("Training not found!");
         }
         return trainings.stream()
-                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
     }
 
@@ -69,22 +69,22 @@ public class TrainingServiceImpl implements TrainingService {
             throw new EntityNotFoundException("Training not found!");
         }
         return trainings.stream()
-                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
-        List<Training> trainings = trainingRepository.findByTrainerId(trainerId).stream()
-                .filter(t -> t.getTraineeId() == traineeId)
-                .filter(t -> t.getTrainingDate().equals(date))
+    public List<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
+        List<Training> trainings = trainingRepository.findByTrainerId(identityDto.getTrainerId()).stream()
+                .filter(training -> training.getTraineeId() == identityDto.getTraineeId())
+                .filter(training -> training.getTrainingDate().equals(identityDto.getTrainingDate()))
                 .toList();
 
         if (trainings.isEmpty()) {
             throw new EntityNotFoundException("Training not found");
         }
         return trainings.stream()
-                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
     }
 
@@ -97,38 +97,41 @@ public class TrainingServiceImpl implements TrainingService {
         } catch (RuntimeException e) {
             throw new UnacceptableOperationException("Failed while saving training!");
         }
-        return modelMapper.map(getTrainingByTrainerAndTraineeAndDate(training.getTrainerId(),
-                training.getTraineeId(), training.getTrainingDate()), TrainingDto.class);
+        TrainingIdentityDto identityDto = modelMapper.map(trainingToSave, TrainingIdentityDto.class);
+
+        return getTrainingByTrainerAndTraineeAndDate(identityDto).get(0);
     }
 
     @Override
-    public TrainingDto updateTraining(int trainerId, int traineeId, LocalDate date, TrainingDto trainingDto) throws UnacceptableOperationException {
-        Training trainingToUpd;
+    public TrainingDto updateTraining(TrainingDto trainingDto) throws UnacceptableOperationException {
+        Training trainingToUpdate;
 
         try {
-            trainingToUpd = trainingRepository.findByTrainerAndTraineeAndDate(trainerId, traineeId, date).get(0);
+            trainingToUpdate = trainingRepository.findByTrainerAndTraineeAndDate(
+                    trainingDto.getTrainerId(),
+                    trainingDto.getTraineeId(),
+                    trainingDto.getTrainingDate()).get(0);
         } catch (Exception e) {
             throw new EntityNotFoundException("Training not found!");
         }
-        trainingToUpd.setTrainerId(trainingDto.getTrainerId());
-        trainingToUpd.setTraineeId(trainingDto.getTraineeId());
-        trainingToUpd.setTrainingName(trainingDto.getTrainingName());
-        trainingToUpd.setTrainingType(trainingDto.getTrainingType());
-        trainingToUpd.setTrainingDate(trainingDto.getTrainingDate());
-        trainingToUpd.setTrainingDuration(trainingDto.getTrainingDuration());
+
+        trainingToUpdate.setTrainingName(trainingDto.getTrainingName());
+        trainingToUpdate.setTrainingType(trainingDto.getTrainingType());
+        trainingToUpdate.setTrainingDuration(trainingDto.getTrainingDuration());
 
         try {
-            trainingRepository.save(trainingToUpd);
+            trainingRepository.save(trainingToUpdate);
         } catch (Exception e) {
             throw new UnacceptableOperationException("Unable to update training!");
         }
-        return modelMapper.map(trainingToUpd, TrainingDto.class);
+        return modelMapper.map(trainingToUpdate, TrainingDto.class);
     }
 
     @Override
-    public void deleteTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) throws UnacceptableOperationException {
+    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) throws UnacceptableOperationException {
         try {
-            trainingRepository.deleteByTrainerAndTraineeAndDate(trainerId, traineeId, date);
+            trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
+                    identityDto.getTraineeId(), identityDto.getTrainingDate());
         } catch (Exception e) {
             throw new UnacceptableOperationException("Unable to delete training!");
         }

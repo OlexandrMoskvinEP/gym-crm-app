@@ -10,16 +10,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PasswordGenerator {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
     private static final int PASSWORD_LENGTH = 10;
-
     private SecureRandom random;
+
+    private final AtomicInteger traineeCounter = new AtomicInteger(1);
+    private final AtomicInteger trainerCounter = new AtomicInteger(1);
 
     @Autowired
     public void setRandom(SecureRandom random) {
         this.random = random;
     }
-
-    private final AtomicInteger traineeCounter = new AtomicInteger(1);
-    private final AtomicInteger trainerCounter = new AtomicInteger(1);
 
     public int generateTraineeId() {
         return traineeCounter.getAndIncrement();

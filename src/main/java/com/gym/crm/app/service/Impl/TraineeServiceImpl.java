@@ -38,7 +38,7 @@ public class TraineeServiceImpl implements TraineeService {
     public List<TraineeDto> getAllTrainees() {
         return traineeRepository.findAll()
                 .stream()
-                .map(t -> modelMapper.map(t, TraineeDto.class))
+                .map(trainee -> modelMapper.map(trainee, TraineeDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +77,8 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto updateTraineeByUsername(String username, TraineeDto traineeDto) {
-        Trainee entityToUpdate = traineeRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
+        Trainee entityToUpdate = traineeRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
         entityToUpdate.setFirstName(traineeDto.getFirstName());
         entityToUpdate.setLastName(traineeDto.getLastName());

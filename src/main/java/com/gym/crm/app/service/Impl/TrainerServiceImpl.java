@@ -38,7 +38,7 @@ public class TrainerServiceImpl implements TrainerService {
     public List<TrainerDto> getAllTrainers() {
         return trainerRepository.findAll()
                 .stream()
-                .map(t -> modelMapper.map(t, TrainerDto.class))
+                .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +76,8 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
-        Trainer entityToUpdate = trainerRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+        Trainer entityToUpdate = trainerRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
         entityToUpdate.setFirstName(trainerDto.getFirstName());
         entityToUpdate.setLastName(trainerDto.getLastName());
