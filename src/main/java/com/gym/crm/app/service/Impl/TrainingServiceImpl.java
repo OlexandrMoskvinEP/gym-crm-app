@@ -1,6 +1,8 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
+import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
 import org.modelmapper.ModelMapper;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
@@ -24,29 +27,64 @@ public class TrainingServiceImpl implements TrainingService {
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
+
     @Override
     public List<TrainingDto> getAllTrainings() {
-        return List.of();
+        return trainingRepository.findAll()
+                .stream()
+                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingDto> getTrainingByTrainerId(int trainerId) {
-        return List.of();
+        List<Training> trainings = trainingRepository.findByTrainerId(trainerId);
+
+        if (trainings.isEmpty()) {
+            throw new EntityNotFoundException("Training not found!");
+        }
+        return trainings.stream()
+                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .toList();
     }
 
     @Override
-    public List<TrainingDto> getTrainingByByTraineeId(int trainerId) {
-        return List.of();
+    public List<TrainingDto> getTrainingByTraineeId(int traineeId) {
+        List<Training> trainings = trainingRepository.findByTraineeId(traineeId);
+
+        if (trainings.isEmpty()) {
+            throw new EntityNotFoundException("Training not found!");
+        }
+        return trainings.stream()
+                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .toList();
     }
 
     @Override
     public List<TrainingDto> getTrainingByDate(LocalDate date) {
-        return List.of();
+        List<Training> trainings = trainingRepository.findByDate(date);
+
+        if (trainings.isEmpty()) {
+            throw new EntityNotFoundException("Training not found!");
+        }
+        return trainings.stream()
+                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .toList();
     }
 
     @Override
     public List<TrainingDto> getTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
-        return List.of();
+        List<Training> trainings = trainingRepository.findByTrainerId(trainerId).stream()
+                .filter(t -> t.getTraineeId() == traineeId)
+                .filter(t -> t.getTrainingDate().equals(date))
+                .toList();
+
+        if (trainings.isEmpty()) {
+            throw new EntityNotFoundException("Training not found");
+        }
+        return trainings.stream()
+                .map(t -> modelMapper.map(t, TrainingDto.class))
+                .toList();
     }
 
     @Override
@@ -55,7 +93,18 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public void deleteTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
+    public TrainingDto updateTraining(int trainerId, int traineeId, LocalDate date, TrainingDto trainingDto){
+        Training trainingToUpd;
+        try{
+           trainingToUpd  = trainingRepository.findByTrainerAndTraineeAndDate(trainerId, traineeId, date).getFirst();
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Training not found!");
+        }
+       trainingToUpd.
+        return null;
+    }
 
+    @Override
+    public void deleteTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
     }
 }

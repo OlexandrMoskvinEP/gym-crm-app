@@ -10,13 +10,15 @@ public interface TrainingService {
 
     List<TrainingDto> getTrainingByTrainerId(int trainerId);
 
-    List<TrainingDto> getTrainingByByTraineeId(int trainerId);
+    List<TrainingDto> getTrainingByTraineeId(int trainerId);
 
     List<TrainingDto> getTrainingByDate(LocalDate date);
 
     List<TrainingDto> getTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 
     TrainingDto addTraining(TrainingDto training);
+
+    TrainingDto updateTraining(int trainerId, int traineeId, LocalDate date, TrainingDto trainingDto);
 
     void deleteTrainingByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 
