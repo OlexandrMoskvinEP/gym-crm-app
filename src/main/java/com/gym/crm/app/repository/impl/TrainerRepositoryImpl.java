@@ -39,8 +39,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public Optional<Trainer> findByUserName(String userName) {
-        Trainer trainer = trainerStorage.get(userName);
+    public Optional<Trainer> findByUsername(String username) {
+        Trainer trainer = trainerStorage.get(username);
 
         return Optional.ofNullable(trainer);
     }

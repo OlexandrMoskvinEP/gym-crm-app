@@ -7,6 +7,7 @@ import com.gym.crm.app.YamlPropertySourceFactory;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,12 @@ public class AppConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         return mapper;
+    }
+
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+
     }
     @Bean
     public Map<String, Trainer> trainerStorage() {

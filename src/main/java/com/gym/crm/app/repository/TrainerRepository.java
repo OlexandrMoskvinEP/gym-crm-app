@@ -10,7 +10,7 @@ public interface TrainerRepository {
 
     Trainer save(Trainer trainer);
 
-    Optional<Trainer> findByUserName(String userName);
+    Optional<Trainer> findByUsername(String username);
 
     void deleteByUserName(String userName);
 }
