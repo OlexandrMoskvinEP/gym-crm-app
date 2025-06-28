@@ -2,6 +2,7 @@ package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.PasswordGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,28 +15,25 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeServiceImplTest {
     private final ModelMapper modelMapper = new ModelMapper();
     private static final TestData data = new TestData();
     private final List<Trainee> trainees = data.getTrainees();
+
     @Captor
     private ArgumentCaptor<Trainee> traineeCaptor;
 
@@ -103,12 +101,33 @@ class TraineeServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void updateTraineeByUsername() {
+    @ParameterizedTest
+    @MethodSource("getTrainee")
+    void shouldUpdateTraineeByUsername(Trainee trainee) {
+        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
+       expected.setActive(false);
+       expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
+        expected.setAddress("checkedAddress");
+
+        String username = trainee.getFirstName() + "." + trainee.getLastName();
+
+        when(repository.findByUsername(username)).thenReturn(Optional.of(modelMapper.map(trainee, Trainee.class)));
+        when(repository.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
+
+        verify(repository, atLeastOnce()).save(traineeCaptor.capture());
+        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(),TraineeDto.class);
+
+        assertEquals(expected, savedTrainee);
+        assertEquals(expected, actual);
     }
 
     @Test
-    void deleteTraineeByUsername() {
+    void shouldThrowExceptionWhetCantDeleteTraineeByUsername() {
+        when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
     }
 
     public static Stream<Trainee> getTrainee() {

@@ -80,8 +80,6 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee entityToUpdate = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        entityToUpdate.setFirstName(traineeDto.getFirstName());
-        entityToUpdate.setLastName(traineeDto.getLastName());
         entityToUpdate.setDateOfBirth(traineeDto.getDateOfBirth());
         entityToUpdate.setAddress(traineeDto.getAddress());
         entityToUpdate.setActive(traineeDto.isActive());
@@ -95,6 +93,6 @@ public class TraineeServiceImpl implements TraineeService {
     public void deleteTraineeByUsername(String username) {
         if (traineeRepository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainee not found!");
-        }
+        }traineeRepository.deleteByUserName(username);
     }
 }
