@@ -6,8 +6,6 @@ import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.PasswordGenerator;
 import com.gym.crm.app.service.TraineeService;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @Service
 public class TraineeServiceImpl implements TraineeService {
     private TraineeRepository traineeRepository;

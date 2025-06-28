@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -49,12 +50,12 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public List<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
+    public Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         return findAll().stream()
                 .filter(t -> t.getTrainerId() == trainerId)
                 .filter(t -> t.getTraineeId() == traineeId)
                 .filter(t -> t.getTrainingDate().equals(date))
-                .collect(Collectors.toList());
+                .findFirst();
     }
 
     @Override
