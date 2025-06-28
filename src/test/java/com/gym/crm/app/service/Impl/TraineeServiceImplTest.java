@@ -36,7 +36,6 @@ class TraineeServiceImplTest {
 
     @Captor
     private ArgumentCaptor<Trainee> traineeCaptor;
-
     @Mock
     private TraineeRepository repository;
     @Mock
@@ -78,7 +77,7 @@ class TraineeServiceImplTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getTrainee")
+    @MethodSource("getTrainees")
     void shouldAddTrainee(Trainee trainee) {
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
         expected.setPassword("fakePassword1234567");
@@ -95,18 +94,18 @@ class TraineeServiceImplTest {
         TraineeDto actual = traineeService.addTrainee(modelMapper.map(trainee, TraineeDto.class));
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
-        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(),TraineeDto.class);
+        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
 
         assertEquals(expected, savedTrainee);
         assertEquals(expected, actual);
     }
 
     @ParameterizedTest
-    @MethodSource("getTrainee")
+    @MethodSource("getTrainees")
     void shouldUpdateTraineeByUsername(Trainee trainee) {
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
-       expected.setActive(false);
-       expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
+        expected.setActive(false);
+        expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
 
         String username = trainee.getFirstName() + "." + trainee.getLastName();
@@ -117,7 +116,7 @@ class TraineeServiceImplTest {
         TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
-        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(),TraineeDto.class);
+        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
 
         assertEquals(expected, savedTrainee);
         assertEquals(expected, actual);
@@ -130,7 +129,7 @@ class TraineeServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
     }
 
-    public static Stream<Trainee> getTrainee() {
+    public static Stream<Trainee> getTrainees() {
         return data.getTrainees().stream();
     }
 }

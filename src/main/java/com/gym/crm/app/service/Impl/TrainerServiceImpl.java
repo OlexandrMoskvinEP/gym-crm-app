@@ -94,5 +94,6 @@ public class TrainerServiceImpl implements TrainerService {
         if (trainerRepository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainer not found!");
         }
+        trainerRepository.deleteByUserName(username);
     }
 }
