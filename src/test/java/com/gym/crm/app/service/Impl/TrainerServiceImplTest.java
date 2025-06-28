@@ -1,8 +1,6 @@
 package com.gym.crm.app.service.Impl;
 
-import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;

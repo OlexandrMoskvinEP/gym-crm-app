@@ -125,11 +125,12 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        try {
-            trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
-                    identityDto.getTraineeId(), identityDto.getTrainingDate());
-        } catch (Exception e) {
-            throw new UnacceptableOperationException("Unable to delete training!");
+        if (trainingRepository.findByTrainerAndTraineeAndDate(
+                identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate()).isEmpty()) {
+            throw new EntityNotFoundException("Training not found!");
         }
+        trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
+                identityDto.getTraineeId(), identityDto.getTrainingDate());
+
     }
 }
