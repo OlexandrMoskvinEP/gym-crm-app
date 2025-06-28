@@ -60,7 +60,7 @@ public class TrainerServiceImpl implements TrainerService {
                 .lastName(trainerDto.getLastName())
                 .username(username)
                 .password(password)
-                .isActive(true)
+                .isActive(trainerDto.isActive())
                 .specialization(trainerDto.getSpecialization())
                 .userId(id)
                 .build();

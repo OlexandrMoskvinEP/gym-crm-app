@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
@@ -74,22 +75,17 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        List<Training> trainings = trainingRepository.findByTrainerId(identityDto.getTrainerId()).stream()
-                .filter(training -> training.getTraineeId() == identityDto.getTraineeId())
-                .filter(training -> training.getTrainingDate().equals(identityDto.getTrainingDate()))
-                .toList();
-
-        if (trainings.isEmpty()) {
-            throw new EntityNotFoundException("Training not found");
-        }
-        return trainings.stream()
-                .map(training -> modelMapper.map(training, TrainingDto.class))
-                .toList();
+    public Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
+        Optional<Training> training = Optional.ofNullable(trainingRepository.findByTrainerAndTraineeAndDate(
+                        identityDto.getTrainerId(),
+                        identityDto.getTraineeId(),
+                        identityDto.getTrainingDate())
+                .orElseThrow(() -> new EntityNotFoundException("Training not found!")));
+        return training.map(training1 -> modelMapper.map(training1, TrainingDto.class));
     }
 
     @Override
-    public TrainingDto addTraining(TrainingDto training) throws UnacceptableOperationException {
+    public TrainingDto addTraining(TrainingDto training) {
         Training trainingToSave = modelMapper.map(training, Training.class);
 
         try {
@@ -99,18 +95,18 @@ public class TrainingServiceImpl implements TrainingService {
         }
         TrainingIdentityDto identityDto = modelMapper.map(trainingToSave, TrainingIdentityDto.class);
 
-        return getTrainingByTrainerAndTraineeAndDate(identityDto).get(0);
+        return getTrainingByTrainerAndTraineeAndDate(identityDto).get();
     }
 
     @Override
-    public TrainingDto updateTraining(TrainingDto trainingDto) throws UnacceptableOperationException {
+    public TrainingDto updateTraining(TrainingDto trainingDto) {
         Training trainingToUpdate;
 
         try {
             trainingToUpdate = trainingRepository.findByTrainerAndTraineeAndDate(
                     trainingDto.getTrainerId(),
                     trainingDto.getTraineeId(),
-                    trainingDto.getTrainingDate()).get(0);
+                    trainingDto.getTrainingDate()).get();
         } catch (Exception e) {
             throw new EntityNotFoundException("Training not found!");
         }
@@ -128,7 +124,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) throws UnacceptableOperationException {
+    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
         try {
             trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
                     identityDto.getTraineeId(), identityDto.getTrainingDate());
