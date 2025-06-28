@@ -1,11 +1,13 @@
 package com.gym.crm.app.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@RequiredArgsConstructor
 @Component
 public class PasswordGenerator {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";

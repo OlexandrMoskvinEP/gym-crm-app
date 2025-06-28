@@ -36,8 +36,8 @@ public class AppConfig {
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
-
     }
+
     @Bean
     public Map<String, Trainer> trainerStorage() {
         return new HashMap<>();
