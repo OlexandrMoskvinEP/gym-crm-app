@@ -5,8 +5,8 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.service.TrainerService;
-import com.gym.crm.app.service.utils.PasswordService;
-import com.gym.crm.app.service.utils.UserProfileService;
+import com.gym.crm.app.service.common.PasswordService;
+import com.gym.crm.app.service.common.UserProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,6 +100,7 @@ public class TrainerServiceImpl implements TrainerService {
         if (trainerRepository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainer not found!");
         }
+
         trainerRepository.deleteByUserName(username);
     }
 }

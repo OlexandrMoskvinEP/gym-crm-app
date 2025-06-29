@@ -64,6 +64,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
+
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
 
         trainingStorage.put(key, training);
@@ -78,6 +79,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         if (!trainingStorage.containsKey(key)) {
             throw new EntityNotFoundException("Unable to delete training!");
         }
+
         trainingStorage.remove(key);
     }
 }

@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.utils;
+package com.gym.crm.app.service.common;
 
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;

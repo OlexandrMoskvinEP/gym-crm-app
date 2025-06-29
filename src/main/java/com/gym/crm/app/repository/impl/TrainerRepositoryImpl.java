@@ -36,6 +36,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         if (trainerStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
+
         Trainer trainerWithId = trainer.toBuilder()
                 .userId(trainerCounter.getAndIncrement())
                 .build();
@@ -57,6 +58,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         if (!trainerStorage.containsKey(username)) {
             throw new EntityNotFoundException("Failed while deleting trainer!");
         }
+
         trainerStorage.remove(username);
     }
 }

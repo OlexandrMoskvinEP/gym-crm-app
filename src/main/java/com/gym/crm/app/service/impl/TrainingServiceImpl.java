@@ -4,7 +4,6 @@ import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
 import org.modelmapper.ModelMapper;
@@ -45,6 +44,7 @@ public class TrainingServiceImpl implements TrainingService {
         if (trainings.isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }
+
         return trainings.stream()
                 .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
@@ -57,6 +57,7 @@ public class TrainingServiceImpl implements TrainingService {
         if (trainings.isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }
+
         return trainings.stream()
                 .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
@@ -69,6 +70,7 @@ public class TrainingServiceImpl implements TrainingService {
         if (trainings.isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }
+
         return trainings.stream()
                 .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
@@ -89,14 +91,9 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingDto addTraining(TrainingDto training) {
         Training trainingToSave = modelMapper.map(training, Training.class);
 
-        try {
-            trainingRepository.saveTraining(trainingToSave);
-        } catch (RuntimeException e) {
-            throw new UnacceptableOperationException("Failed while saving training!");
-        }
-        TrainingIdentityDto identityDto = modelMapper.map(trainingToSave, TrainingIdentityDto.class);
+        Training persistedTraining = trainingRepository.saveTraining(trainingToSave);
 
-        return getTrainingByTrainerAndTraineeAndDate(identityDto).get();
+        return modelMapper.map(persistedTraining, TrainingDto.class);
     }
 
     @Override
@@ -127,6 +124,7 @@ public class TrainingServiceImpl implements TrainingService {
                 identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate()).isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }
+
         trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
                 identityDto.getTraineeId(), identityDto.getTrainingDate());
     }

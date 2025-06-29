@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.utils;
+package com.gym.crm.app.service.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 public class PasswordService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
     private static final int PASSWORD_LENGTH = 10;
+
     private SecureRandom random;
 
     @Autowired
@@ -25,6 +26,7 @@ public class PasswordService {
             int index = random.nextInt(CHARACTERS.length());
             password.append(CHARACTERS.charAt(index));
         }
+
         return password.toString();
     }
 }

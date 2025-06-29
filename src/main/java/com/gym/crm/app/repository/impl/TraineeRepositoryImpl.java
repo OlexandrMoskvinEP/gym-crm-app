@@ -36,6 +36,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         if (traineeStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
+
         Trainee traineeWithId = trainee.toBuilder()
                 .userId(traineeCounter.getAndIncrement())
                 .build();
@@ -57,6 +58,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         if (!traineeStorage.containsKey(username)) {
             throw new EntityNotFoundException("Failed while deleting trainer!");
         }
+
         traineeStorage.remove(username);
     }
 }
