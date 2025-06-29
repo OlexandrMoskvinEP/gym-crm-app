@@ -1,8 +1,8 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.DuplicateUsernameException;
-import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private Map<String, Trainer> trainerStorage;
 
     @Autowired
-       public void setTrainerStorage(CommonStorage commonStorage) {
+    public void setTrainerStorage(CommonStorage commonStorage) {
         this.trainerStorage = commonStorage.getTrainerStorage();
     }
 
@@ -46,7 +46,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public void deleteByUserName(String userName) {
-        trainerStorage.remove(userName);
+    public void deleteByUserName(String username) {
+        if (trainerStorage.containsKey(username)) {
+            trainerStorage.remove(username);
+        } else throw new EntityNotFoundException("Failed while deleting trainer!");
     }
 }

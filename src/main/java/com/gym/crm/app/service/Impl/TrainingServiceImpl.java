@@ -81,6 +81,7 @@ public class TrainingServiceImpl implements TrainingService {
                         identityDto.getTraineeId(),
                         identityDto.getTrainingDate())
                 .orElseThrow(() -> new EntityNotFoundException("Training not found!")));
+
         return training.map(training1 -> modelMapper.map(training1, TrainingDto.class));
     }
 

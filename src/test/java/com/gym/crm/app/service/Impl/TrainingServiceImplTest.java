@@ -6,10 +6,12 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
+import com.gym.crm.app.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -103,8 +106,23 @@ class TrainingServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void getTrainingByTrainerAndTraineeAndDate() {
+    @ParameterizedTest
+    @MethodSource("getTrainingId")
+    void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
+        Training training1 = trainings.stream()
+                .filter(training -> training.getTrainerId()==dto.getTrainerId())
+                .filter(training -> training.getTraineeId()==dto.getTraineeId())
+                .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
+                .findFirst().get();
+
+        when(repository.findByTrainerAndTraineeAndDate(dto.getTrainerId(), dto.getTraineeId(), dto.getTrainingDate()))
+                .thenReturn(Optional.of(training1));
+
+        Optional<TrainingDto>expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
+        Optional<TrainingDto>actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @ParameterizedTest
@@ -174,5 +192,9 @@ class TrainingServiceImplTest {
                 LocalDate.of(2025, 6, 25),
                 LocalDate.of(2025, 6, 24)
         );
+    }
+
+    public static Stream<TrainingIdentityDto> getTrainingId() {
+        return data.getIdentities().stream();
     }
 }

@@ -1,7 +1,8 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.DuplicateUsernameException;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         String key = trainerId + traineeId + date.toString();
 
-        trainingStorage.remove(key);
+        if(trainingStorage.containsKey(key)){
+            trainingStorage.remove(key);
+        }else throw new EntityNotFoundException("Unable to delete training!");
     }
 }

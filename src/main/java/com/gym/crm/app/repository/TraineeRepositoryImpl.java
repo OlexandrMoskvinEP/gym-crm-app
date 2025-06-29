@@ -1,7 +1,8 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.exception.DuplicateUsernameException;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public void deleteByUserName(String userName) {
-        traineeStorage.remove(userName);
+    public void deleteByUserName(String username) {
+        if (traineeStorage.containsKey(username)) {
+            traineeStorage.remove(username);
+        } else throw new EntityNotFoundException("Failed while deleting trainer!");
     }
 }
