@@ -1,11 +1,12 @@
-package com.gym.crm.app.service.Impl;
+package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
-import com.gym.crm.app.service.PasswordGenerator;
 import com.gym.crm.app.service.TraineeService;
+import com.gym.crm.app.service.utils.PasswordService;
+import com.gym.crm.app.service.utils.UserProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,17 @@ import java.util.stream.Collectors;
 public class TraineeServiceImpl implements TraineeService {
     private TraineeRepository traineeRepository;
     private ModelMapper modelMapper;
-    private PasswordGenerator passwordGenerator;
+    private PasswordService passwordService;
+    private UserProfileService userProfileService;
 
     @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
+    }
+
+    @Autowired
+    public void setPasswordService(PasswordService passwordService) {
+        this.passwordService = passwordService;
     }
 
     @Autowired
@@ -46,14 +53,14 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeDto getTraineeByUsername(String username) {
         Trainee trainee = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+
         return modelMapper.map(trainee, TraineeDto.class);
     }
 
     @Override
     public TraineeDto addTrainee(TraineeDto traineeDto) {
-        String username = passwordGenerator.generateUsername(traineeDto.getFirstName(), traineeDto.getLastName());
-        String password = passwordGenerator.generatePassword();
-        int id = passwordGenerator.generateTraineeId();
+        String username = userProfileService.createUsername(traineeDto.getFirstName(), traineeDto.getLastName());
+        String password = passwordService.generatePassword();
 
         Trainee entityToAdd = Trainee.builder()
                 .firstName(traineeDto.getFirstName())
@@ -63,25 +70,10 @@ public class TraineeServiceImpl implements TraineeService {
                 .isActive(traineeDto.isActive())
                 .dateOfBirth(traineeDto.getDateOfBirth())
                 .address(traineeDto.getAddress())
-                .userId(id)
                 .build();
 
-        try {
-            traineeRepository.save(entityToAdd);
-        } catch (Exception e) {
-            Trainee updatedEntity = Trainee.builder()
-                    .firstName(traineeDto.getFirstName())
-                    .lastName(traineeDto.getLastName())
-                    .username(passwordGenerator.addIndexWhenDuplicate(username, id))
-                    .password(password)
-                    .isActive(traineeDto.isActive())
-                    .dateOfBirth(traineeDto.getDateOfBirth())
-                    .address(traineeDto.getAddress())
-                    .userId(id)
-                    .build();
+        traineeRepository.saveTrainee(entityToAdd);
 
-            traineeRepository.save(updatedEntity);
-        }
         return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
     }
 
@@ -101,7 +93,7 @@ public class TraineeServiceImpl implements TraineeService {
                 .dateOfBirth(traineeDto.getDateOfBirth())
                 .build();
 
-        traineeRepository.save(entityToUpdate);
+        traineeRepository.saveTrainee(entityToUpdate);
 
         return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
     }
@@ -110,6 +102,7 @@ public class TraineeServiceImpl implements TraineeService {
     public void deleteTraineeByUsername(String username) {
         if (traineeRepository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainee not found!");
-        }traineeRepository.deleteByUserName(username);
+        }
+        traineeRepository.deleteByUserName(username);
     }
 }

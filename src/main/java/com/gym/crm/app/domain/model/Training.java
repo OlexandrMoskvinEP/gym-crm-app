@@ -2,7 +2,6 @@ package com.gym.crm.app.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.ToString;
 import java.time.LocalDate;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor

@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.yaml.snakeyaml.Yaml;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
@@ -54,8 +53,7 @@ public class AppConfig {
     }
 
     @Bean
-    public SecureRandom secureRandom(){
+    public SecureRandom secureRandom() {
         return new SecureRandom();
     }
-
 }

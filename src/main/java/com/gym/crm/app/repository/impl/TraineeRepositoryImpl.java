@@ -1,4 +1,4 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.exception.DuplicateUsernameException;
@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
     private Map<String, Trainee> traineeStorage;
+    private final AtomicInteger traineeCounter = new AtomicInteger(1);
 
     @Autowired
     public void setTraineeStorage(CommonStorage commonStorage) {
@@ -28,15 +30,19 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Trainee save(Trainee trainee) {
+    public Trainee saveTrainee(Trainee trainee) {
         String key = trainee.getUsername();
 
         if (traineeStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
+        Trainee traineeWithId = trainee.toBuilder()
+                .userId(traineeCounter.getAndIncrement())
+                .build();
+
         traineeStorage.put(key, trainee);
 
-        return trainee;
+        return traineeWithId;
     }
 
     @Override
@@ -48,8 +54,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public void deleteByUserName(String username) {
-        if (traineeStorage.containsKey(username)) {
-            traineeStorage.remove(username);
-        } else throw new EntityNotFoundException("Failed while deleting trainer!");
+        if (!traineeStorage.containsKey(username)) {
+            throw new EntityNotFoundException("Failed while deleting trainer!");
+        }
+        traineeStorage.remove(username);
     }
 }

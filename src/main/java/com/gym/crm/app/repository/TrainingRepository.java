@@ -17,7 +17,7 @@ public interface TrainingRepository {
 
     Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 
-    Training save(Training training);
+    Training saveTraining(Training training);
 
     void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 

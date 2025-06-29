@@ -1,34 +1,21 @@
-package com.gym.crm.app.service;
+package com.gym.crm.app.service.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @Component
-public class PasswordGenerator {
+public class PasswordService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
     private static final int PASSWORD_LENGTH = 10;
-
-    private final AtomicInteger traineeCounter = new AtomicInteger(1);
-    private final AtomicInteger trainerCounter = new AtomicInteger(1);
-
     private SecureRandom random;
 
     @Autowired
     public void setRandom(SecureRandom random) {
         this.random = random;
-    }
-
-    public int generateTraineeId() {
-        return traineeCounter.getAndIncrement();
-    }
-
-    public int generateTrainerId() {
-        return trainerCounter.getAndIncrement();
     }
 
     public String generatePassword() {
@@ -39,13 +26,5 @@ public class PasswordGenerator {
             password.append(CHARACTERS.charAt(index));
         }
         return password.toString();
-    }
-
-    public String generateUsername(String firstName, String lastName) {
-        return firstName + "." + lastName;
-    }
-
-    public String addIndexWhenDuplicate(String userName, int index) {
-        return userName + index;
     }
 }

@@ -1,12 +1,12 @@
-package com.gym.crm.app.service.Impl;
+package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainerDto;
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.service.PasswordGenerator;
 import com.gym.crm.app.service.TrainerService;
+import com.gym.crm.app.service.utils.PasswordService;
+import com.gym.crm.app.service.utils.UserProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,17 @@ import java.util.stream.Collectors;
 public class TrainerServiceImpl implements TrainerService {
     private TrainerRepository trainerRepository;
     private ModelMapper modelMapper;
-    private PasswordGenerator passwordGenerator;
+    private PasswordService passwordService;
+    private UserProfileService userProfileService;
 
     @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
+    }
+
+    @Autowired
+    public void setPasswordService(PasswordService passwordService) {
+        this.passwordService = passwordService;
     }
 
     @Autowired
@@ -47,14 +53,14 @@ public class TrainerServiceImpl implements TrainerService {
     public TrainerDto getTrainerByUsername(String username) {
         Trainer trainer = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+
         return modelMapper.map(trainer, TrainerDto.class);
     }
 
     @Override
     public TrainerDto addTrainer(TrainerDto trainerDto) {
-        String username = passwordGenerator.generateUsername(trainerDto.getFirstName(), trainerDto.getLastName());
-        String password = passwordGenerator.generatePassword();
-        int id = passwordGenerator.generateTrainerId();
+        String username = userProfileService.createUsername(trainerDto.getFirstName(), trainerDto.getLastName());
+        String password = passwordService.generatePassword();
 
         Trainer entityToAdd = Trainer.builder()
                 .firstName(trainerDto.getFirstName())
@@ -63,23 +69,10 @@ public class TrainerServiceImpl implements TrainerService {
                 .password(password)
                 .isActive(trainerDto.isActive())
                 .specialization(trainerDto.getSpecialization())
-                .userId(id)
                 .build();
 
-        try {
-            trainerRepository.save(entityToAdd);
-        } catch (Exception e) {
-            Trainer updatedEntity = Trainer.builder()
-                    .firstName(trainerDto.getFirstName())
-                    .lastName(trainerDto.getLastName())
-                    .username(passwordGenerator.addIndexWhenDuplicate(username, id))
-                    .password(password)
-                    .isActive(trainerDto.isActive())
-                    .specialization(trainerDto.getSpecialization())
-                    .userId(id)
-                    .build();
-            trainerRepository.save(updatedEntity);
-        }
+        trainerRepository.saveTrainer(entityToAdd);
+
         return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
     }
 
@@ -97,7 +90,7 @@ public class TrainerServiceImpl implements TrainerService {
                 .specialization(existing.getSpecialization())
                 .build();
 
-        trainerRepository.save(entityToUpdate);
+        trainerRepository.saveTrainer(entityToUpdate);
 
         return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
     }

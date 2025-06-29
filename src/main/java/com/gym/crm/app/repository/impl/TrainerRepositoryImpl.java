@@ -1,8 +1,9 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.storage.CommonStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
     private Map<String, Trainer> trainerStorage;
+    private final AtomicInteger trainerCounter = new AtomicInteger(1);
 
     @Autowired
     public void setTrainerStorage(CommonStorage commonStorage) {
@@ -27,15 +30,19 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
-    public Trainer save(Trainer trainer) {
+    public Trainer saveTrainer(Trainer trainer) {
         String key = trainer.getUsername();
 
         if (trainerStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
-        trainerStorage.put(key, trainer);
+        Trainer trainerWithId = trainer.toBuilder()
+                .userId(trainerCounter.getAndIncrement())
+                .build();
 
-        return trainer;
+        trainerStorage.put(key, trainerWithId);
+
+        return trainerWithId;
     }
 
     @Override
@@ -47,8 +54,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public void deleteByUserName(String username) {
-        if (trainerStorage.containsKey(username)) {
-            trainerStorage.remove(username);
-        } else throw new EntityNotFoundException("Failed while deleting trainer!");
+        if (!trainerStorage.containsKey(username)) {
+            throw new EntityNotFoundException("Failed while deleting trainer!");
+        }
+        trainerStorage.remove(username);
     }
 }

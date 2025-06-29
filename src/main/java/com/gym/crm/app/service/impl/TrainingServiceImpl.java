@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.Impl;
+package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
@@ -90,7 +90,7 @@ public class TrainingServiceImpl implements TrainingService {
         Training trainingToSave = modelMapper.map(training, Training.class);
 
         try {
-            trainingRepository.save(trainingToSave);
+            trainingRepository.saveTraining(trainingToSave);
         } catch (RuntimeException e) {
             throw new UnacceptableOperationException("Failed while saving training!");
         }
@@ -101,42 +101,33 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto updateTraining(TrainingDto trainingDto) {
-        Training trainingToUpdate;
-
-        try {
-            trainingToUpdate = trainingRepository.findByTrainerAndTraineeAndDate(
-                    trainingDto.getTrainerId(),
-                    trainingDto.getTraineeId(),
-                    trainingDto.getTrainingDate()).get();
-        } catch (Exception e) {
-            throw new EntityNotFoundException("Training not found!");
-        }
+        Training existing = trainingRepository.findByTrainerAndTraineeAndDate(
+                        trainingDto.getTrainerId(),
+                        trainingDto.getTraineeId(),
+                        trainingDto.getTrainingDate())
+                .orElseThrow(() -> new EntityNotFoundException("Training not found!"));
 
         Training updated = Training.builder()
-                .trainingDate(trainingToUpdate.getTrainingDate())
+                .trainingDate(existing.getTrainingDate())
                 .trainingDuration(trainingDto.getTrainingDuration())
                 .trainingName(trainingDto.getTrainingName())
                 .trainingType(trainingDto.getTrainingType())
-                .traineeId(trainingToUpdate.getTraineeId())
-                .trainerId(trainingToUpdate.getTrainerId())
+                .traineeId(existing.getTraineeId())
+                .trainerId(existing.getTrainerId())
                 .build();
 
-        try {
-            trainingRepository.save(updated);
-        } catch (Exception e) {
-            throw new UnacceptableOperationException("Unable to update training!");
-        }
+        trainingRepository.saveTraining(updated);
+
         return modelMapper.map(updated, TrainingDto.class);
     }
 
     @Override
     public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        if (trainingRepository.findByTrainerAndTraineeAndDate(
+        if (!trainingRepository.findByTrainerAndTraineeAndDate(
                 identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate()).isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }
         trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
                 identityDto.getTraineeId(), identityDto.getTrainingDate());
-
     }
 }

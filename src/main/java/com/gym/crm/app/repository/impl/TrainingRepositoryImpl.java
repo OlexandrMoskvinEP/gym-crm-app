@@ -1,4 +1,4 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.DuplicateUsernameException;
@@ -60,12 +60,14 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public Training save(Training training) {
+    public Training saveTraining(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
         String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
+
         trainingStorage.put(key, training);
+
         return trainingStorage.get(key);
     }
 
@@ -73,8 +75,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         String key = trainerId + traineeId + date.toString();
 
-        if(trainingStorage.containsKey(key)){
-            trainingStorage.remove(key);
-        }else throw new EntityNotFoundException("Unable to delete training!");
+        if (!trainingStorage.containsKey(key)) {
+            throw new EntityNotFoundException("Unable to delete training!");
+        }
+        trainingStorage.remove(key);
     }
 }

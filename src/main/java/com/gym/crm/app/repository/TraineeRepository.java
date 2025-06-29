@@ -9,7 +9,7 @@ public interface TraineeRepository {
 
     List<Trainee> findAll();
 
-    Trainee save(Trainee trainer);
+    Trainee saveTrainee(Trainee trainee);
 
     Optional<Trainee> findByUsername(String username);
 

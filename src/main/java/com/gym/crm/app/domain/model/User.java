@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @ToString
 @EqualsAndHashCode
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class User {
