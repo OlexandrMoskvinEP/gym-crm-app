@@ -41,7 +41,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 .userId(traineeCounter.getAndIncrement())
                 .build();
 
-        traineeStorage.put(key, trainee);
+        traineeStorage.put(key, traineeWithId);
 
         return traineeWithId;
     }
