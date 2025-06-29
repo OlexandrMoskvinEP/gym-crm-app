@@ -4,6 +4,7 @@ import com.gym.crm.app.domain.model.Training;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TrainingRepository {
     List<Training> findAll();
@@ -14,9 +15,9 @@ public interface TrainingRepository {
 
     List<Training> findByDate(LocalDate date);
 
-    List<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
+    Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 
-    void save(Training training);
+    Training saveTraining(Training training);
 
     void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
 

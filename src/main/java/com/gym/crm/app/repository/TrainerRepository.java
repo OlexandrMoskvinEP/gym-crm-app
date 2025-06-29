@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface TrainerRepository {
     List<Trainer> findAll();
 
-    Trainer save(Trainer trainer);
+    Trainer saveTrainer(Trainer trainer);
 
-    Optional<Trainer> findByUserName(String userName);
+    Optional<Trainer> findByUsername(String username);
 
     void deleteByUserName(String userName);
 }

@@ -8,7 +8,7 @@
       "dateOfBirth" : "1992-07-03",
       "address" : "Park Lane 5",
       "userId" : 105,
-      "active" : true
+      "isActive" : true
     },
     "trainee4" : {
       "firstName" : "David",
@@ -18,7 +18,7 @@
       "dateOfBirth" : "1995-11-10",
       "address" : null,
       "userId" : 104,
-      "active" : true
+      "isActive" : true
     },
     "trainee3" : {
       "firstName" : "Carol",
@@ -28,7 +28,7 @@
       "dateOfBirth" : "1988-08-15",
       "address" : "2nd Avenue",
       "userId" : 103,
-      "active" : false
+      "isActive" : false
     },
     "trainee2" : {
       "firstName" : "Bob",
@@ -38,7 +38,7 @@
       "dateOfBirth" : "1993-05-20",
       "address" : "Main Street 1",
       "userId" : 102,
-      "active" : true
+      "isActive" : true
     },
     "trainee1" : {
       "firstName" : "Alice",
@@ -48,7 +48,7 @@
       "dateOfBirth" : "1990-12-12",
       "address" : null,
       "userId" : 101,
-      "active" : true
+      "isActive" : true
     }
   },
   "TRAINER" : {
@@ -61,7 +61,7 @@
         "trainingTypeName" : "aerobics"
       },
       "userId" : 204,
-      "active" : true
+      "isActive" : true
     },
     "trainer3" : {
       "firstName" : "Michael",
@@ -72,7 +72,7 @@
         "trainingTypeName" : "crossfit"
       },
       "userId" : 203,
-      "active" : false
+      "isActive" : false
     },
     "trainer2" : {
       "firstName" : "Linda",
@@ -83,7 +83,7 @@
         "trainingTypeName" : "yoga"
       },
       "userId" : 202,
-      "active" : true
+      "isActive" : true
     },
     "trainer1" : {
       "firstName" : "John",
@@ -94,7 +94,7 @@
         "trainingTypeName" : "fitness"
       },
       "userId" : 201,
-      "active" : true
+      "isActive" : true
     },
     "trainer5" : {
       "firstName" : "Mark",
@@ -105,10 +105,20 @@
         "trainingTypeName" : "pilates"
       },
       "userId" : 205,
-      "active" : true
+      "isActive" : true
     }
   },
   "TRAINING" : {
+    "9752025-06-28" : {
+      "trainerId" : 321,
+      "traineeId" : 654,
+      "trainingName" : "Pokatushka",
+      "trainingType" : {
+        "trainingTypeName" : "Cycling"
+      },
+      "trainingDate" : "2025-06-28",
+      "trainingDuration" : 120
+    },
     "training1" : {
       "trainerId" : 201,
       "traineeId" : 101,

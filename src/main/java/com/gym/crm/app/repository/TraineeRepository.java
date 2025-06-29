@@ -9,9 +9,9 @@ public interface TraineeRepository {
 
     List<Trainee> findAll();
 
-    Trainee save(Trainee trainer);
+    Trainee saveTrainee(Trainee trainee);
 
-    Optional<Trainee> findByUserName(String userName);
+    Optional<Trainee> findByUsername(String username);
 
     void deleteByUserName(String userName);
 }

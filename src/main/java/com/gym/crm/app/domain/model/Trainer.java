@@ -1,19 +1,19 @@
 package com.gym.crm.app.domain.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
+@Getter
 @ToString(callSuper = true)
-@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder
+@NoArgsConstructor(force = true)
 public class Trainer extends User {
-    private TrainingType specialization;
-    private int userId;
+    private final TrainingType specialization;
+    private final int userId;
 }

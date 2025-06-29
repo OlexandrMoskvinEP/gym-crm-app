@@ -7,11 +7,13 @@ import com.gym.crm.app.YamlPropertySourceFactory;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 @ComponentScan(basePackages = "com.gym.crm.app")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class AppConfig {
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -27,6 +30,11 @@ public class AppConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         return mapper;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     @Bean
@@ -42,5 +50,10 @@ public class AppConfig {
     @Bean
     public Map<String, Training> trainingStorage() {
         return new HashMap<>();
+    }
+
+    @Bean
+    public SecureRandom secureRandom() {
+        return new SecureRandom();
     }
 }
