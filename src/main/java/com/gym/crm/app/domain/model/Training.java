@@ -3,19 +3,24 @@ package com.gym.crm.app.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
 @Builder
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class Training {
-    private int trainerId;
-    private int traineeId;
-    private String trainingName;
-    private TrainingType trainingType;
-    private LocalDate trainingDate;
-    private int trainingDuration;
+    private final int trainerId;
+    private final int traineeId;
+    private final String trainingName;
+    private final TrainingType trainingType;
+    private final LocalDate trainingDate;
+    private final int trainingDuration;
 }

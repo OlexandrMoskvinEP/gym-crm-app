@@ -112,16 +112,21 @@ public class TrainingServiceImpl implements TrainingService {
             throw new EntityNotFoundException("Training not found!");
         }
 
-        trainingToUpdate.setTrainingName(trainingDto.getTrainingName());
-        trainingToUpdate.setTrainingType(trainingDto.getTrainingType());
-        trainingToUpdate.setTrainingDuration(trainingDto.getTrainingDuration());
+        Training updated = Training.builder()
+                .trainingDate(trainingToUpdate.getTrainingDate())
+                .trainingDuration(trainingDto.getTrainingDuration())
+                .trainingName(trainingDto.getTrainingName())
+                .trainingType(trainingDto.getTrainingType())
+                .traineeId(trainingToUpdate.getTraineeId())
+                .trainerId(trainingToUpdate.getTrainerId())
+                .build();
 
         try {
-            trainingRepository.save(trainingToUpdate);
+            trainingRepository.save(updated);
         } catch (Exception e) {
             throw new UnacceptableOperationException("Unable to update training!");
         }
-        return modelMapper.map(trainingToUpdate, TrainingDto.class);
+        return modelMapper.map(updated, TrainingDto.class);
     }
 
     @Override

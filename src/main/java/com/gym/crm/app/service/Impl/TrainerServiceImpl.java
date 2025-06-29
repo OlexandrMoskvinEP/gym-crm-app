@@ -1,6 +1,7 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
@@ -68,21 +69,33 @@ public class TrainerServiceImpl implements TrainerService {
         try {
             trainerRepository.save(entityToAdd);
         } catch (Exception e) {
-            entityToAdd.setUsername(passwordGenerator.addIndexWhenDuplicate(username, id));
-            trainerRepository.save(entityToAdd);
+            Trainer updatedEntity = Trainer.builder()
+                    .firstName(trainerDto.getFirstName())
+                    .lastName(trainerDto.getLastName())
+                    .username(passwordGenerator.addIndexWhenDuplicate(username, id))
+                    .password(password)
+                    .isActive(trainerDto.isActive())
+                    .specialization(trainerDto.getSpecialization())
+                    .userId(id)
+                    .build();
+            trainerRepository.save(updatedEntity);
         }
         return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
     }
 
     @Override
     public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
-        Trainer entityToUpdate = trainerRepository.findByUsername(username)
+        Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        entityToUpdate.setFirstName(trainerDto.getFirstName());
-        entityToUpdate.setLastName(trainerDto.getLastName());
-        entityToUpdate.setSpecialization(trainerDto.getSpecialization());
-        entityToUpdate.setActive(trainerDto.isActive());
+        Trainer entityToUpdate = Trainer.builder()
+                .firstName(existing.getFirstName())
+                .lastName(existing.getLastName())
+                .username(existing.getUsername())
+                .password(existing.getPassword())
+                .userId(existing.getUserId())
+                .specialization(existing.getSpecialization())
+                .build();
 
         trainerRepository.save(entityToUpdate);
 

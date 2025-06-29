@@ -69,20 +69,37 @@ public class TraineeServiceImpl implements TraineeService {
         try {
             traineeRepository.save(entityToAdd);
         } catch (Exception e) {
-            entityToAdd.setUsername(passwordGenerator.addIndexWhenDuplicate(username, id));
-            traineeRepository.save(entityToAdd);
+            Trainee updatedEntity = Trainee.builder()
+                    .firstName(traineeDto.getFirstName())
+                    .lastName(traineeDto.getLastName())
+                    .username(passwordGenerator.addIndexWhenDuplicate(username, id))
+                    .password(password)
+                    .isActive(traineeDto.isActive())
+                    .dateOfBirth(traineeDto.getDateOfBirth())
+                    .address(traineeDto.getAddress())
+                    .userId(id)
+                    .build();
+
+            traineeRepository.save(updatedEntity);
         }
         return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
     }
 
     @Override
     public TraineeDto updateTraineeByUsername(String username, TraineeDto traineeDto) {
-        Trainee entityToUpdate = traineeRepository.findByUsername(username)
+        Trainee existing = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        entityToUpdate.setDateOfBirth(traineeDto.getDateOfBirth());
-        entityToUpdate.setAddress(traineeDto.getAddress());
-        entityToUpdate.setActive(traineeDto.isActive());
+        Trainee entityToUpdate = Trainee.builder()
+                .firstName(existing.getFirstName())
+                .lastName(existing.getLastName())
+                .username(existing.getUsername())
+                .password(existing.getPassword())
+                .userId(existing.getUserId())
+                .isActive(traineeDto.isActive())
+                .address(traineeDto.getAddress())
+                .dateOfBirth(traineeDto.getDateOfBirth())
+                .build();
 
         traineeRepository.save(entityToUpdate);
 

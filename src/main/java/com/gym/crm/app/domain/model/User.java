@@ -1,18 +1,29 @@
 package com.gym.crm.app.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class User {
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
-    private boolean isActive;
+    private final String firstName;
+    private final String lastName;
+    private final String username;
+    private final String password;
+    @JsonProperty("isActive")
+    private final boolean isActive;
+
+    @JsonProperty("isActive")
+    public boolean getIsActive() {
+        return isActive;
+    }
 }

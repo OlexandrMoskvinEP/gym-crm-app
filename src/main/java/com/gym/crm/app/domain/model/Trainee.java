@@ -3,20 +3,21 @@ package com.gym.crm.app.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
+@Getter
 @ToString(callSuper = true)
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class Trainee extends User {
-    private LocalDate dateOfBirth;
-    private String address;
-    private int userId;
+    private final LocalDate dateOfBirth;
+    private final String address;
+    private final int userId;
 }
