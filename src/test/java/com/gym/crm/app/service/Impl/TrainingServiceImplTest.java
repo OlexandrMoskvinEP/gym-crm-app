@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceImplTest {
     private static final TestData data = new TestData();
+
     private final ModelMapper modelMapper = new ModelMapper();
     private static final List<Training> trainings = data.getTrainings();
 
@@ -50,8 +51,6 @@ class TrainingServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        trainingService = new TrainingServiceImpl();
-        trainingService.setTrainingRepository(repository);
         trainingService.setModelMapper(modelMapper);
     }
 
@@ -70,7 +69,7 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {321, 204, 205, 206, 207})
     void getTrainingByTrainerId(int trainerId) {
-        Training training = trainings.stream().filter(training1 -> training1.getTrainerId() == trainerId).findFirst().get();
+        Training training = constructTrainingByTrainerId(trainerId);
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         when(repository.findByTrainerId(trainerId)).thenReturn(List.of(training));
@@ -84,7 +83,7 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @ValueSource(ints = {654, 121, 122, 123, 124})
     void getTrainingByTraineeId(int traineeId) {
-        Training training = trainings.stream().filter(training1 -> training1.getTraineeId() == traineeId).findFirst().get();
+        Training training = constructTrainingByTraineeId(traineeId);
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         when(repository.findByTrainerId(traineeId)).thenReturn(List.of(training));
@@ -98,7 +97,7 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @MethodSource("getDates")
     void getTrainingByDate(LocalDate date) {
-        Training training = trainings.stream().filter(training1 -> training1.getTrainingDate().equals(date)).findFirst().get();
+        Training training = constructTrainingByDate(date);
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         when(repository.findByDate(date)).thenReturn(List.of(training));
@@ -112,16 +111,13 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainingId")
     void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
-        Training training1 = trainings.stream()
-                .filter(training -> training.getTrainerId() == dto.getTrainerId())
-                .filter(training -> training.getTraineeId() == dto.getTraineeId())
-                .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
-                .findFirst().get();
+        Training training1 = getTraining(dto);
 
         when(repository.findByTrainerAndTraineeAndDate(dto.getTrainerId(), dto.getTraineeId(), dto.getTrainingDate()))
                 .thenReturn(Optional.of(training1));
 
         Optional<TrainingDto> expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
+
         Optional<TrainingDto> actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
 
         assertNotNull(actual);
@@ -179,7 +175,7 @@ class TrainingServiceImplTest {
                 new TrainingIdentityDto(1, 2, LocalDate.EPOCH)));
     }
 
-    public static Stream<Training> getTrainings() {
+    private static Stream<Training> getTrainings() {
         return data.getTrainings().stream();
     }
 
@@ -193,7 +189,27 @@ class TrainingServiceImplTest {
         );
     }
 
-    public static Stream<TrainingIdentityDto> getTrainingId() {
+    private static Stream<TrainingIdentityDto> getTrainingId() {
         return data.getIdentities().stream();
+    }
+
+    private Training constructTrainingByDate(LocalDate param) {
+        return trainings.stream().filter(training1 -> training1.getTrainingDate().equals(param)).findFirst().get();
+    }
+
+    private Training constructTrainingByTraineeId(int param) {
+        return trainings.stream().filter(training -> training.getTraineeId() == param).findFirst().get();
+    }
+
+    private Training constructTrainingByTrainerId(int param) {
+        return trainings.stream().filter(training -> training.getTrainerId() == param).findFirst().get();
+    }
+
+    private static Training getTraining(TrainingIdentityDto dto) {
+        return trainings.stream()
+                .filter(t -> t.getTrainerId() == dto.getTrainerId())
+                .filter(t -> t.getTraineeId() == dto.getTraineeId())
+                .filter(t -> t.getTrainingDate().equals(dto.getTrainingDate()))
+                .findFirst().get();
     }
 }

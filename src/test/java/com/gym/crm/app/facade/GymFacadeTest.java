@@ -41,11 +41,6 @@ class GymFacadeTest {
     @InjectMocks
     private GymFacade gymFacade;
 
-    @BeforeEach
-    void setUp() {
-        gymFacade = new GymFacade(traineeService, trainerService, trainingService);
-    }
-
     @Test
     void shouldReturnAllTrainers() {
         List<TrainerDto> expected = data.getTrainers().stream()

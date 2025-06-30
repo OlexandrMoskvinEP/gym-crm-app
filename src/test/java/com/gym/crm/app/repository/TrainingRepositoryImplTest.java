@@ -121,28 +121,27 @@ class TrainingRepositoryImplTest {
 
     @Test
     void deleteByTrainerAndTraineeAndDate() {
-        Training training = Training.builder()
-                .trainingDate(LocalDate.EPOCH)
-                .trainingName("fakeTraining")
-                .trainingType(new TrainingType("fakeSport"))
-                .trainingDuration(240)
-                .traineeId(123)
-                .trainerId(4567)
-                .build();
+        Training training = constructTraining();
 
         repository.saveTraining(training);
 
         assertDoesNotThrow(() -> repository
                 .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenCantDeleteTraining() {
+        Training training = constructTraining();
+
         assertThrows(EntityNotFoundException.class, () -> repository
                 .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
     }
 
-    public static Stream<Training> getTrainings() {
+    private static Stream<Training> getTrainings() {
         return data.getTrainings().stream();
     }
 
-    static Stream<LocalDate> getDates() {
+    private static Stream<LocalDate> getDates() {
         return Stream.of(
                 LocalDate.of(2025, 6, 28),
                 LocalDate.of(2025, 6, 27),
@@ -152,7 +151,18 @@ class TrainingRepositoryImplTest {
         );
     }
 
-    public static Stream<TrainingIdentityDto> getTrainingId() {
+    private static Stream<TrainingIdentityDto> getTrainingId() {
         return data.getIdentities().stream();
+    }
+
+    private Training constructTraining() {
+        return Training.builder()
+                .trainingDate(LocalDate.EPOCH)
+                .trainingName("fakeTraining")
+                .trainingType(new TrainingType("fakeSport"))
+                .trainingDuration(240)
+                .traineeId(123)
+                .trainerId(4567)
+                .build();
     }
 }

@@ -4,6 +4,8 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Component
 public class UserProfileService {
+    private static final Logger logger = LoggerFactory.getLogger(UserProfileService.class);
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
 
@@ -24,6 +27,10 @@ public class UserProfileService {
 
         while (allExistUsernames.contains(username)) {
             username = rawUsername + suffix++;
+        }
+
+        if (!rawUsername.equalsIgnoreCase(username)) {
+            logger.warn("User with username {} already exist, applying index", rawUsername);
         }
 
         return username;

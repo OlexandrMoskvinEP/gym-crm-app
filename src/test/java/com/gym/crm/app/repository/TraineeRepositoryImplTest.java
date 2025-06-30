@@ -93,6 +93,10 @@ class TraineeRepositoryImplTest {
         repository.saveTrainee(trainee);
 
         assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenCantDelete() {
         assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
     }
 

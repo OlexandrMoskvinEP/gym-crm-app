@@ -38,8 +38,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         String key = trainer.getUsername();
 
         if (trainerStorage.containsKey(key)) {
-            logger.warn("Trainer with username {} already exists", trainer.getUsername());
-
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
@@ -62,8 +60,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public void deleteByUserName(String username) {
         if (!trainerStorage.containsKey(username)) {
-            logger.warn("Trainer with username {} does`t exist", username);
-
             throw new EntityNotFoundException("Failed while deleting trainer!");
         }
 

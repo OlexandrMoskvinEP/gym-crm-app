@@ -66,9 +66,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Training saveTraining(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
-            logger.warn("Training with trainerId {} " +
-                    "and traineeId {} already exists", training.getTrainerId(), training.getTraineeId());
-
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
@@ -84,9 +81,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         String key = trainerId + traineeId + date.toString();
 
         if (!trainingStorage.containsKey(key)) {
-            logger.warn("Training with trainerId {} " +
-                    "and traineeId {} does`t exist", trainerId, traineeId);
-
             throw new EntityNotFoundException("Unable to delete training!");
         }
 

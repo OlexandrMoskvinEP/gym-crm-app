@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceImplTest {
     private static final TestData data = new TestData();
+
     private final ModelMapper modelMapper = new ModelMapper();
     private final List<Trainer> trainers = data.getTrainers();
 
@@ -54,11 +55,7 @@ class TrainerServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        trainerService = new TrainerServiceImpl();
-        trainerService.setTrainerRepository(repository);
         trainerService.setModelMapper(modelMapper);
-        trainerService.setPasswordService(passwordService);
-        trainerService.setUserProfileService(userProfileService);
     }
 
     @Test
@@ -153,7 +150,7 @@ class TrainerServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
     }
 
-    public static Stream<Trainer> getTrainers() {
+    private static Stream<Trainer> getTrainers() {
         return data.getTrainers().stream();
     }
 }
