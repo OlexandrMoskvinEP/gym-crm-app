@@ -1,8 +1,6 @@
 package com.gym.crm.app.domain.dto;
 
-import com.fasterxml.jackson.core.ErrorReportConfiguration;
 import com.gym.crm.app.domain.model.TrainingType;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;

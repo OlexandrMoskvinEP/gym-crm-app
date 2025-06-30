@@ -148,6 +148,7 @@ class TrainingServiceImplTest {
     @MethodSource("getTrainings")
     void updateTraining(Training training) {
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
+
         expected.setTrainingName("fakeTrainingName");
         expected.setTrainingType(new TrainingType("fakeTrainingType"));
         expected.setTrainingDuration(240);
@@ -163,6 +164,7 @@ class TrainingServiceImplTest {
         TrainingDto actual = trainingService.updateTraining(modelMapper.map(expected, TrainingDto.class));
 
         verify(repository, atLeastOnce()).saveTraining(trainingCaptor.capture());
+
         TrainingDto savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingDto.class);
 
         assertEquals(expected, savedTraining);

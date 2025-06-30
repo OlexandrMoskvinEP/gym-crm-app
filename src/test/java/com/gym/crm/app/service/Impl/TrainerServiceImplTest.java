@@ -90,6 +90,7 @@ class TrainerServiceImplTest {
     @MethodSource("getTrainers")
     void shouldAddTrainer(Trainer trainer) {
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
+
         expected.setPassword("fakePassword1234567");
         expected.setUserId(0);
 
@@ -107,6 +108,7 @@ class TrainerServiceImplTest {
         TrainerDto actual = trainerService.addTrainer(modelMapper.map(trainer, TrainerDto.class));
 
         verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
+
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
 
         assertNotNull(savedTrainer);
@@ -119,6 +121,7 @@ class TrainerServiceImplTest {
     @MethodSource("getTrainers")
     void shouldUpdateTrainerByUsername(Trainer trainer) {
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
+
         expected.setActive(false);
         expected.setSpecialization(new TrainingType("fakeSport"));
 
@@ -134,6 +137,7 @@ class TrainerServiceImplTest {
         TrainerDto actual = trainerService.updateTrainerByUsername(username, expected);
 
         verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
+
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
 
         assertNotNull(savedTrainer);

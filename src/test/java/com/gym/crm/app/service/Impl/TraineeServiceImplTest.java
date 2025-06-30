@@ -119,6 +119,7 @@ class TraineeServiceImplTest {
     @MethodSource("getTrainees")
     void shouldUpdateTraineeByUsername(Trainee trainee) {
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
+
         expected.setActive(false);
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
@@ -136,6 +137,7 @@ class TraineeServiceImplTest {
         TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
 
         verify(repository, atLeastOnce()).saveTrainee(traineeCaptor.capture());
+
         TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
 
         assertNotNull(savedTrainee);

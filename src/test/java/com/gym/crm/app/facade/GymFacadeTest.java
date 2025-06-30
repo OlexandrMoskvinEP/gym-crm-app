@@ -225,6 +225,7 @@ class GymFacadeTest {
         Optional<TrainingDto> actual = gymFacade.getTrainingByTrainerAndTraineeAndDate(dto);
 
         verify(trainingService).getTrainingByTrainerAndTraineeAndDate(dto);
+
         assertNotNull(actual);
         assertEquals(Optional.of(trainingDto), actual);
     }
@@ -238,6 +239,7 @@ class GymFacadeTest {
         TrainingDto actual = gymFacade.addTraining(trainingDto);
 
         verify(trainingService).addTraining(trainingDto);
+
         assertEquals(trainingDto, actual);
     }
 
@@ -250,6 +252,7 @@ class GymFacadeTest {
         TrainingDto actual = gymFacade.updateTraining(trainingDto);
 
         verify(trainingService).updateTraining(trainingDto);
+
         assertEquals(trainingDto, actual);
     }
 

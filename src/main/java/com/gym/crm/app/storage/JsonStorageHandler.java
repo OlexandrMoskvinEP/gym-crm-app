@@ -7,11 +7,17 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +27,8 @@ import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
 
 @Component
 public class JsonStorageHandler {
+    private static final Logger logger = LoggerFactory.getLogger(JsonStorageHandler.class);
+
     @Setter
     @Value("${storage.filePath}")
     private String storageFilePath;
@@ -33,6 +41,8 @@ public class JsonStorageHandler {
     }
 
     public Map<Namespace, Map<String, ?>> loadEntitiesFromFile() {
+        logger.info("Loading entities from file {}", storageFilePath);
+
         Map<String, Object> fileStorage = loadRawStorage();
 
         Map<String, Trainer> trainers = parseSection(fileStorage, TRAINER.name(), Trainer.class);
@@ -44,15 +54,21 @@ public class JsonStorageHandler {
         loadedData.put(TRAINEE, trainees);
         loadedData.put(TRAINING, trainings);
 
+        logger.info("Loaded {} trainers, {} trainees and {} trainings from file",
+                trainers.size(), trainees.size(), trainings.size());
+
         return loadedData;
     }
 
     private HashMap<String, Object> loadRawStorage() {
         try (InputStream input = new FileInputStream(storageFilePath)) {
-            return objectMapper.readValue(input, new TypeReference<>() {
-            });
+
+            return objectMapper.readValue(input, new TypeReference<>() {});
+
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read from JSON file", e);
+            logger.warn("Failed while reading from file {} ", storageFilePath);
+
+            throw new UnacceptableOperationException("Failed to read from JSON file");
         }
     }
 
@@ -67,7 +83,9 @@ public class JsonStorageHandler {
                 result.put(id, obj);
             }
         }
+
         return result;
+
     }
 
     public void save(Map<Namespace, Map<String, ?>> storage) throws UnacceptableOperationException {
@@ -79,7 +97,11 @@ public class JsonStorageHandler {
 
         try (Writer writer = new FileWriter(storageFilePath)) {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, toWrite);
+
+            logger.info("Storage successfully saved to {}", storageFilePath);
         } catch (IOException e) {
+            logger.warn("Failed while saving to {}", storageFilePath);
+
             throw new UnacceptableOperationException("Error occurred while try to write into the file!");
         }
     }

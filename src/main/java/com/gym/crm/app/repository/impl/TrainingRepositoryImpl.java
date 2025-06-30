@@ -5,6 +5,8 @@ import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class TrainingRepositoryImpl implements TrainingRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TrainingRepositoryImpl.class);
+
     private Map<String, Training> trainingStorage;
 
     @Autowired
@@ -62,6 +66,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Training saveTraining(Training training) {
         if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
+            logger.warn("Training with trainerId {} " +
+                    "and traineeId {} already exists", training.getTrainerId(), training.getTraineeId());
+
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
@@ -77,6 +84,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         String key = trainerId + traineeId + date.toString();
 
         if (!trainingStorage.containsKey(key)) {
+            logger.warn("Training with trainerId {} " +
+                    "and traineeId {} does`t exist", trainerId, traineeId);
+
             throw new EntityNotFoundException("Unable to delete training!");
         }
 

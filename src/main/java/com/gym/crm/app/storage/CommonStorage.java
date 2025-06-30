@@ -8,6 +8,8 @@ import com.gym.crm.app.storage.JsonStorageHandler.Namespace;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
 @Getter
 @Component
 public class CommonStorage {
+    private static final Logger logger = LoggerFactory.getLogger(CommonStorage.class);
+
     private final Map<Namespace, Map<String, ?>> storage = new HashMap<>();
 
     private final JsonStorageHandler jsonStorageHandler;
@@ -38,6 +42,8 @@ public class CommonStorage {
 
     @PostConstruct
     public void init() {
+        logger.info("Initializing storage");
+
         Map<Namespace, Map<String, ?>> loadedDataFromFile = jsonStorageHandler.loadEntitiesFromFile();
         storage.putAll(loadedDataFromFile);
 
@@ -58,6 +64,8 @@ public class CommonStorage {
 
     @PreDestroy
     public void shutdown() throws UnacceptableOperationException {
+        logger.info("Saving storage to disk");
+
         jsonStorageHandler.save(storage);
     }
 

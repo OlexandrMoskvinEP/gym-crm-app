@@ -8,6 +8,8 @@ import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
+    private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
+
     private TrainingRepository trainingRepository;
     private ModelMapper modelMapper;
 
@@ -92,7 +96,13 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingDto addTraining(TrainingDto training) {
         Training trainingToSave = TrainingMapper.mapDtoToEntity(training);
 
+        logger.info("Adding training for trainer {} and trainee {} on {}",
+                training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
+
         Training persistedTraining = trainingRepository.saveTraining(trainingToSave);
+
+        logger.info("Training successfully added for trainer {} and trainee {} on {}",
+                training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
 
         return modelMapper.map(persistedTraining, TrainingDto.class);
     }
@@ -116,6 +126,9 @@ public class TrainingServiceImpl implements TrainingService {
 
         trainingRepository.saveTraining(updated);
 
+        logger.info("Training for trainer {} and trainee {} on {} updated",
+                updated.getTrainerId(), updated.getTraineeId(), updated.getTrainingDate());
+
         return modelMapper.map(updated, TrainingDto.class);
     }
 
@@ -128,5 +141,8 @@ public class TrainingServiceImpl implements TrainingService {
 
         trainingRepository.deleteByTrainerAndTraineeAndDate(identityDto.getTrainerId(),
                 identityDto.getTraineeId(), identityDto.getTrainingDate());
+
+        logger.info("Training for trainer {} and trainee {} on {} deleted",
+                identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate());
     }
 }

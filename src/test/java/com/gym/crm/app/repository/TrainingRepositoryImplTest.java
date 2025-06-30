@@ -6,6 +6,7 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.repository.impl.TrainingRepositoryImpl;
 import com.gym.crm.app.storage.CommonStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,14 +35,14 @@ class TrainingRepositoryImplTest {
     @Mock
     private CommonStorage commonStorage;
     private static final TestData data = new TestData();
-    private com.gym.crm.app.repository.impl.TrainingRepositoryImpl repository;
+    private TrainingRepositoryImpl repository;
     private final Map<String, Training> trainingMap = new HashMap<>(data.getTRAINING_STORAGE());
 
     @BeforeEach
     void setUp() {
         when(commonStorage.getTrainingStorage()).thenReturn(trainingMap);
 
-        repository = new com.gym.crm.app.repository.impl.TrainingRepositoryImpl();
+        repository = new TrainingRepositoryImpl();
         repository.setTrainingStorage(commonStorage);
     }
 

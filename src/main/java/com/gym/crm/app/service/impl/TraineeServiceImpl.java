@@ -8,6 +8,8 @@ import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
+    private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
+
     private TraineeRepository traineeRepository;
     private ModelMapper modelMapper;
     private PasswordService passwordService;
@@ -62,6 +66,8 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.createUsername(traineeDto.getFirstName(), traineeDto.getLastName());
         String password = passwordService.generatePassword();
 
+        logger.info("Adding trainee with username {}", username);
+
         Trainee entityToAdd = Trainee.builder()
                 .firstName(traineeDto.getFirstName())
                 .lastName(traineeDto.getLastName())
@@ -73,6 +79,8 @@ public class TraineeServiceImpl implements TraineeService {
                 .build();
 
         traineeRepository.saveTrainee(entityToAdd);
+
+        logger.info("Trainee {} successfully added", username);
 
         return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
     }
@@ -95,6 +103,8 @@ public class TraineeServiceImpl implements TraineeService {
 
         traineeRepository.saveTrainee(entityToUpdate);
 
+        logger.info("Trainee {} updated", username);
+
         return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
     }
 
@@ -105,5 +115,7 @@ public class TraineeServiceImpl implements TraineeService {
         }
 
         traineeRepository.deleteByUserName(username);
+
+        logger.info("Trainee {} deleted", username);
     }
 }

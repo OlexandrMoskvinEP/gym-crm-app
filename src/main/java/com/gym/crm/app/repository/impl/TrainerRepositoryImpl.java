@@ -5,6 +5,8 @@ import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
+
     private Map<String, Trainer> trainerStorage;
     private final AtomicInteger trainerCounter = new AtomicInteger(1);
 
@@ -34,6 +38,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         String key = trainer.getUsername();
 
         if (trainerStorage.containsKey(key)) {
+            logger.warn("Trainer with username {} already exists", trainer.getUsername());
+
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
@@ -56,6 +62,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public void deleteByUserName(String username) {
         if (!trainerStorage.containsKey(username)) {
+            logger.warn("Trainer with username {} does`t exist", username);
+
             throw new EntityNotFoundException("Failed while deleting trainer!");
         }
 

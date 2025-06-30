@@ -25,6 +25,7 @@ public class UserProfileService {
         while (allExistUsernames.contains(username)) {
             username = rawUsername + suffix++;
         }
+
         return username;
     }
 
