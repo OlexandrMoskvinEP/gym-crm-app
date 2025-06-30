@@ -20,10 +20,10 @@ public class UserProfileService {
 
     public String createUsername(String firstName, String lastName) {
         String rawUsername = firstName + "." + lastName;
-        String username = rawUsername;
+        String username = rawUsername.toLowerCase();
         int suffix = 1;
 
-        List<String> allExistUsernames = retrieveAllUsernames();
+        List<String> allExistUsernames = retrieveAllUsernames().stream().map(String::toLowerCase).toList();
 
         while (allExistUsernames.contains(username)) {
             username = rawUsername + suffix++;
