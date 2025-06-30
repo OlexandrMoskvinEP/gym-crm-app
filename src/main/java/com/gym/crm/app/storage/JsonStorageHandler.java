@@ -6,6 +6,7 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.UnacceptableOperationException;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import static com.gym.crm.app.storage.JsonStorageHandler.Namespace.TRAINING;
 
 @Component
 public class JsonStorageHandler {
+    @Setter
     @Value("${storage.filePath}")
     private String storageFilePath;
 
