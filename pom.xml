@@ -90,6 +90,12 @@
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.3.30</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

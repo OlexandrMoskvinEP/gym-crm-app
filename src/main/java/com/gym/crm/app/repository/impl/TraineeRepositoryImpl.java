@@ -5,6 +5,8 @@ import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,8 +18,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
-    private Map<String, Trainee> traineeStorage;
+    private static final Logger logger = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
+
     private final AtomicInteger traineeCounter = new AtomicInteger(1);
+
+    private Map<String, Trainee> traineeStorage;
+
 
     @Autowired
     public void setTraineeStorage(CommonStorage commonStorage) {
@@ -34,14 +40,14 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         String key = trainee.getUsername();
 
         if (traineeStorage.containsKey(key)) {
-            throw new DuplicateUsernameException("Entity already exists!");
+           throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainee traineeWithId = trainee.toBuilder()
                 .userId(traineeCounter.getAndIncrement())
                 .build();
 
-        traineeStorage.put(key, trainee);
+        traineeStorage.put(key, traineeWithId);
 
         return traineeWithId;
     }

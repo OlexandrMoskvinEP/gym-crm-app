@@ -5,6 +5,8 @@ import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class TrainingRepositoryImpl implements TrainingRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TrainingRepositoryImpl.class);
+
     private Map<String, Training> trainingStorage;
 
     @Autowired

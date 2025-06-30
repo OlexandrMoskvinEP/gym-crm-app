@@ -5,6 +5,8 @@ import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.storage.CommonStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,8 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
-    private Map<String, Trainer> trainerStorage;
+    private static final Logger logger = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
+
     private final AtomicInteger trainerCounter = new AtomicInteger(1);
+
+    private Map<String, Trainer> trainerStorage;
 
     @Autowired
     public void setTrainerStorage(CommonStorage commonStorage) {
