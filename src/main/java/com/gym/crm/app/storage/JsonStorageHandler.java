@@ -62,12 +62,10 @@ public class JsonStorageHandler {
 
     private HashMap<String, Object> loadRawStorage() {
         try (InputStream input = new FileInputStream(storageFilePath)) {
-
-            return objectMapper.readValue(input, new TypeReference<>() {});
+            return objectMapper.readValue(input, new TypeReference<>() {
+            });
 
         } catch (IOException e) {
-            logger.warn("Failed while reading from file {} ", storageFilePath);
-
             throw new UnacceptableOperationException("Failed to read from JSON file");
         }
     }

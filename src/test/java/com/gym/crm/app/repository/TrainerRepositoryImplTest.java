@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TrainerRepositoryImplTest {
     private static final TestData data = new TestData();
+
     private final Map<String, Trainer> trainerMap = new HashMap<>(data.getTRAINER_STORAGE());
 
     @Mock

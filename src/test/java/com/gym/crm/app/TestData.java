@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Getter
 public class TestData {
-
     List<Trainee> trainees = List.of(
             Trainee.builder().firstName("Alice").lastName("Smith").username("Alice.Smith").password("Abc123!@#")
                     .dateOfBirth(LocalDate.of(1990, 3, 12)).address("Main Street").userId(0).isActive(true).build(),

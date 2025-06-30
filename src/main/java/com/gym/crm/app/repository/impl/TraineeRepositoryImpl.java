@@ -20,8 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TraineeRepositoryImpl implements TraineeRepository {
     private static final Logger logger = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
 
-    private Map<String, Trainee> traineeStorage;
     private final AtomicInteger traineeCounter = new AtomicInteger(1);
+
+    private Map<String, Trainee> traineeStorage;
+
 
     @Autowired
     public void setTraineeStorage(CommonStorage commonStorage) {

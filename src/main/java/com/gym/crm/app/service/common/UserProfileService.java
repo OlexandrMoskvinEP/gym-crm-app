@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 @Component
 public class UserProfileService {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileService.class);
+
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
 

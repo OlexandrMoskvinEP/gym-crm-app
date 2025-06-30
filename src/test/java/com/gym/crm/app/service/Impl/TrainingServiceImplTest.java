@@ -38,9 +38,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceImplTest {
     private static final TestData data = new TestData();
+    private static final List<Training> trainings = data.getTrainings();
 
     private final ModelMapper modelMapper = new ModelMapper();
-    private static final List<Training> trainings = data.getTrainings();
 
     @Mock
     private TrainingRepository repository;
