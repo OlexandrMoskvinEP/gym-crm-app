@@ -6,6 +6,7 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
+import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingDto training) {
-        Training trainingToSave = modelMapper.map(training, Training.class);
+        Training trainingToSave = TrainingMapper.mapDtoToEntity(training);
 
         Training persistedTraining = trainingRepository.saveTraining(trainingToSave);
 
@@ -120,7 +121,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        if (!trainingRepository.findByTrainerAndTraineeAndDate(
+        if (trainingRepository.findByTrainerAndTraineeAndDate(
                 identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate()).isEmpty()) {
             throw new EntityNotFoundException("Training not found!");
         }

@@ -1,14 +1,15 @@
 package com.gym.crm.app.service.Impl;
 
+import com.gym.crm.app.TestData;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.TestData;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TrainerServiceImpl;
+import com.gym.crm.app.service.mapper.TrainerMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,9 +28,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceImplTest {
@@ -87,19 +91,26 @@ class TrainerServiceImplTest {
     void shouldAddTrainer(Trainer trainer) {
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
         expected.setPassword("fakePassword1234567");
+        expected.setUserId(0);
+
+        Trainer trainerToReturn = TrainerMapper.mapToEntityWithUserId(trainer, expected.getUserId());
+        trainerToReturn = trainerToReturn.toBuilder().password("fakePassword1234567").build();
 
         String username = trainer.getFirstName() + "." + trainer.getLastName();
+
         when(passwordService.generatePassword()).thenReturn("fakePassword1234567");
         when(userProfileService.createUsername(trainer.getFirstName(), trainer.getLastName())).thenReturn(username);
 
-        when(repository.saveTrainer(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(repository.findByUsername(username)).thenReturn(Optional.of(modelMapper.map(expected, Trainer.class)));
+        when(repository.saveTrainer(any(Trainer.class))).thenReturn(trainerToReturn);
+        when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
 
         TrainerDto actual = trainerService.addTrainer(modelMapper.map(trainer, TrainerDto.class));
 
         verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
 
+        assertNotNull(savedTrainer);
+        assertNotNull(actual);
         assertEquals(expected, savedTrainer);
         assertEquals(expected, actual);
     }
@@ -111,16 +122,22 @@ class TrainerServiceImplTest {
         expected.setActive(false);
         expected.setSpecialization(new TrainingType("fakeSport"));
 
+        Trainer trainerToReturn = TrainerMapper.mapToEntityWithUserId(trainer, expected.getUserId());
+        trainerToReturn = trainerToReturn.toBuilder()
+                .isActive(expected.isActive()).specialization(expected.getSpecialization()).build();
+
         String username = trainer.getFirstName() + "." + trainer.getLastName();
 
-        when(repository.findByUsername(username)).thenReturn(Optional.of(modelMapper.map(trainer, Trainer.class)));
-        when(repository.saveTrainer(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
+        when(repository.saveTrainer(any(Trainer.class))).thenReturn(trainerToReturn);
 
         TrainerDto actual = trainerService.updateTrainerByUsername(username, expected);
 
         verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
 
+        assertNotNull(savedTrainer);
+        assertNotNull(actual);
         assertEquals(expected, savedTrainer);
         assertEquals(expected, actual);
     }

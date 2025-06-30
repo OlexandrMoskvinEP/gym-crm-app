@@ -44,17 +44,17 @@ class TrainerRepositoryImplTest {
 
     @Test
     void shouldReturnAllTrainers() {
-        List<Trainer>expected = new ArrayList<>(trainerMap.values());
+        List<Trainer> expected = new ArrayList<>(trainerMap.values());
 
-        List<Trainer>actual = repository.findAll();
+        List<Trainer> actual = repository.findAll();
 
         assertNotNull(actual);
-        assertEquals(expected.size(),actual.size());
+        assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
     }
 
     @Test
-    public void shouldSaveAndReturnSavedTrainerEntity(){
+    public void shouldSaveAndReturnSavedTrainerEntity() {
         Trainer trainer = Trainer.builder()
                 .firstName("John")
                 .lastName("Dou")
@@ -77,7 +77,7 @@ class TrainerRepositoryImplTest {
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldSaveTrainerEntity(Trainer trainer) {
-              assertThrows(DuplicateUsernameException.class,()->repository.saveTrainer(trainer));
+        assertThrows(DuplicateUsernameException.class, () -> repository.saveTrainer(trainer));
     }
 
     @ParameterizedTest
@@ -105,8 +105,8 @@ class TrainerRepositoryImplTest {
 
         repository.saveTrainer(trainer);
 
-        assertDoesNotThrow(()->repository.deleteByUserName("John.Dou"));
-        assertThrows(EntityNotFoundException.class,()->repository.deleteByUserName("John.Dou"));
+        assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
     }
 
     public static Stream<Trainer> getTrainers() {

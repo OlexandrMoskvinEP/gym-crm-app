@@ -93,16 +93,16 @@ class TraineeServiceImplTest {
         expected.setPassword("fakePassword1234567");
         expected.setUserId(0);
 
-        Trainee toReturn = TraineeMapper.mapWithUserId(trainee, expected.getUserId());
-        toReturn = toReturn.toBuilder().password("fakePassword1234567").build();
+        Trainee EntityToReturn = TraineeMapper.mapToEntityWithUserId(trainee, expected.getUserId());
+        EntityToReturn = EntityToReturn.toBuilder().password("fakePassword1234567").build();
 
         String username = trainee.getFirstName() + "." + trainee.getLastName();
 
         when(passwordService.generatePassword()).thenReturn("fakePassword1234567");
         when(userProfileService.createUsername(trainee.getFirstName(), trainee.getLastName())).thenReturn(username);
 
-        when(repository.saveTrainee(any(Trainee.class))).thenReturn(toReturn);
-        when(repository.findByUsername(username)).thenReturn(Optional.of(toReturn));
+        when(repository.saveTrainee(any(Trainee.class))).thenReturn(EntityToReturn);
+        when(repository.findByUsername(username)).thenReturn(Optional.of(EntityToReturn));
 
         TraineeDto actual = traineeService.addTrainee(modelMapper.map(trainee, TraineeDto.class));
 
@@ -123,7 +123,7 @@ class TraineeServiceImplTest {
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
 
-        Trainee traineeToReturn = TraineeMapper.mapWithUserId(trainee, expected.getUserId());
+        Trainee traineeToReturn = TraineeMapper.mapToEntityWithUserId(trainee, expected.getUserId());
         traineeToReturn = traineeToReturn.toBuilder()
                 .isActive(expected.isActive()).address(expected.getAddress())
                 .dateOfBirth(expected.getDateOfBirth()).build();

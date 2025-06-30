@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.impl.TrainingServiceImpl;
+import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -112,16 +113,16 @@ class TrainingServiceImplTest {
     @MethodSource("getTrainingId")
     void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
         Training training1 = trainings.stream()
-                .filter(training -> training.getTrainerId()==dto.getTrainerId())
-                .filter(training -> training.getTraineeId()==dto.getTraineeId())
+                .filter(training -> training.getTrainerId() == dto.getTrainerId())
+                .filter(training -> training.getTraineeId() == dto.getTraineeId())
                 .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
 
         when(repository.findByTrainerAndTraineeAndDate(dto.getTrainerId(), dto.getTraineeId(), dto.getTrainingDate()))
                 .thenReturn(Optional.of(training1));
 
-        Optional<TrainingDto>expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
-        Optional<TrainingDto>actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
+        Optional<TrainingDto> expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
+        Optional<TrainingDto> actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
@@ -132,13 +133,7 @@ class TrainingServiceImplTest {
     void shouldAddTraining(Training training) {
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
-        int trainerId = training.getTrainerId();
-        int traineeId = training.getTraineeId();
-        LocalDate trainingDate = training.getTrainingDate();
-
-        when(repository.saveTraining(any(Training.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(repository.findByTrainerAndTraineeAndDate(trainerId, traineeId, trainingDate))
-                .thenReturn(Optional.of(modelMapper.map(expected, Training.class)));
+        when(repository.saveTraining(any(Training.class))).thenReturn(TrainingMapper.mapDtoToEntity(expected));
 
         TrainingDto actual = trainingService.addTraining(modelMapper.map(training, TrainingDto.class));
 
