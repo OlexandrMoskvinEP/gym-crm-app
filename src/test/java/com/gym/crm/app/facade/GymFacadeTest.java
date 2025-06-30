@@ -63,7 +63,6 @@ class GymFacadeTest {
     @Test
     void shouldReturnTrainerByUsername() {
         TrainerDto expected = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-
         when(trainerService.getTrainerByUsername("username")).thenReturn(expected);
 
         TrainerDto actual = gymFacade.getTrainerByUsername("username");
@@ -75,7 +74,6 @@ class GymFacadeTest {
     @Test
     void shouldAddTrainer() {
         TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-
         when(trainerService.addTrainer(trainerDto)).thenReturn(trainerDto);
 
         TrainerDto actual = gymFacade.addTrainer(trainerDto);
@@ -87,7 +85,6 @@ class GymFacadeTest {
     @Test
     void shouldUpdateTrainerByUsername() {
         TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-
         when(trainerService.updateTrainerByUsername("username", trainerDto)).thenReturn(trainerDto);
 
         TrainerDto actual = gymFacade.updateTrainerByUsername("username", trainerDto);
@@ -99,7 +96,6 @@ class GymFacadeTest {
     @Test
     void shouldDeleteTrainerByUsername() {
         doNothing().when(trainerService).deleteTrainerByUsername("username");
-
         gymFacade.deleteTrainerByUsername("username");
 
         verify(trainerService).deleteTrainerByUsername("username");
@@ -122,7 +118,6 @@ class GymFacadeTest {
     @Test
     void shouldReturnTraineeByUsername() {
         TraineeDto expected = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-
         when(traineeService.getTraineeByUsername("username")).thenReturn(expected);
 
         TraineeDto actual = gymFacade.getTraineeByUsername("username");
@@ -134,7 +129,6 @@ class GymFacadeTest {
     @Test
     void shouldAddTrainee() {
         TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-
         when(traineeService.addTrainee(traineeDto)).thenReturn(traineeDto);
 
         TraineeDto actual = gymFacade.addTrainee(traineeDto);
@@ -146,7 +140,6 @@ class GymFacadeTest {
     @Test
     void shouldUpdateTraineeByUsername() {
         TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-
         when(traineeService.updateTraineeByUsername("username", traineeDto)).thenReturn(traineeDto);
 
         TraineeDto actual = gymFacade.updateTraineeByUsername("username", traineeDto);
@@ -181,7 +174,6 @@ class GymFacadeTest {
     @Test
     void shouldReturnTrainingByTrainerId() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.getTrainingByTrainerId(1)).thenReturn(List.of(trainingDto));
 
         List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1);
@@ -193,7 +185,6 @@ class GymFacadeTest {
     @Test
     void shouldReturnTrainingByTraineeId() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.getTrainingByTraineeId(1)).thenReturn(List.of(trainingDto));
 
         List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1);
@@ -206,7 +197,6 @@ class GymFacadeTest {
     void shouldReturnTrainingByDate() {
         LocalDate date = LocalDate.now();
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.getTrainingByDate(date)).thenReturn(List.of(trainingDto));
 
         List<TrainingDto> actual = gymFacade.getTrainingByDate(date);
@@ -219,7 +209,6 @@ class GymFacadeTest {
     void shouldReturnTrainingByTrainerAndTraineeAndDate() {
         TrainingIdentityDto dto = new TrainingIdentityDto(1, 2, LocalDate.now());
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.getTrainingByTrainerAndTraineeAndDate(dto)).thenReturn(Optional.of(trainingDto));
 
         Optional<TrainingDto> actual = gymFacade.getTrainingByTrainerAndTraineeAndDate(dto);
@@ -233,33 +222,28 @@ class GymFacadeTest {
     @Test
     void shouldAddTraining() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.addTraining(trainingDto)).thenReturn(trainingDto);
 
         TrainingDto actual = gymFacade.addTraining(trainingDto);
 
         verify(trainingService).addTraining(trainingDto);
-
         assertEquals(trainingDto, actual);
     }
 
     @Test
     void shouldUpdateTraining() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-
         when(trainingService.updateTraining(trainingDto)).thenReturn(trainingDto);
 
         TrainingDto actual = gymFacade.updateTraining(trainingDto);
 
         verify(trainingService).updateTraining(trainingDto);
-
         assertEquals(trainingDto, actual);
     }
 
     @Test
     void shouldDeleteTrainingByTrainerAndTraineeAndDate() {
         TrainingIdentityDto dto = new TrainingIdentityDto(1, 2, LocalDate.now());
-
         doNothing().when(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
 
         gymFacade.deleteTrainingByTrainerAndTraineeAndDate(dto);

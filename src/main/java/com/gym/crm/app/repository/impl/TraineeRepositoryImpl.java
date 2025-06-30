@@ -38,9 +38,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         String key = trainee.getUsername();
 
         if (traineeStorage.containsKey(key)) {
-            logger.warn("Trainee with username {} already exists", trainee.getUsername());
-
-            throw new DuplicateUsernameException("Entity already exists!");
+           throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainee traineeWithId = trainee.toBuilder()
@@ -62,8 +60,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public void deleteByUserName(String username) {
         if (!traineeStorage.containsKey(username)) {
-            logger.warn("Trainee with username {} does`t exist", username);
-
             throw new EntityNotFoundException("Failed while deleting trainer!");
         }
 

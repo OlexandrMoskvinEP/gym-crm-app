@@ -29,11 +29,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeRepositoryImplTest {
+    private static final TestData data = new TestData();
+    private final Map<String, Trainee> traineeMap = new HashMap<>(data.getTRAINEE_STORAGE());
+
     @Mock
     private CommonStorage commonStorage;
-    private static final TestData data = new TestData();
+
     private TraineeRepositoryImpl repository;
-    private final Map<String, Trainee> traineeMap = new HashMap<>(data.getTRAINEE_STORAGE());
 
     @BeforeEach
     void setUp() {
@@ -56,16 +58,7 @@ class TraineeRepositoryImplTest {
 
     @Test
     public void shouldSaveAndReturnSavedTraineeEntity() {
-        Trainee trainee = Trainee.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
-                .isActive(true)
-                .password("iwibfwiyeyb")
-                .address("nowhereCity")
-                .dateOfBirth(LocalDate.of(1987, 2, 12))
-                .userId(1)
-                .build();
+        Trainee trainee = constructTrainee();
 
         Trainee actual = repository.saveTrainee(trainee);
         Trainee savedToStorage = traineeMap.get(trainee.getUsername());
@@ -95,16 +88,7 @@ class TraineeRepositoryImplTest {
 
     @Test
     void shouldDeleteTraineeByUserName() {
-        Trainee trainee = Trainee.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
-                .isActive(true)
-                .password("iwibfwiyeyb")
-                .address("nowhereCity")
-                .dateOfBirth(LocalDate.of(1987, 2, 12))
-                .userId(7896)
-                .build();
+        Trainee trainee = constructTrainee();
 
         repository.saveTrainee(trainee);
 
@@ -112,7 +96,20 @@ class TraineeRepositoryImplTest {
         assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
     }
 
-    public static Stream<Trainee> getTrainees() {
+    private static Stream<Trainee> getTrainees() {
         return data.getTrainees().stream();
+    }
+
+    private Trainee constructTrainee() {
+        return Trainee.builder()
+                .firstName("John")
+                .lastName("Dou")
+                .username("John.Dou")
+                .isActive(true)
+                .password("iwibfwiyeyb")
+                .address("nowhereCity")
+                .dateOfBirth(LocalDate.of(1987, 2, 12))
+                .userId(1)
+                .build();
     }
 }

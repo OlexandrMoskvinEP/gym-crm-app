@@ -37,8 +37,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeServiceImplTest {
-    private final ModelMapper modelMapper = new ModelMapper();
     private static final TestData data = new TestData();
+    private final ModelMapper modelMapper = new ModelMapper();
     private final List<Trainee> trainees = data.getTrainees();
 
     @Captor

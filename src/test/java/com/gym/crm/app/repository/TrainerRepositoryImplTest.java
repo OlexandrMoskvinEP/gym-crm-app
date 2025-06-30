@@ -29,11 +29,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerRepositoryImplTest {
+    private static final TestData data = new TestData();
+    private final Map<String, Trainer> trainerMap = new HashMap<>(data.getTRAINER_STORAGE());
+
     @Mock
     private CommonStorage commonStorage;
-    private static final TestData data = new TestData();
+
     private TrainerRepositoryImpl repository;
-    private final Map<String, Trainer> trainerMap = new HashMap<>(data.getTRAINER_STORAGE());
 
     @BeforeEach
     void setUp() {
@@ -56,15 +58,7 @@ class TrainerRepositoryImplTest {
 
     @Test
     public void shouldSaveAndReturnSavedTrainerEntity() {
-        Trainer trainer = Trainer.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
-                .isActive(true)
-                .password("iwibfwiyeyb")
-                .specialization(new TrainingType("fakeSport"))
-                .userId(1)
-                .build();
+        Trainer trainer = constructTrainer();
 
         Trainer actual = repository.saveTrainer(trainer);
         Trainer savedToStorage = trainerMap.get(trainer.getUsername());
@@ -94,23 +88,26 @@ class TrainerRepositoryImplTest {
 
     @Test
     void shouldDeleteTrainerByUserName() {
-        Trainer trainer = Trainer.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
-                .isActive(true)
-                .password("iwibfwiyeyb")
-                .specialization(new TrainingType("fakeSport"))
-                .userId(7896)
-                .build();
-
+        Trainer trainer = constructTrainer();
         repository.saveTrainer(trainer);
 
         assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
         assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
     }
 
-    public static Stream<Trainer> getTrainers() {
+    private static Stream<Trainer> getTrainers() {
         return data.getTrainers().stream();
+    }
+
+    private Trainer constructTrainer() {
+        return Trainer.builder()
+                .firstName("John")
+                .lastName("Dou")
+                .username("John.Dou")
+                .isActive(true)
+                .password("iwibfwiyeyb")
+                .specialization(new TrainingType("fakeSport"))
+                .userId(1)
+                .build();
     }
 }

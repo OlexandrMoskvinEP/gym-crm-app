@@ -32,11 +32,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingRepositoryImplTest {
+    private static final TestData data = new TestData();
+    private final Map<String, Training> trainingMap = new HashMap<>(data.getTRAINING_STORAGE());
+
     @Mock
     private CommonStorage commonStorage;
-    private static final TestData data = new TestData();
+
     private TrainingRepositoryImpl repository;
-    private final Map<String, Training> trainingMap = new HashMap<>(data.getTRAINING_STORAGE());
 
     @BeforeEach
     void setUp() {

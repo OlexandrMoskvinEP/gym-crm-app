@@ -85,7 +85,6 @@ public class JsonStorageHandler {
         }
 
         return result;
-
     }
 
     public void save(Map<Namespace, Map<String, ?>> storage) throws UnacceptableOperationException {

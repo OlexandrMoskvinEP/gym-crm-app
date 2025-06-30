@@ -37,8 +37,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceImplTest {
-    private final ModelMapper modelMapper = new ModelMapper();
     private static final TestData data = new TestData();
+    private final ModelMapper modelMapper = new ModelMapper();
     private static final List<Training> trainings = data.getTrainings();
 
     @Mock
@@ -146,7 +146,7 @@ class TrainingServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("getTrainings")
-    void updateTraining(Training training) {
+    void shouldUpdateTraining(Training training) {
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         expected.setTrainingName("fakeTrainingName");
