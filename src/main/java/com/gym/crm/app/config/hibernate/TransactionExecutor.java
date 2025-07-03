@@ -46,7 +46,6 @@ public class TransactionExecutor {
             if (tx != null) {
                 tx.rollback();
             }
-
             throw ex;
         }
     }
