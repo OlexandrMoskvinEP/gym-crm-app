@@ -1,6 +1,7 @@
 {
   "TRAINEE" : {
     "trainee5" : {
+      "id" : 0,
       "firstName" : "Eva",
       "lastName" : "Green",
       "username" : "Eva.Green",
@@ -11,6 +12,7 @@
       "isActive" : true
     },
     "trainee4" : {
+      "id" : 0,
       "firstName" : "David",
       "lastName" : "Lee",
       "username" : "David.Lee",
@@ -21,6 +23,7 @@
       "isActive" : true
     },
     "trainee3" : {
+      "id" : 0,
       "firstName" : "Carol",
       "lastName" : "Johnson",
       "username" : "Carol.Johnson",
@@ -31,6 +34,7 @@
       "isActive" : false
     },
     "trainee2" : {
+      "id" : 0,
       "firstName" : "Bob",
       "lastName" : "Miller",
       "username" : "Bob.Miller",
@@ -41,6 +45,7 @@
       "isActive" : true
     },
     "trainee1" : {
+      "id" : 0,
       "firstName" : "Alice",
       "lastName" : "Brown",
       "username" : "Alice.Brown",
@@ -53,6 +58,7 @@
   },
   "TRAINER" : {
     "trainer4" : {
+      "id" : 0,
       "firstName" : "Sophie",
       "lastName" : "Taylor",
       "username" : "Sophie.Taylor",
@@ -64,6 +70,7 @@
       "isActive" : true
     },
     "trainer3" : {
+      "id" : 0,
       "firstName" : "Michael",
       "lastName" : "Green",
       "username" : "Michael.Green",
@@ -75,6 +82,7 @@
       "isActive" : false
     },
     "trainer2" : {
+      "id" : 0,
       "firstName" : "Linda",
       "lastName" : "White",
       "username" : "Linda.White",
@@ -86,6 +94,7 @@
       "isActive" : true
     },
     "trainer1" : {
+      "id" : 0,
       "firstName" : "John",
       "lastName" : "Smith",
       "username" : "John.Smith",
@@ -97,6 +106,7 @@
       "isActive" : true
     },
     "trainer5" : {
+      "id" : 0,
       "firstName" : "Mark",
       "lastName" : "Black",
       "username" : "Mark.Black",
