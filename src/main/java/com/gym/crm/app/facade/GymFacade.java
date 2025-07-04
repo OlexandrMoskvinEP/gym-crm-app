@@ -73,11 +73,11 @@ public class GymFacade {
         return trainingService.getAllTrainings();
     }
 
-    public List<TrainingDto> getTrainingByTrainerId(int trainerId) {
+    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
         return trainingService.getTrainingByTrainerId(trainerId);
     }
 
-    public List<TrainingDto> getTrainingByTraineeId(int trainerId) {
+    public List<TrainingDto> getTrainingByTraineeId(Long trainerId) {
         return trainingService.getTrainingByTraineeId(trainerId);
     }
 

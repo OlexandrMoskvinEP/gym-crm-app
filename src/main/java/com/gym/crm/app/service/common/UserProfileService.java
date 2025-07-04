@@ -1,6 +1,5 @@
 package com.gym.crm.app.service.common;
 
-import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +38,9 @@ public class UserProfileService {
 
     private List<String> retrieveAllUsernames() {
         Stream<String> traineeUsernames = traineeRepository.findAll().stream()
-                .map(User::getUsername);
+                .map(trainee -> trainee.getUser().getUsername());
         Stream<String> trainerUsernames = trainerRepository.findAll().stream()
-                .map(User::getUsername);
+                .map(trainee -> trainee.getUser().getUsername());
 
         return Stream.concat(traineeUsernames, trainerUsernames).toList();
     }

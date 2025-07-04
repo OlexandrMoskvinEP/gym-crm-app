@@ -2,6 +2,7 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.TraineeService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,23 +68,18 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.createUsername(traineeDto.getFirstName(), traineeDto.getLastName());
         String password = passwordService.generatePassword();
 
+        traineeDto.setPassword(password);
+        traineeDto.setUsername(username);
+
         logger.info("Adding trainee with username {}", username);
 
-        Trainee entityToAdd = Trainee.builder()
-                .firstName(traineeDto.getFirstName())
-                .lastName(traineeDto.getLastName())
-                .username(username)
-                .password(password)
-                .isActive(traineeDto.isActive())
-                .dateOfBirth(traineeDto.getDateOfBirth())
-                .address(traineeDto.getAddress())
-                .build();
+        Trainee entityToAdd = getTraineeWithUser(traineeDto);
 
         traineeRepository.saveTrainee(entityToAdd);
 
         logger.info("Trainee {} successfully added", username);
 
-        return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
+        return getTraineeDtoFromEntity(traineeRepository.findByUsername(username).get());
     }
 
     @Override
@@ -90,16 +87,7 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee existing = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        Trainee entityToUpdate = Trainee.builder()
-                .firstName(existing.getFirstName())
-                .lastName(existing.getLastName())
-                .username(existing.getUsername())
-                .password(existing.getPassword())
-                .userId(existing.getUserId())
-                .isActive(traineeDto.isActive())
-                .address(traineeDto.getAddress())
-                .dateOfBirth(traineeDto.getDateOfBirth())
-                .build();
+        Trainee entityToUpdate = getTraineeWithUser(traineeDto);
 
         traineeRepository.saveTrainee(entityToUpdate);
 
@@ -117,5 +105,32 @@ public class TraineeServiceImpl implements TraineeService {
         traineeRepository.deleteByUserName(username);
 
         logger.info("Trainee {} deleted", username);
+    }
+
+    private Trainee getTraineeWithUser(TraineeDto traineeDto) {
+        User user = User.builder()
+                .username(traineeDto.getUsername())
+                .password(traineeDto.getPassword())
+                .isActive(traineeDto.isActive())
+                .firstName(traineeDto.getFirstName())
+                .lastName(traineeDto.getLastName())
+                .build();
+
+        return Trainee.builder()
+                .dateOfBirth(traineeDto.getDateOfBirth())
+                .address(traineeDto.getAddress())
+                .user(user)
+                .build();
+    }
+    private TraineeDto getTraineeDtoFromEntity(Trainee trainee){
+        return new TraineeDto(trainee.getUser().getFirstName(),
+                trainee.getUser().getLastName(),
+                trainee.getUser().getUsername(),
+                trainee.getUser().getPassword(),
+                trainee.getUser().isActive(),
+                trainee.getDateOfBirth(),
+                trainee.getAddress(),
+                trainee.getId()
+                );
     }
 }

@@ -3,6 +3,7 @@ package com.gym.crm.app.repository;
 import com.gym.crm.app.TestData;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.impl.TrainerRepositoryImpl;
@@ -60,9 +61,10 @@ class TrainerRepositoryImplTest {
     @Test
     public void shouldSaveAndReturnSavedTrainerEntity() {
         Trainer trainer = constructTrainer();
+        trainer = trainer.toBuilder().id(1L).build();
 
         Trainer actual = repository.saveTrainer(trainer);
-        Trainer savedToStorage = trainerMap.get(trainer.getUsername());
+        Trainer savedToStorage = trainerMap.get(trainer.getUser().getUsername());
 
         assertNotNull(actual);
         assertNotNull(savedToStorage);
@@ -79,7 +81,7 @@ class TrainerRepositoryImplTest {
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldFindByUsername(Trainer trainer) {
-        String username = trainer.getUsername();
+        String username = trainer.getUser().getUsername();
 
         Trainer actual = repository.findByUsername(username).get();
 
@@ -90,9 +92,12 @@ class TrainerRepositoryImplTest {
     @Test
     void shouldDeleteTrainerByUserName() {
         Trainer trainer = constructTrainer();
+
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("Sophie1.Taylor1"));
+
         repository.saveTrainer(trainer);
 
-        assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+        assertDoesNotThrow(() -> repository.deleteByUserName("Sophie1.Taylor1"));
     }
 
     @Test
@@ -106,13 +111,18 @@ class TrainerRepositoryImplTest {
 
     private Trainer constructTrainer() {
         return Trainer.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
+                .specialization(new TrainingType(23L, "aerobics"))
+                .user(constractUser())
+                .build();
+    }
+
+    private User constractUser() {
+        return User.builder()
+                .firstName("Sophie1")
+                .lastName("Taylor1")
+                .username("Sophie1.Taylor1")
+                .password("S0ph!e456")
                 .isActive(true)
-                .password("iwibfwiyeyb")
-                .specialization(new TrainingType("fakeSport"))
-                .userId(1)
                 .build();
     }
 }

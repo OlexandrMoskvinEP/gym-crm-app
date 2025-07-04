@@ -2,6 +2,7 @@ package com.gym.crm.app.repository;
 
 import com.gym.crm.app.TestData;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.impl.TraineeRepositoryImpl;
@@ -60,9 +61,10 @@ class TraineeRepositoryImplTest {
     @Test
     public void shouldSaveAndReturnSavedTraineeEntity() {
         Trainee trainee = constructTrainee();
+        trainee = trainee.toBuilder().id(1L).build();
 
         Trainee actual = repository.saveTrainee(trainee);
-        Trainee savedToStorage = traineeMap.get(trainee.getUsername());
+        Trainee savedToStorage = traineeMap.get(trainee.getUser().getUsername());
 
         assertNotNull(actual);
         assertNotNull(savedToStorage);
@@ -79,7 +81,7 @@ class TraineeRepositoryImplTest {
     @ParameterizedTest
     @MethodSource("getTrainees")
     void shouldFindByUsername(Trainee trainee) {
-        String username = trainee.getUsername();
+        String username = trainee.getUser().getUsername();
 
         Trainee actual = repository.findByUsername(username).get();
 
@@ -91,9 +93,11 @@ class TraineeRepositoryImplTest {
     void shouldDeleteTraineeByUserName() {
         Trainee trainee = constructTrainee();
 
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
+
         repository.saveTrainee(trainee);
 
-        assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+        assertDoesNotThrow(() -> repository.deleteByUserName("Alice.Moro"));
     }
 
     @Test
@@ -107,14 +111,19 @@ class TraineeRepositoryImplTest {
 
     private Trainee constructTrainee() {
         return Trainee.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
+                .dateOfBirth(LocalDate.of(1990, 3, 12))
+                .address("Main Street")
+                .user(constructUser())
+                .build();
+    }
+
+    private static User constructUser() {
+        return User.builder()
+                .firstName("Alice")
+                .lastName("Moro")
+                .username("Alice.Moro")
+                .password("Abc123!@#")
                 .isActive(true)
-                .password("iwibfwiyeyb")
-                .address("nowhereCity")
-                .dateOfBirth(LocalDate.of(1987, 2, 12))
-                .userId(1)
                 .build();
     }
 }

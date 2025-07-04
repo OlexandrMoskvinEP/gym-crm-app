@@ -62,13 +62,6 @@ public class CommonStorage {
         }
     }
 
-    @PreDestroy
-    public void shutdown() throws UnacceptableOperationException {
-        logger.info("Saving storage to disk");
-
-        jsonStorageHandler.save(storage);
-    }
-
     @SuppressWarnings("unchecked")
     public Map<String, Trainer> getTrainerStorage() {
         return (Map<String, Trainer>) storage.get(TRAINER);

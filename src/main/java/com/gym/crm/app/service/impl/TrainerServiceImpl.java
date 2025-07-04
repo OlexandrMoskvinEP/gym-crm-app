@@ -2,6 +2,7 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.model.Trainer;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.service.TrainerService;
@@ -66,22 +67,18 @@ public class TrainerServiceImpl implements TrainerService {
         String username = userProfileService.createUsername(trainerDto.getFirstName(), trainerDto.getLastName());
         String password = passwordService.generatePassword();
 
+        trainerDto.setPassword(password);
+        trainerDto.setUsername(username);
+
         logger.info("Adding trainer with username {}", username);
 
-        Trainer entityToAdd = Trainer.builder()
-                .firstName(trainerDto.getFirstName())
-                .lastName(trainerDto.getLastName())
-                .username(username)
-                .password(password)
-                .isActive(trainerDto.isActive())
-                .specialization(trainerDto.getSpecialization())
-                .build();
+        Trainer entityToAdd = mapTrainerWithUser(trainerDto);
 
-        trainerRepository.saveTrainer(entityToAdd);
+        Trainer returned =  trainerRepository.saveTrainer(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
 
-        return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
+        return getTrainerDtoFromEntity(returned);
     }
 
     @Override
@@ -89,14 +86,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        Trainer entityToUpdate = Trainer.builder()
-                .firstName(existing.getFirstName())
-                .lastName(existing.getLastName())
-                .username(existing.getUsername())
-                .password(existing.getPassword())
-                .userId(existing.getUserId())
-                .specialization(existing.getSpecialization())
-                .build();
+        Trainer entityToUpdate = mapTrainerWithUser(trainerDto);
 
         trainerRepository.saveTrainer(entityToUpdate);
 
@@ -114,5 +104,31 @@ public class TrainerServiceImpl implements TrainerService {
         trainerRepository.deleteByUserName(username);
 
         logger.info("Trainer {} deleted", username);
+    }
+
+    private Trainer mapTrainerWithUser(TrainerDto trainerDto) {
+        User user = User.builder()
+                .username(trainerDto.getUsername())
+                .password(trainerDto.getPassword())
+                .isActive(trainerDto.isActive())
+                .firstName(trainerDto.getFirstName())
+                .lastName(trainerDto.getLastName())
+                .build();
+
+        return Trainer.builder()
+                .specialization(trainerDto.getSpecialization())
+                .user(user)
+                .build();
+    }
+
+    private TrainerDto getTrainerDtoFromEntity(Trainer trainer) {
+        return new TrainerDto(trainer.getUser().getFirstName(),
+                trainer.getUser().getLastName(),
+                trainer.getUser().getUsername(),
+                trainer.getUser().getPassword(),
+                trainer.getUser().isActive(),
+                trainer.getSpecialization(),
+                trainer.getId()
+        );
     }
 }

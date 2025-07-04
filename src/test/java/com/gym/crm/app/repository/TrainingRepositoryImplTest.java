@@ -2,6 +2,8 @@ package com.gym.crm.app.repository;
 
 import com.gym.crm.app.TestData;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.DuplicateUsernameException;
@@ -17,6 +19,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,10 +64,10 @@ class TrainingRepositoryImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {321, 204, 205, 206, 207})
-    void shouldFindEntityByTrainerId(int trainerId) {
+    @ValueSource(longs = {321, 204, 205, 206, 207})
+    void shouldFindEntityByTrainerId(Long trainerId) {
         List<Training> expected = new ArrayList<>(trainingMap.values())
-                .stream().filter(training -> training.getTrainerId() == trainerId).toList();
+                .stream().filter(training -> training.getId().equals(trainerId)).toList();
 
         List<Training> actual = repository.findByTrainerId(trainerId);
 
@@ -74,10 +77,10 @@ class TrainingRepositoryImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {654, 121, 122, 123, 124})
-    void shouldFindEntityByTraineeId(int traineeId) {
+    @ValueSource(longs = {654, 121, 122, 123, 124})
+    void shouldFindEntityByTraineeId(Long traineeId) {
         List<Training> expected = new ArrayList<>(trainingMap.values())
-                .stream().filter(training -> training.getTraineeId() == traineeId).toList();
+                .stream().filter(training -> training.getId().equals(traineeId)).toList();
 
         List<Training> actual = repository.findByTraineeId(traineeId);
 
@@ -103,8 +106,8 @@ class TrainingRepositoryImplTest {
     @MethodSource("getTrainingId")
     void shouldFindEntityByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
         Training expected = trainingMap.values().stream()
-                .filter(training -> training.getTrainerId() == dto.getTrainerId())
-                .filter(training -> training.getTraineeId() == dto.getTraineeId())
+                .filter(training -> training.getTrainer().getId().equals(dto.getTrainerId()))
+                .filter(training -> training.getTrainee().getId().equals(dto.getTraineeId()))
                 .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
 
@@ -127,7 +130,9 @@ class TrainingRepositoryImplTest {
         repository.saveTraining(training);
 
         assertDoesNotThrow(() -> repository
-                .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
+                .deleteByTrainerAndTraineeAndDate(training.getTrainer().getId(),
+                        training.getTrainee().getId(),
+                        training.getTrainingDate()));
     }
 
     @Test
@@ -135,7 +140,7 @@ class TrainingRepositoryImplTest {
         Training training = constructTraining();
 
         assertThrows(EntityNotFoundException.class, () -> repository
-                .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
+                .deleteByTrainerAndTraineeAndDate(training.getId(), training.getId(), training.getTrainingDate()));
     }
 
     private static Stream<Training> getTrainings() {
@@ -160,10 +165,10 @@ class TrainingRepositoryImplTest {
         return Training.builder()
                 .trainingDate(LocalDate.EPOCH)
                 .trainingName("fakeTraining")
-                .trainingType(new TrainingType("fakeSport"))
-                .trainingDuration(240)
-                .traineeId(123)
-                .trainerId(4567)
+                .trainingType(new TrainingType(1L, "fakeSport"))
+                .trainingDuration(BigDecimal.valueOf(240))
+                .trainer(Trainer.builder().id(321L).build())
+                .trainee(Trainee.builder().id(4567L).build())
                 .build();
     }
 }

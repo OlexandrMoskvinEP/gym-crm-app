@@ -2,7 +2,10 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
@@ -43,7 +46,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTrainerId(int trainerId) {
+    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
         List<Training> trainings = trainingRepository.findByTrainerId(trainerId);
 
         if (trainings.isEmpty()) {
@@ -56,7 +59,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTraineeId(int traineeId) {
+    public List<TrainingDto> getTrainingByTraineeId(Long traineeId) {
         List<Training> trainings = trainingRepository.findByTraineeId(traineeId);
 
         if (trainings.isEmpty()) {
@@ -94,7 +97,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingDto training) {
-        Training trainingToSave = TrainingMapper.mapDtoToEntity(training);
+        Training trainingToSave = mapDtoToEntity(training);
 
         logger.info("Adding training for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
@@ -104,10 +107,10 @@ public class TrainingServiceImpl implements TrainingService {
         logger.info("Training successfully added for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
 
-        return modelMapper.map(persistedTraining, TrainingDto.class);
+        return getTrainingDtoFromEntity(persistedTraining);
     }
 
-    @Override
+   @Override
     public TrainingDto updateTraining(TrainingDto trainingDto) {
         Training existing = trainingRepository.findByTrainerAndTraineeAndDate(
                         trainingDto.getTrainerId(),
@@ -120,14 +123,14 @@ public class TrainingServiceImpl implements TrainingService {
                 .trainingDuration(trainingDto.getTrainingDuration())
                 .trainingName(trainingDto.getTrainingName())
                 .trainingType(trainingDto.getTrainingType())
-                .traineeId(existing.getTraineeId())
-                .trainerId(existing.getTrainerId())
+                .trainee(existing.getTrainee())
+                .trainer(existing.getTrainer())
                 .build();
 
         trainingRepository.saveTraining(updated);
 
         logger.info("Training for trainer {} and trainee {} on {} updated",
-                updated.getTrainerId(), updated.getTraineeId(), updated.getTrainingDate());
+                updated.getTrainer(), updated.getTrainee(), updated.getTrainingDate());
 
         return modelMapper.map(updated, TrainingDto.class);
     }
@@ -144,5 +147,27 @@ public class TrainingServiceImpl implements TrainingService {
 
         logger.info("Training for trainer {} and trainee {} on {} deleted",
                 identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate());
+    }
+
+    private TrainingDto getTrainingDtoFromEntity(Training training) {
+        return new TrainingDto(training.getTrainer().getId(),
+                training.getTrainee().getId(),
+                training.getTrainingName(),
+                training.getTrainingType(),
+                training.getTrainingDate(),
+                training.getTrainingDuration());
+    }
+
+    private static Training mapDtoToEntity(TrainingDto source) {
+        return Training.builder()
+                .trainingName(source.getTrainingName())
+                .trainingDate(source.getTrainingDate())
+                .trainingDuration(source.getTrainingDuration())
+
+                .trainer(Trainer.builder().id(source.getTrainerId()).build())
+                .trainee(Trainee.builder().id(source.getTraineeId()).build())
+                .trainingType(source.getTrainingType())
+                .trainingName(source.getTrainingName())
+                .build();
     }
 }

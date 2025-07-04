@@ -169,22 +169,22 @@ class GymFacadeTest {
     @Test
     void shouldReturnTrainingByTrainerId() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByTrainerId(1)).thenReturn(List.of(trainingDto));
+        when(trainingService.getTrainingByTrainerId(1L)).thenReturn(List.of(trainingDto));
 
-        List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1);
+        List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1L);
 
-        verify(trainingService).getTrainingByTrainerId(1);
+        verify(trainingService).getTrainingByTrainerId(1L);
         assertEquals(List.of(trainingDto), actual);
     }
 
     @Test
     void shouldReturnTrainingByTraineeId() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByTraineeId(1)).thenReturn(List.of(trainingDto));
+        when(trainingService.getTrainingByTraineeId(1L)).thenReturn(List.of(trainingDto));
 
-        List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1);
+        List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1L);
 
-        verify(trainingService).getTrainingByTraineeId(1);
+        verify(trainingService).getTrainingByTraineeId(1L);
         assertEquals(List.of(trainingDto), actual);
     }
 
@@ -202,7 +202,7 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnTrainingByTrainerAndTraineeAndDate() {
-        TrainingIdentityDto dto = new TrainingIdentityDto(1, 2, LocalDate.now());
+        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
         when(trainingService.getTrainingByTrainerAndTraineeAndDate(dto)).thenReturn(Optional.of(trainingDto));
 
@@ -238,7 +238,7 @@ class GymFacadeTest {
 
     @Test
     void shouldDeleteTrainingByTrainerAndTraineeAndDate() {
-        TrainingIdentityDto dto = new TrainingIdentityDto(1, 2, LocalDate.now());
+        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
         doNothing().when(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
 
         gymFacade.deleteTrainingByTrainerAndTraineeAndDate(dto);

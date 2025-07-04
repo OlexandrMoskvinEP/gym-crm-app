@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.impl.TrainingServiceImpl;
-import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -42,12 +42,13 @@ class TrainingServiceImplTest {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
+    @Captor
+    private ArgumentCaptor<Training> trainingCaptor;
     @Mock
     private TrainingRepository repository;
     @InjectMocks
     private TrainingServiceImpl trainingService;
-    @Captor
-    private ArgumentCaptor<Training> trainingCaptor;
+
 
     @BeforeEach
     void setUp() {
@@ -67,8 +68,8 @@ class TrainingServiceImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {321, 204, 205, 206, 207})
-    void getTrainingByTrainerId(int trainerId) {
+    @ValueSource(longs = {321L, 204L, 205L, 206L, 207L})
+    void getTrainingByTrainerId(Long trainerId) {
         Training training = constructTrainingByTrainerId(trainerId);
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
@@ -81,8 +82,8 @@ class TrainingServiceImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {654, 121, 122, 123, 124})
-    void getTrainingByTraineeId(int traineeId) {
+    @ValueSource(longs = {654, 121, 122, 123, 124})
+    void getTrainingByTraineeId(Long traineeId) {
         Training training = constructTrainingByTraineeId(traineeId);
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
@@ -108,6 +109,7 @@ class TrainingServiceImplTest {
         assertEquals(expected, actual);
     }
 
+
     @ParameterizedTest
     @MethodSource("getTrainingId")
     void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
@@ -127,14 +129,15 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainings")
     void shouldAddTraining(Training training) {
-        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
+        TrainingDto expected = getTrainingDtoFromEntity(training);
 
-        when(repository.saveTraining(any(Training.class))).thenReturn(TrainingMapper.mapDtoToEntity(expected));
+        when(repository.saveTraining(any(Training.class))).thenReturn(training);
 
-        TrainingDto actual = trainingService.addTraining(modelMapper.map(training, TrainingDto.class));
+        TrainingDto actual = trainingService.addTraining(expected);
 
         verify(repository, atLeastOnce()).saveTraining(trainingCaptor.capture());
-        TrainingDto savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingDto.class);
+
+        TrainingDto savedTraining = getTrainingDtoFromEntity(trainingCaptor.getValue());
 
         assertEquals(expected, savedTraining);
         assertEquals(expected, actual);
@@ -146,11 +149,11 @@ class TrainingServiceImplTest {
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         expected.setTrainingName("fakeTrainingName");
-        expected.setTrainingType(new TrainingType("fakeTrainingType"));
-        expected.setTrainingDuration(240);
+        expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
+        expected.setTrainingDuration(BigDecimal.valueOf(240));
 
-        int trainerId = training.getTrainerId();
-        int traineeId = training.getTraineeId();
+        long trainerId = training.getTrainer().getId();
+        long traineeId = training.getTrainee().getId();
         LocalDate trainingDate = training.getTrainingDate();
 
         when(repository.findByTrainerAndTraineeAndDate(trainerId, traineeId, trainingDate))
@@ -169,10 +172,10 @@ class TrainingServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhetCantDeleteTrainingByTrainerAndTraineeAndDate() {
-        when(repository.findByTrainerAndTraineeAndDate(1, 2, LocalDate.EPOCH)).thenReturn(Optional.empty());
+        when(repository.findByTrainerAndTraineeAndDate(1L, 2L, LocalDate.EPOCH)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> trainingService.deleteTrainingByTrainerAndTraineeAndDate(
-                new TrainingIdentityDto(1, 2, LocalDate.EPOCH)));
+                new TrainingIdentityDto(1L, 2L, LocalDate.EPOCH)));
     }
 
     private static Stream<Training> getTrainings() {
@@ -193,23 +196,38 @@ class TrainingServiceImplTest {
         return data.getIdentities().stream();
     }
 
-    private Training constructTrainingByDate(LocalDate param) {
-        return trainings.stream().filter(training1 -> training1.getTrainingDate().equals(param)).findFirst().get();
+    private Training constructTrainingByDate(LocalDate date) {
+        return trainings.stream()
+                .filter(training -> training.getTrainingDate().equals(date))
+                .findFirst().get();
     }
 
-    private Training constructTrainingByTraineeId(int param) {
-        return trainings.stream().filter(training -> training.getTraineeId() == param).findFirst().get();
+    private Training constructTrainingByTraineeId(Long traineeId) {
+        return trainings.stream()
+                .filter(training -> training.getTrainee().getId().equals(traineeId))
+                .findFirst().get();
     }
 
-    private Training constructTrainingByTrainerId(int param) {
-        return trainings.stream().filter(training -> training.getTrainerId() == param).findFirst().get();
+    private Training constructTrainingByTrainerId(Long trainerId) {
+        return trainings.stream()
+                .filter(training -> training.getTrainer().getId().equals(trainerId))
+                .findFirst().get();
     }
 
     private static Training getTraining(TrainingIdentityDto dto) {
         return trainings.stream()
-                .filter(t -> t.getTrainerId() == dto.getTrainerId())
-                .filter(t -> t.getTraineeId() == dto.getTraineeId())
-                .filter(t -> t.getTrainingDate().equals(dto.getTrainingDate()))
+                .filter(training -> training.getTrainer().getId().equals(dto.getTrainerId()))
+                .filter(training -> training.getTrainee().getId().equals(dto.getTraineeId()))
+                .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
+    }
+
+    private TrainingDto getTrainingDtoFromEntity(Training training) {
+        return new TrainingDto(training.getTrainer().getId(),
+                training.getTrainee().getId(),
+                training.getTrainingName(),
+                training.getTrainingType(),
+                training.getTrainingDate(),
+                training.getTrainingDuration());
     }
 }

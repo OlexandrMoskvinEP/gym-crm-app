@@ -1,29 +1,46 @@
 package com.gym.crm.app.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
+@Entity
+@Table(name = "users")
 @Getter
-@ToString
 @EqualsAndHashCode
-@SuperBuilder(toBuilder = true)
+@ToString
+@Builder(toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 public class User {
-    private final String firstName;
-    private final String lastName;
-    private final String username;
-    private final String password;
-    @JsonProperty("isActive")
-    private final boolean isActive;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "first_name", nullable = false, length = 16)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 16)
+    private String lastName;
+
+    @Column(name = "username", nullable = false, unique = true, length = 34)
+    private String username;
+
+    @ToString.Exclude
+    @Column(name = "password", nullable = false, length = 16)
+    private String password;
 
     @JsonProperty("isActive")
-    public boolean getIsActive() {
-        return isActive;
-    }
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 }

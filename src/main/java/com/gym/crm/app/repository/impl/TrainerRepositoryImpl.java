@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
 
-    private final AtomicInteger trainerCounter = new AtomicInteger(1);
+    private final AtomicLong trainerCounter = new AtomicLong(1);
 
     private Map<String, Trainer> trainerStorage;
 
@@ -36,14 +36,14 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer saveTrainer(Trainer trainer) {
-        String key = trainer.getUsername();
+        String key = trainer.getUser().getUsername();
 
         if (trainerStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainer trainerWithId = trainer.toBuilder()
-                .userId(trainerCounter.getAndIncrement())
+                .id(trainerCounter.getAndIncrement())
                 .build();
 
         trainerStorage.put(key, trainerWithId);

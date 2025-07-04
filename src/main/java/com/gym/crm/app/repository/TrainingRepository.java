@@ -9,16 +9,15 @@ import java.util.Optional;
 public interface TrainingRepository {
     List<Training> findAll();
 
-    List<Training> findByTrainerId(int trainerId);
-
-    List<Training> findByTraineeId(int trainerId);
+    List<Training> findByTrainerId(Long trainerId);
 
     List<Training> findByDate(LocalDate date);
 
-    Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
+    Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date);
 
     Training saveTraining(Training training);
 
-    void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date);
+    void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date);
 
+    List<Training> findByTraineeId(Long traineeId);
 }
