@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.32.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1751656069738-1" author="AlexM">
+        <createTable tableName="trainee_trainer">
+            <column name="trainee_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_trainee_trainer"/>
+            </column>
+            <column name="trainer_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_trainee_trainer"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1751656069738-2" author="AlexM">
+        <createTable tableName="trainees">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_trainees"/>
+            </column>
+            <column name="date_of_birth" type="DATE"/>
+            <column name="address" type="VARCHAR(128)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1751656069738-3" author="AlexM">
+        <addUniqueConstraint columnNames="user_id" constraintName="uc_trainees_user" tableName="trainees"/>
+    </changeSet>
+    <changeSet id="1751656069738-4" author="AlexM">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="trainees" constraintName="FK_TRAINEES_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet id="1751656069738-5" author="AlexM">
+        <addForeignKeyConstraint baseColumnNames="trainee_id" baseTableName="trainee_trainer"
+                                 constraintName="fk_tratra_on_trainee" referencedColumnNames="id"
+                                 referencedTableName="trainees"/>
+    </changeSet>
+    <changeSet id="1751656069738-6" author="AlexM">
+        <addForeignKeyConstraint baseColumnNames="trainer_id" baseTableName="trainee_trainer"
+                                 constraintName="fk_tratra_on_trainer" referencedColumnNames="id"
+                                 referencedTableName="trainers"/>
+    </changeSet>
+
+</databaseChangeLog>
