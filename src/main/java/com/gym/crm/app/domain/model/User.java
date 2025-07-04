@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +16,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -30,17 +27,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "first_name", nullable = false, length = 16)
     private String firstName;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "last_name", nullable = false, length = 16)
     private String lastName;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "username", nullable = false, unique = true, length = 34)
     private String username;
 
     @ToString.Exclude
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false, length = 16)
     private String password;
 
     @JsonProperty("isActive")

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -108,7 +107,7 @@ class TrainingRepositoryImplTest {
     void shouldFindEntityByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
         Training expected = trainingMap.values().stream()
                 .filter(training -> training.getTrainer().getId().equals(dto.getTrainerId()))
-                .filter(training -> training.getTrainee().getId().equals(dto.getTraineeId()) )
+                .filter(training -> training.getTrainee().getId().equals(dto.getTraineeId()))
                 .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
 

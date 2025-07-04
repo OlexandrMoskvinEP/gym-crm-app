@@ -45,12 +45,14 @@ class TraineeServiceImplTest {
 
     @Captor
     private ArgumentCaptor<Trainee> traineeCaptor;
+
     @Mock
     private TraineeRepository repository;
     @Mock
     private PasswordService passwordService;
     @Mock
     private UserProfileService userProfileService;
+
     @InjectMocks
     private TraineeServiceImpl traineeService;
 
@@ -95,15 +97,15 @@ class TraineeServiceImplTest {
         expected.setLastName(trainee.getUser().getLastName());
         expected.setActive(trainee.getUser().isActive());
 
-        Trainee EntityToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
+        Trainee entityToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
 
         String username = expected.getFirstName() + "." + expected.getLastName();
 
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
 
-        when(repository.saveTrainee(any(Trainee.class))).thenReturn(EntityToReturn);
-        when(repository.findByUsername(username)).thenReturn(Optional.of(EntityToReturn));
+        when(repository.saveTrainee(any(Trainee.class))).thenReturn(entityToReturn);
+        when(repository.findByUsername(username)).thenReturn(Optional.of(entityToReturn));
 
         TraineeDto actual = traineeService.addTrainee(expected);
 

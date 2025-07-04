@@ -2,7 +2,10 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.TrainingService;
@@ -94,7 +97,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingDto training) {
-        Training trainingToSave = TrainingMapper.mapDtoToEntity(training);
+        Training trainingToSave = mapDtoToEntity(training);
 
         logger.info("Adding training for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
@@ -153,5 +156,18 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingType(),
                 training.getTrainingDate(),
                 training.getTrainingDuration());
+    }
+
+    private static Training mapDtoToEntity(TrainingDto source) {
+        return Training.builder()
+                .trainingName(source.getTrainingName())
+                .trainingDate(source.getTrainingDate())
+                .trainingDuration(source.getTrainingDuration())
+
+                .trainer(Trainer.builder().id(source.getTrainerId()).build())
+                .trainee(Trainee.builder().id(source.getTraineeId()).build())
+                .trainingType(source.getTrainingType())
+                .trainingName(source.getTrainingName())
+                .build();
     }
 }

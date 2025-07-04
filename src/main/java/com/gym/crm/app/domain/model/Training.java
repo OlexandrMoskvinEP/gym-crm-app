@@ -32,13 +32,13 @@ public class Training {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "training_name", nullable = false)
+    @Column(name = "training_name", nullable = false, length = 32)
     private String trainingName;
 
-    @Column(name = "training_Date")
+    @Column(name = "training_date")
     private LocalDate trainingDate;
 
-    @Column(name = "training_Duration")
+    @Column(name = "training_duration")
     private BigDecimal trainingDuration;
 
     @ManyToOne

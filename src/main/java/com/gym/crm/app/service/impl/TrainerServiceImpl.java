@@ -72,13 +72,13 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Adding trainer with username {}", username);
 
-        Trainer entityToAdd = getTrainerWithUser(trainerDto);
+        Trainer entityToAdd = mapTrainerWithUser(trainerDto);
 
-        trainerRepository.saveTrainer(entityToAdd);
+        Trainer returned =  trainerRepository.saveTrainer(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
 
-        return getTrainerDtoFromEntity(trainerRepository.findByUsername(username).get());
+        return getTrainerDtoFromEntity(returned);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        Trainer entityToUpdate = getTrainerWithUser(trainerDto);
+        Trainer entityToUpdate = mapTrainerWithUser(trainerDto);
 
         trainerRepository.saveTrainer(entityToUpdate);
 
@@ -106,7 +106,7 @@ public class TrainerServiceImpl implements TrainerService {
         logger.info("Trainer {} deleted", username);
     }
 
-    private Trainer getTrainerWithUser(TrainerDto trainerDto) {
+    private Trainer mapTrainerWithUser(TrainerDto trainerDto) {
         User user = User.builder()
                 .username(trainerDto.getUsername())
                 .password(trainerDto.getPassword())

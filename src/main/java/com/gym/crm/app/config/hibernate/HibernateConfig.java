@@ -53,7 +53,6 @@ public class HibernateConfig {
                 .addAnnotatedClass(com.gym.crm.app.domain.model.Training.class)
                 .addAnnotatedClass(com.gym.crm.app.domain.model.TrainingType.class);
 
-
         org.hibernate.boot.Metadata metadata = sources.buildMetadata();
 
         return metadata.buildSessionFactory();

@@ -1,6 +1,5 @@
 package com.gym.crm.app.service.common;
 
-import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;

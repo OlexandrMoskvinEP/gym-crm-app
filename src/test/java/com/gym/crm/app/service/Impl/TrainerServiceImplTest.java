@@ -1,9 +1,7 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.TestData;
-import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -45,16 +43,18 @@ class TrainerServiceImplTest {
     private final ModelMapper modelMapper = new ModelMapper();
     private final List<Trainer> trainers = data.getTrainers();
 
+    @Captor
+    private ArgumentCaptor<Trainer> trainerCaptor;
+
     @Mock
     private TrainerRepository repository;
     @Mock
     private PasswordService passwordService;
-    @InjectMocks
-    private TrainerServiceImpl trainerService;
     @Mock
     private UserProfileService userProfileService;
-    @Captor
-    private ArgumentCaptor<Trainer> trainerCaptor;
+
+    @InjectMocks
+    private TrainerServiceImpl trainerService;
 
     @BeforeEach
     void setUp() {
@@ -97,15 +97,14 @@ class TrainerServiceImplTest {
         expected.setLastName(trainer.getUser().getLastName());
         expected.setActive(trainer.getUser().isActive());
 
-        Trainer EntityToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
+        Trainer entityToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
 
         String username = expected.getFirstName() + "." + expected.getLastName();
 
         when(passwordService.generatePassword()).thenReturn(trainer.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
 
-        when(repository.saveTrainer(any(Trainer.class))).thenReturn(EntityToReturn);
-        when(repository.findByUsername(username)).thenReturn(Optional.of(EntityToReturn));
+        when(repository.saveTrainer(any(Trainer.class))).thenReturn(entityToReturn);
 
         TrainerDto actual = trainerService.addTrainer(expected);
 
@@ -125,7 +124,7 @@ class TrainerServiceImplTest {
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
 
         expected.setActive(false);
-        expected.setSpecialization(new TrainingType(1L,"fakeSport"));
+        expected.setSpecialization(new TrainingType(1L, "fakeSport"));
 
         Trainer trainerToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
         User updatedUser = trainerToReturn.getUser().toBuilder()
@@ -164,6 +163,7 @@ class TrainerServiceImplTest {
     private static Stream<Trainer> getTrainers() {
         return data.getTrainers().stream();
     }
+
     private Trainer mapToEntityWithUserId(Trainer source, Long userId) {
         return source.toBuilder()
                 .id(userId)

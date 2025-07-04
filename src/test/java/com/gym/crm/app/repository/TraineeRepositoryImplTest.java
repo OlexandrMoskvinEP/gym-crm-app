@@ -58,9 +58,10 @@ class TraineeRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-    // @Test
+    @Test
     public void shouldSaveAndReturnSavedTraineeEntity() {
         Trainee trainee = constructTrainee();
+        trainee = trainee.toBuilder().id(1L).build();
 
         Trainee actual = repository.saveTrainee(trainee);
         Trainee savedToStorage = traineeMap.get(trainee.getUser().getUsername());

@@ -42,6 +42,7 @@ public class Trainee {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
+    @Column(name = "address", length = 128)
     private String address;
 
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)

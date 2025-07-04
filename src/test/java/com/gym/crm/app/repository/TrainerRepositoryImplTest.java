@@ -58,9 +58,10 @@ class TrainerRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-
+    @Test
     public void shouldSaveAndReturnSavedTrainerEntity() {
         Trainer trainer = constructTrainer();
+        trainer = trainer.toBuilder().id(1L).build();
 
         Trainer actual = repository.saveTrainer(trainer);
         Trainer savedToStorage = trainerMap.get(trainer.getUser().getUsername());
@@ -88,12 +89,15 @@ class TrainerRepositoryImplTest {
         assertEquals(trainer, actual);
     }
 
-
+    @Test
     void shouldDeleteTrainerByUserName() {
         Trainer trainer = constructTrainer();
+
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("Sophie1.Taylor1"));
+
         repository.saveTrainer(trainer);
 
-        assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+        assertDoesNotThrow(() -> repository.deleteByUserName("Sophie1.Taylor1"));
     }
 
     @Test
@@ -109,9 +113,9 @@ class TrainerRepositoryImplTest {
         return Trainer.builder()
                 .specialization(new TrainingType(23l, "aerobics"))
                 .user(User.builder()
-                        .firstName("Sophie")
-                        .lastName("Taylor")
-                        .username("Sophie.Taylor")
+                        .firstName("Sophie1")
+                        .lastName("Taylor1")
+                        .username("Sophie1.Taylor1")
                         .password("S0ph!e456")
                         .isActive(true)
                         .build())

@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.impl.TrainingServiceImpl;
-import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,12 +42,13 @@ class TrainingServiceImplTest {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
+    @Captor
+    private ArgumentCaptor<Training> trainingCaptor;
     @Mock
     private TrainingRepository repository;
     @InjectMocks
     private TrainingServiceImpl trainingService;
-    @Captor
-    private ArgumentCaptor<Training> trainingCaptor;
+
 
     @BeforeEach
     void setUp() {
@@ -149,14 +149,14 @@ class TrainingServiceImplTest {
         TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
         expected.setTrainingName("fakeTrainingName");
-        expected.setTrainingType(new TrainingType(1l,"fakeTrainingType"));
+        expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
         expected.setTrainingDuration(BigDecimal.valueOf(240));
 
         long trainerId = training.getTrainer().getId();
         long traineeId = training.getTrainee().getId();
         LocalDate trainingDate = training.getTrainingDate();
 
-        when(repository.findByTrainerAndTraineeAndDate( trainerId, traineeId, trainingDate))
+        when(repository.findByTrainerAndTraineeAndDate(trainerId, traineeId, trainingDate))
                 .thenReturn(Optional.of(modelMapper.map(training, Training.class)));
         when(repository.saveTraining(any(Training.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -196,26 +196,29 @@ class TrainingServiceImplTest {
         return data.getIdentities().stream();
     }
 
-    private Training constructTrainingByDate(LocalDate param) {
+    private Training constructTrainingByDate(LocalDate date) {
         return trainings.stream()
-                .filter(training1 -> training1.getTrainingDate().equals(param)).findFirst().get();
+                .filter(training -> training.getTrainingDate().equals(date))
+                .findFirst().get();
     }
 
-    private Training constructTrainingByTraineeId(Long param) {
+    private Training constructTrainingByTraineeId(Long traineeId) {
         return trainings.stream()
-                .filter(training -> training.getTrainee().getId().equals(param)).findFirst().get();
+                .filter(training -> training.getTrainee().getId().equals(traineeId))
+                .findFirst().get();
     }
 
-    private Training constructTrainingByTrainerId(Long param) {
+    private Training constructTrainingByTrainerId(Long trainerId) {
         return trainings.stream()
-                .filter(training -> training.getTrainer().getId().equals(param)).findFirst().get();
+                .filter(training -> training.getTrainer().getId().equals(trainerId))
+                .findFirst().get();
     }
 
     private static Training getTraining(TrainingIdentityDto dto) {
         return trainings.stream()
-                .filter(t -> t.getTrainer().getId().equals(dto.getTrainerId()))
-                .filter(t -> t.getTrainee().getId().equals(dto.getTraineeId()))
-                .filter(t -> t.getTrainingDate().equals(dto.getTrainingDate()))
+                .filter(training -> training.getTrainer().getId().equals(dto.getTrainerId()))
+                .filter(training -> training.getTrainee().getId().equals(dto.getTraineeId()))
+                .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
     }
 

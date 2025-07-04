@@ -23,6 +23,6 @@ public class TrainingType {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "training_type_name")
+    @Column(name = "training_type_name", length = 32)
     private String trainingTypeName;
 }

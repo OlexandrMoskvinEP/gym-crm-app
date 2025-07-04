@@ -24,7 +24,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     private Map<String, Trainee> traineeStorage;
 
-
     @Autowired
     public void setTraineeStorage(CommonStorage commonStorage) {
         this.traineeStorage = commonStorage.getTraineeStorage();
@@ -40,7 +39,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         String key = trainee.getUser().getUsername();
 
         if (traineeStorage.containsKey(key)) {
-           throw new DuplicateUsernameException("Entity already exists!");
+            throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainee traineeWithId = trainee.toBuilder()
