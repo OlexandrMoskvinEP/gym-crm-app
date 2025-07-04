@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface TrainingService {
     List<TrainingDto> getAllTrainings();
 
-    List<TrainingDto> getTrainingByTrainerId(int trainerId);
+    List<TrainingDto> getTrainingByTrainerId(Long trainerId);
 
-    List<TrainingDto> getTrainingByTraineeId(int trainerId);
+   List<TrainingDto> getTrainingByTraineeId(Long traineeId);
 
     List<TrainingDto> getTrainingByDate(LocalDate date);
 

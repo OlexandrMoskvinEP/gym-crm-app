@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +68,9 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.createUsername(traineeDto.getFirstName(), traineeDto.getLastName());
         String password = passwordService.generatePassword();
 
+        traineeDto.setPassword(password);
+        traineeDto.setUsername(username);
+
         logger.info("Adding trainee with username {}", username);
 
         Trainee entityToAdd = getTraineeWithUser(traineeDto);
@@ -75,7 +79,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         logger.info("Trainee {} successfully added", username);
 
-        return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
+        return getTraineeDtoFromEntity(traineeRepository.findByUsername(username).get());
     }
 
     @Override
@@ -106,6 +110,7 @@ public class TraineeServiceImpl implements TraineeService {
     private Trainee getTraineeWithUser(TraineeDto traineeDto) {
         User user = User.builder()
                 .username(traineeDto.getUsername())
+                .password(traineeDto.getPassword())
                 .isActive(traineeDto.isActive())
                 .firstName(traineeDto.getFirstName())
                 .lastName(traineeDto.getLastName())
@@ -116,5 +121,16 @@ public class TraineeServiceImpl implements TraineeService {
                 .address(traineeDto.getAddress())
                 .user(user)
                 .build();
+    }
+    private TraineeDto getTraineeDtoFromEntity(Trainee trainee){
+        return new TraineeDto(trainee.getUser().getFirstName(),
+                trainee.getUser().getLastName(),
+                trainee.getUser().getUsername(),
+                trainee.getUser().getPassword(),
+                trainee.getUser().isActive(),
+                trainee.getDateOfBirth(),
+                trainee.getAddress(),
+                trainee.getId()
+                );
     }
 }

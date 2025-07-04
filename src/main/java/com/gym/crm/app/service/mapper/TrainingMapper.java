@@ -14,7 +14,7 @@ public class TrainingMapper {
                 .trainee(source.getTrainee())
                 .trainingDate(source.getTrainingDate())
                 .trainingType(source.getTrainingType())
-                .trainingDuration(BigDecimal.valueOf(source.getTrainingDuration()))
+                .trainingDuration(source.getTrainingDuration())
                 .trainingName(source.getTrainingName())
                 .build();
     }

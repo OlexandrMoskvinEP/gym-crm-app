@@ -58,7 +58,7 @@ class TraineeRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-   // @Test
+    // @Test
     public void shouldSaveAndReturnSavedTraineeEntity() {
         Trainee trainee = constructTrainee();
 
@@ -77,10 +77,10 @@ class TraineeRepositoryImplTest {
         assertThrows(DuplicateUsernameException.class, () -> repository.saveTrainee(trainee));
     }
 
-//    @ParameterizedTest
-//    @MethodSource("getTrainees")
+    @ParameterizedTest
+    @MethodSource("getTrainees")
     void shouldFindByUsername(Trainee trainee) {
-        String username = trainee.getAddress();
+        String username = trainee.getUser().getUsername();
 
         Trainee actual = repository.findByUsername(username).get();
 
@@ -88,13 +88,15 @@ class TraineeRepositoryImplTest {
         assertEquals(trainee, actual);
     }
 
-//    @Test
+    @Test
     void shouldDeleteTraineeByUserName() {
         Trainee trainee = constructTrainee();
 
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
+
         repository.saveTrainee(trainee);
 
-        assertDoesNotThrow(() -> repository.deleteByUserName("John.Dou"));
+        assertDoesNotThrow(() -> repository.deleteByUserName("Alice.Moro"));
     }
 
     @Test
@@ -112,8 +114,8 @@ class TraineeRepositoryImplTest {
                 .address("Main Street")
                 .user(User.builder()
                         .firstName("Alice")
-                        .lastName("Smith")
-                        .username("Alice.Smith")
+                        .lastName("Moro")
+                        .username("Alice.Moro")
                         .password("Abc123!@#")
                         .isActive(true)
                         .build())

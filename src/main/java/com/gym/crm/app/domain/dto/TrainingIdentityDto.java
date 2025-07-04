@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainingIdentityDto {
-    private int trainerId;
-    private int traineeId;
+    private Long trainerId;
+    private Long traineeId;
     private LocalDate trainingDate;
 }

@@ -1,8 +1,6 @@
 package com.gym.crm.app.service.impl;
 
-import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -69,6 +67,9 @@ public class TrainerServiceImpl implements TrainerService {
         String username = userProfileService.createUsername(trainerDto.getFirstName(), trainerDto.getLastName());
         String password = passwordService.generatePassword();
 
+        trainerDto.setPassword(password);
+        trainerDto.setUsername(username);
+
         logger.info("Adding trainer with username {}", username);
 
         Trainer entityToAdd = getTrainerWithUser(trainerDto);
@@ -77,7 +78,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Trainer {} successfully added", username);
 
-        return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
+        return getTrainerDtoFromEntity(trainerRepository.findByUsername(username).get());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-       Trainer entityToUpdate = getTrainerWithUser(trainerDto);
+        Trainer entityToUpdate = getTrainerWithUser(trainerDto);
 
         trainerRepository.saveTrainer(entityToUpdate);
 
@@ -108,6 +109,7 @@ public class TrainerServiceImpl implements TrainerService {
     private Trainer getTrainerWithUser(TrainerDto trainerDto) {
         User user = User.builder()
                 .username(trainerDto.getUsername())
+                .password(trainerDto.getPassword())
                 .isActive(trainerDto.isActive())
                 .firstName(trainerDto.getFirstName())
                 .lastName(trainerDto.getLastName())
@@ -117,5 +119,16 @@ public class TrainerServiceImpl implements TrainerService {
                 .specialization(trainerDto.getSpecialization())
                 .user(user)
                 .build();
+    }
+
+    private TrainerDto getTrainerDtoFromEntity(Trainer trainer) {
+        return new TrainerDto(trainer.getUser().getFirstName(),
+                trainer.getUser().getLastName(),
+                trainer.getUser().getUsername(),
+                trainer.getUser().getPassword(),
+                trainer.getUser().isActive(),
+                trainer.getSpecialization(),
+                trainer.getId()
+        );
     }
 }

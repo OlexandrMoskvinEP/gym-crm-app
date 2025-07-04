@@ -1,9 +1,14 @@
 package com.gym.crm.app.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class TraineeDto {
     private String firstName;
@@ -13,5 +18,5 @@ public class TraineeDto {
     private boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
-    private int userId;
+    private Long userId;
 }

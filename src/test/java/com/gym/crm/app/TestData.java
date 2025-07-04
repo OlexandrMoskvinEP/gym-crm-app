@@ -136,34 +136,63 @@ public class TestData {
 
 
     List<Training> trainings = List.of(
-            Training.builder().id(321l).id(654l).trainingName("Pokatushka")
-                    .trainingType(new TrainingType(1l, "Cycling"))
-                    .trainingDate(LocalDate.of(2025, 6, 28)).trainingDuration(BigDecimal.valueOf(120))
+            Training.builder()
+                    .id(1L)
+                    .trainingName("Pokatushka")
+                    .trainer(Trainer.builder().id(321L).build())
+                    .trainee(Trainee.builder().id(654L).build())
+                    .trainingType(new TrainingType(1L, "Cycling"))
+                    .trainingDate(LocalDate.of(2025, 6, 28))
+                    .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
-            Training.builder().id(204l).id(121l).trainingName("Morning Yoga")
-                    .trainingType(new TrainingType(2l, "Yoga"))
-                    .trainingDate(LocalDate.of(2025, 6, 27)).trainingDuration(BigDecimal.valueOf(60))
+
+            Training.builder()
+                    .id(2L)
+                    .trainingName("Morning Yoga")
+                    .trainer(Trainer.builder().id(204L).build())
+                    .trainee(Trainee.builder().id(121L).build())
+                    .trainingType(new TrainingType(2L, "Yoga"))
+                    .trainingDate(LocalDate.of(2025, 6, 27))
+                    .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
-            Training.builder().id(205l).id(122l).trainingName("CrossFit Blast")
-                    .trainingType(new TrainingType(3l, "CrossFit"))
-                    .trainingDate(LocalDate.of(2025, 6, 26)).trainingDuration(BigDecimal.valueOf(75))
+
+            Training.builder()
+                    .id(3L)
+                    .trainingName("CrossFit Blast")
+                    .trainer(Trainer.builder().id(205L).build())
+                    .trainee(Trainee.builder().id(122L).build())
+                    .trainingType(new TrainingType(3L, "CrossFit"))
+                    .trainingDate(LocalDate.of(2025, 6, 26))
+                    .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
-            Training.builder().id(206l).id(123l).trainingName("Pilates Session")
-                    .trainingType(new TrainingType(4l, "Pilates"))
-                    .trainingDate(LocalDate.of(2025, 6, 25)).trainingDuration(BigDecimal.valueOf(50))
+
+            Training.builder()
+                    .id(4L)
+                    .trainingName("Pilates Session")
+                    .trainer(Trainer.builder().id(206L).build())
+                    .trainee(Trainee.builder().id(123L).build())
+                    .trainingType(new TrainingType(4L, "Pilates"))
+                    .trainingDate(LocalDate.of(2025, 6, 25))
+                    .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
-            Training.builder().id(207l).id(124l).trainingName("Boxing Drills")
-                    .trainingType(new TrainingType(5l, "Boxing"))
-                    .trainingDate(LocalDate.of(2025, 6, 24)).trainingDuration(BigDecimal.valueOf(90))
+
+            Training.builder()
+                    .id(5L)
+                    .trainingName("Boxing Drills")
+                    .trainer(Trainer.builder().id(207L).build())
+                    .trainee(Trainee.builder().id(124L).build())
+                    .trainingType(new TrainingType(5L, "Boxing"))
+                    .trainingDate(LocalDate.of(2025, 6, 24))
+                    .trainingDuration(BigDecimal.valueOf(90))
                     .build()
     );
 
     List<TrainingIdentityDto> identities = List.of(
-            new TrainingIdentityDto(321, 654, LocalDate.of(2025, 6, 28)),
-            new TrainingIdentityDto(204, 121, LocalDate.of(2025, 6, 27)),
-            new TrainingIdentityDto(205, 122, LocalDate.of(2025, 6, 26)),
-            new TrainingIdentityDto(206, 123, LocalDate.of(2025, 6, 25)),
-            new TrainingIdentityDto(207, 124, LocalDate.of(2025, 6, 24))
+            new TrainingIdentityDto(321L, 654L, LocalDate.of(2025, 6, 28)),
+            new TrainingIdentityDto(204L, 121L, LocalDate.of(2025, 6, 27)),
+            new TrainingIdentityDto(205L, 122L, LocalDate.of(2025, 6, 26)),
+            new TrainingIdentityDto(206L, 123L, LocalDate.of(2025, 6, 25)),
+            new TrainingIdentityDto(207L, 124L, LocalDate.of(2025, 6, 24))
     );
 
     Map<String, Trainer> TRAINER_STORAGE = Map.of(
@@ -289,44 +318,54 @@ public class TestData {
 
     Map<String, Training> TRAINING_STORAGE = Map.of(
             "321_654_2025-06-28", Training.builder()
-                    .id(321l)
-                    .id(654l)
+                    .id(1L)
+                    .trainer(Trainer.builder().id(321L).build())
+                    .trainee(Trainee.builder().id(654L).build())
                     .trainingName("Pokatushka")
-                    .trainingType(new TrainingType(1l, "Cycling"))
+                    .trainingType(new TrainingType(1L, "Cycling"))
                     .trainingDate(LocalDate.of(2025, 6, 28))
                     .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
+
             "204_121_2025-06-27", Training.builder()
-                    .id(204l)
-                    .id(121l)
+                    .id(2L)
+                    .trainer(Trainer.builder().id(204L).build())
+                    .trainee(Trainee.builder().id(121L).build())
                     .trainingName("Morning Yoga")
-                    .trainingType(new TrainingType(2l, "Yoga"))
+                    .trainingType(new TrainingType(2L, "Yoga"))
                     .trainingDate(LocalDate.of(2025, 6, 27))
                     .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
+
             "205_122_2025-06-26", Training.builder()
-                    .id(205l)
-                    .id(122l)
+                    .id(3L)
+                    .trainer(Trainer.builder().id(205L).build())
+                    .trainee(Trainee.builder().id(122L).build())
                     .trainingName("CrossFit Blast")
-                    .trainingType(new TrainingType(3l, "CrossFit"))
+                    .trainingType(new TrainingType(3L, "CrossFit"))
                     .trainingDate(LocalDate.of(2025, 6, 26))
                     .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
+
             "206_123_2025-06-25", Training.builder()
-                    .id(206l)
-                    .id(123l)
+                    .id(4L)
+                    .trainer(Trainer.builder().id(206L).build())
+                    .trainee(Trainee.builder().id(123L).build())
                     .trainingName("Pilates Session")
-                    .trainingType(new TrainingType(4l, "Pilates"))
+                    .trainingType(new TrainingType(4L, "Pilates"))
                     .trainingDate(LocalDate.of(2025, 6, 25))
                     .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
+
             "207_124_2025-06-24", Training.builder()
-                    .id(207l)
-                    .id(124l)
+                    .id(5L)
+                    .trainer(Trainer.builder().id(207L).build())
+                    .trainee(Trainee.builder().id(124L).build())
                     .trainingName("Boxing Drills")
-                    .trainingType(new TrainingType(5l, "Boxing"))
+                    .trainingType(new TrainingType(5L, "Boxing"))
                     .trainingDate(LocalDate.of(2025, 6, 24))
                     .trainingDuration(BigDecimal.valueOf(90))
                     .build()
     );
+
 }

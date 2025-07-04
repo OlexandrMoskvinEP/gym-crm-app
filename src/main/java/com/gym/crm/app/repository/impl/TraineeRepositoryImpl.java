@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
     private static final Logger logger = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
 
-    private final AtomicInteger traineeCounter = new AtomicInteger(1);
+    private final AtomicLong traineeCounter = new AtomicLong(1);
 
     private Map<String, Trainee> traineeStorage;
 
@@ -44,7 +44,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         }
 
         Trainee traineeWithId = trainee.toBuilder()
-                .id((long) traineeCounter.getAndIncrement())
+                .id(traineeCounter.getAndIncrement())
                 .build();
 
         traineeStorage.put(key, traineeWithId);

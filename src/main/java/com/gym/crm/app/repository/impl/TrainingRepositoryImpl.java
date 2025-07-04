@@ -34,16 +34,16 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public List<Training> findByTrainerId(int trainerId) {
+    public List<Training> findByTrainerId(Long trainerId) {
         return findAll().stream()
-                .filter(t -> t.getId() == trainerId)
+                .filter(t -> t.getId().equals(trainerId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Training> findByTraineeId(int traineeId) {
+    public List<Training> findByTraineeId(Long traineeId) {
         return findAll().stream()
-                .filter(t -> t.getId() == traineeId)
+                .filter(t -> t.getId().equals(traineeId))
                 .collect(Collectors.toList());
     }
 
@@ -55,26 +55,32 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
+    public Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
         return findAll().stream()
-                .filter(t -> t.getId() == trainerId)
-                .filter(t -> t.getId() == traineeId)
+                .filter(t -> t.getTrainer().getId().equals(trainerId))
+                .filter(t -> t.getTrainee().getId().equals(traineeId))
                 .filter(t -> t.getTrainingDate().equals(date))
                 .findFirst();
     }
 
     @Override
     public Training saveTraining(Training training) {
-       String key = training.getId() + training.getId() + training.getTrainingDate().toString();
+        String key = String.format("%d_%d_%s",
+                training.getTrainer().getId(),
+                training.getTrainee().getId(),
+                training.getTrainingDate());
 
+        if (trainingStorage.containsKey(key)) {
+            throw new DuplicateUsernameException("Entity already exists!");
+        }
         trainingStorage.put(key, training);
 
         return trainingStorage.get(key);
     }
 
     @Override
-    public void deleteByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
-        String key = trainerId + traineeId + date.toString();
+    public void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
+        String key = trainerId + "_" + traineeId + "_" + date.toString();
 
         if (!trainingStorage.containsKey(key)) {
             throw new EntityNotFoundException("Unable to delete training!");

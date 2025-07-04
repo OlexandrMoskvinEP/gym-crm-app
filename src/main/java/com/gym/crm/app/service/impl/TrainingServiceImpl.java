@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +43,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTrainerId(int trainerId) {
+    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
         List<Training> trainings = trainingRepository.findByTrainerId(trainerId);
 
         if (trainings.isEmpty()) {
@@ -57,7 +56,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTrainingByTraineeId(int traineeId) {
+    public List<TrainingDto> getTrainingByTraineeId(Long traineeId) {
         List<Training> trainings = trainingRepository.findByTraineeId(traineeId);
 
         if (trainings.isEmpty()) {
@@ -105,10 +104,10 @@ public class TrainingServiceImpl implements TrainingService {
         logger.info("Training successfully added for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
 
-        return modelMapper.map(persistedTraining, TrainingDto.class);
+        return getTrainingDtoFromEntity(persistedTraining);
     }
 
-    @Override
+   @Override
     public TrainingDto updateTraining(TrainingDto trainingDto) {
         Training existing = trainingRepository.findByTrainerAndTraineeAndDate(
                         trainingDto.getTrainerId(),
@@ -118,7 +117,7 @@ public class TrainingServiceImpl implements TrainingService {
 
         Training updated = Training.builder()
                 .trainingDate(existing.getTrainingDate())
-                .trainingDuration(BigDecimal.valueOf(trainingDto.getTrainingDuration()))
+                .trainingDuration(trainingDto.getTrainingDuration())
                 .trainingName(trainingDto.getTrainingName())
                 .trainingType(trainingDto.getTrainingType())
                 .trainee(existing.getTrainee())
@@ -145,5 +144,14 @@ public class TrainingServiceImpl implements TrainingService {
 
         logger.info("Training for trainer {} and trainee {} on {} deleted",
                 identityDto.getTrainerId(), identityDto.getTraineeId(), identityDto.getTrainingDate());
+    }
+
+    private TrainingDto getTrainingDtoFromEntity(Training training) {
+        return new TrainingDto(training.getTrainer().getId(),
+                training.getTrainee().getId(),
+                training.getTrainingName(),
+                training.getTrainingType(),
+                training.getTrainingDate(),
+                training.getTrainingDuration());
     }
 }

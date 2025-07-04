@@ -32,6 +32,15 @@ public class Training {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "training_name", nullable = false)
+    private String trainingName;
+
+    @Column(name = "training_Date")
+    private LocalDate trainingDate;
+
+    @Column(name = "training_Duration")
+    private BigDecimal trainingDuration;
+
     @ManyToOne
     @JoinColumn(name = "trainer_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_training_trainer"))
     private Trainer trainer;
@@ -40,16 +49,7 @@ public class Training {
     @JoinColumn(name = "trainee_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_training_trainee"))
     private Trainee trainee;
 
-    @Column(name = "training_name", nullable = false)
-    private String trainingName;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "training_type_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_training_training_type"))
     private TrainingType trainingType;
-
-    @Column(name = "training_Date")
-    private LocalDate trainingDate;
-
-    @Column(name = "training_Duration")
-    private BigDecimal trainingDuration;
 }
