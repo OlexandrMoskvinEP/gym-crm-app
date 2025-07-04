@@ -2,7 +2,6 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
@@ -70,19 +69,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         logger.info("Adding trainee with username {}", username);
 
-        User user = User.builder()
-                .username(username)
-                .password(password)
-                .isActive(traineeDto.isActive())
-                .firstName(traineeDto.getFirstName())
-                .lastName(traineeDto.getLastName())
-                .build();
-
-        Trainee entityToAdd = Trainee.builder()
-                .dateOfBirth(traineeDto.getDateOfBirth())
-                .address(traineeDto.getAddress())
-                .user(user)
-                .build();
+        Trainee entityToAdd = getTraineeWithUser(traineeDto);
 
         traineeRepository.saveTrainee(entityToAdd);
 
@@ -96,18 +83,7 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee existing = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        User user = User.builder()
-                .username(username)
-                .isActive(traineeDto.isActive())
-                .firstName(traineeDto.getFirstName())
-                .lastName(traineeDto.getLastName())
-                .build();
-
-        Trainee entityToUpdate = Trainee.builder()
-                .dateOfBirth(traineeDto.getDateOfBirth())
-                .address(traineeDto.getAddress())
-                .user(user)
-                .build();
+        Trainee entityToUpdate = getTraineeWithUser(traineeDto);
 
         traineeRepository.saveTrainee(entityToUpdate);
 
@@ -125,5 +101,20 @@ public class TraineeServiceImpl implements TraineeService {
         traineeRepository.deleteByUserName(username);
 
         logger.info("Trainee {} deleted", username);
+    }
+
+    private Trainee getTraineeWithUser(TraineeDto traineeDto) {
+        User user = User.builder()
+                .username(traineeDto.getUsername())
+                .isActive(traineeDto.isActive())
+                .firstName(traineeDto.getFirstName())
+                .lastName(traineeDto.getLastName())
+                .build();
+
+        return Trainee.builder()
+                .dateOfBirth(traineeDto.getDateOfBirth())
+                .address(traineeDto.getAddress())
+                .user(user)
+                .build();
     }
 }

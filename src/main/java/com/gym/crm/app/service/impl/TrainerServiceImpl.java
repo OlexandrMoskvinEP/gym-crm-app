@@ -1,6 +1,8 @@
 package com.gym.crm.app.service.impl;
 
+import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -69,18 +71,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Adding trainer with username {}", username);
 
-        User user = User.builder()
-                .firstName(trainerDto.getFirstName())
-                .lastName(trainerDto.getLastName())
-                .username(username)
-                .password(password)
-                .isActive(trainerDto.isActive())
-                .build();
-
-        Trainer entityToAdd = Trainer.builder()
-                .specialization(trainerDto.getSpecialization())
-                .user(user)
-                .build();
+        Trainer entityToAdd = getTrainerWithUser(trainerDto);
 
         trainerRepository.saveTrainer(entityToAdd);
 
@@ -94,17 +85,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        User user = User.builder()
-                .firstName(trainerDto.getFirstName())
-                .lastName(trainerDto.getLastName())
-                .username(username)
-                .isActive(trainerDto.isActive())
-                .build();
-
-        Trainer entityToUpdate = Trainer.builder()
-                .specialization(trainerDto.getSpecialization())
-                .user(user)
-                .build();
+       Trainer entityToUpdate = getTrainerWithUser(trainerDto);
 
         trainerRepository.saveTrainer(entityToUpdate);
 
@@ -122,5 +103,19 @@ public class TrainerServiceImpl implements TrainerService {
         trainerRepository.deleteByUserName(username);
 
         logger.info("Trainer {} deleted", username);
+    }
+
+    private Trainer getTrainerWithUser(TrainerDto trainerDto) {
+        User user = User.builder()
+                .username(trainerDto.getUsername())
+                .isActive(trainerDto.isActive())
+                .firstName(trainerDto.getFirstName())
+                .lastName(trainerDto.getLastName())
+                .build();
+
+        return Trainer.builder()
+                .specialization(trainerDto.getSpecialization())
+                .user(user)
+                .build();
     }
 }

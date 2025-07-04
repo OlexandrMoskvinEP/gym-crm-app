@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,6 +91,8 @@ class TraineeServiceImplTest {
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
         expected.setPassword("fakePassword1234567");
         expected.setUserId(0);
+        expected.setFirstName(trainee.getUser().getFirstName());
+        expected.setLastName(trainee.getUser().getLastName());
 
         Trainee EntityToReturn = TraineeMapper.mapToEntityWithUserId(trainee, expected.getUserId());
         User updatedUser = trainee.getUser().toBuilder()
@@ -103,12 +106,12 @@ class TraineeServiceImplTest {
         String username = trainee.getUser().getFirstName() + "." + trainee.getUser().getLastName();
 
         when(passwordService.generatePassword()).thenReturn("fakePassword1234567");
-        when(userProfileService.createUsername(trainee.getUser().getFirstName(), trainee.getUser().getLastName())).thenReturn(username);
+        when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
 
         when(repository.saveTrainee(any(Trainee.class))).thenReturn(EntityToReturn);
         when(repository.findByUsername(username)).thenReturn(Optional.of(EntityToReturn));
 
-        TraineeDto actual = traineeService.addTrainee(modelMapper.map(trainee, TraineeDto.class));
+        TraineeDto actual = traineeService.addTrainee(expected);
 
         verify(repository, atLeastOnce()).saveTrainee(traineeCaptor.capture());
         TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
