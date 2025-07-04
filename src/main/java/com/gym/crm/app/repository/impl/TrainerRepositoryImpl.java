@@ -36,14 +36,14 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer saveTrainer(Trainer trainer) {
-        String key = trainer.getUsername();
+        String key = trainer.getUser().getUsername();
 
         if (trainerStorage.containsKey(key)) {
             throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainer trainerWithId = trainer.toBuilder()
-                .userId(trainerCounter.getAndIncrement())
+                .id((long) trainerCounter.getAndIncrement())
                 .build();
 
         trainerStorage.put(key, trainerWithId);

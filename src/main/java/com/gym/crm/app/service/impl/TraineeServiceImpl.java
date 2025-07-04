@@ -2,6 +2,8 @@ package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.TraineeService;
@@ -68,14 +70,18 @@ public class TraineeServiceImpl implements TraineeService {
 
         logger.info("Adding trainee with username {}", username);
 
-        Trainee entityToAdd = Trainee.builder()
-                .firstName(traineeDto.getFirstName())
-                .lastName(traineeDto.getLastName())
+        User user = User.builder()
                 .username(username)
                 .password(password)
                 .isActive(traineeDto.isActive())
+                .firstName(traineeDto.getFirstName())
+                .lastName(traineeDto.getLastName())
+                .build();
+
+        Trainee entityToAdd = Trainee.builder()
                 .dateOfBirth(traineeDto.getDateOfBirth())
                 .address(traineeDto.getAddress())
+                .user(user)
                 .build();
 
         traineeRepository.saveTrainee(entityToAdd);
@@ -90,15 +96,17 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee existing = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        Trainee entityToUpdate = Trainee.builder()
-                .firstName(existing.getFirstName())
-                .lastName(existing.getLastName())
-                .username(existing.getUsername())
-                .password(existing.getPassword())
-                .userId(existing.getUserId())
+        User user = User.builder()
+                .username(username)
                 .isActive(traineeDto.isActive())
-                .address(traineeDto.getAddress())
+                .firstName(traineeDto.getFirstName())
+                .lastName(traineeDto.getLastName())
+                .build();
+
+        Trainee entityToUpdate = Trainee.builder()
                 .dateOfBirth(traineeDto.getDateOfBirth())
+                .address(traineeDto.getAddress())
+                .user(user)
                 .build();
 
         traineeRepository.saveTrainee(entityToUpdate);

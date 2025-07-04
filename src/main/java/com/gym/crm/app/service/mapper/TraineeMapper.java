@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class TraineeMapper {
     public static Trainee mapToEntityWithUserId(Trainee source, int userId) {
         return source.toBuilder()
-                .userId(userId)
+                .id((long) userId)
                 .build();
     }
 }

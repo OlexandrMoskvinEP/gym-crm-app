@@ -39,9 +39,9 @@ public class UserProfileService {
 
     private List<String> retrieveAllUsernames() {
         Stream<String> traineeUsernames = traineeRepository.findAll().stream()
-                .map(User::getUsername);
+                .map(trainee -> trainee.getUser().getUsername());
         Stream<String> trainerUsernames = trainerRepository.findAll().stream()
-                .map(User::getUsername);
+                .map(trainee -> trainee.getUser().getUsername());
 
         return Stream.concat(traineeUsernames, trainerUsernames).toList();
     }

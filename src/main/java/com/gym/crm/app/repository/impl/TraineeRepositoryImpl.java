@@ -37,14 +37,14 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Trainee saveTrainee(Trainee trainee) {
-        String key = trainee.getUsername();
+        String key = trainee.getUser().getUsername();
 
         if (traineeStorage.containsKey(key)) {
            throw new DuplicateUsernameException("Entity already exists!");
         }
 
         Trainee traineeWithId = trainee.toBuilder()
-                .userId(traineeCounter.getAndIncrement())
+                .id((long) traineeCounter.getAndIncrement())
                 .build();
 
         traineeStorage.put(key, traineeWithId);

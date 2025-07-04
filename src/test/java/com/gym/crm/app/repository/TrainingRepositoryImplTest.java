@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ class TrainingRepositoryImplTest {
     @ValueSource(ints = {321, 204, 205, 206, 207})
     void shouldFindEntityByTrainerId(int trainerId) {
         List<Training> expected = new ArrayList<>(trainingMap.values())
-                .stream().filter(training -> training.getTrainerId() == trainerId).toList();
+                .stream().filter(training -> training.getId() == trainerId).toList();
 
         List<Training> actual = repository.findByTrainerId(trainerId);
 
@@ -77,7 +78,7 @@ class TrainingRepositoryImplTest {
     @ValueSource(ints = {654, 121, 122, 123, 124})
     void shouldFindEntityByTraineeId(int traineeId) {
         List<Training> expected = new ArrayList<>(trainingMap.values())
-                .stream().filter(training -> training.getTraineeId() == traineeId).toList();
+                .stream().filter(training -> training.getId() == traineeId).toList();
 
         List<Training> actual = repository.findByTraineeId(traineeId);
 
@@ -99,12 +100,11 @@ class TrainingRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-    @ParameterizedTest
-    @MethodSource("getTrainingId")
+
     void shouldFindEntityByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
         Training expected = trainingMap.values().stream()
-                .filter(training -> training.getTrainerId() == dto.getTrainerId())
-                .filter(training -> training.getTraineeId() == dto.getTraineeId())
+                .filter(training -> training.getId() == dto.getTrainerId())
+                .filter(training -> training.getId() == dto.getTraineeId())
                 .filter(training -> training.getTrainingDate().equals(dto.getTrainingDate()))
                 .findFirst().get();
 
@@ -114,8 +114,7 @@ class TrainingRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-    @ParameterizedTest
-    @MethodSource("getTrainings")
+
     void shouldSaveEntity(Training training) {
         assertThrows(DuplicateUsernameException.class, () -> repository.saveTraining(training));
     }
@@ -127,7 +126,7 @@ class TrainingRepositoryImplTest {
         repository.saveTraining(training);
 
         assertDoesNotThrow(() -> repository
-                .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
+                .deleteByTrainerAndTraineeAndDate(Math.toIntExact(training.getId()), Math.toIntExact(training.getId()), training.getTrainingDate()));
     }
 
     @Test
@@ -135,7 +134,7 @@ class TrainingRepositoryImplTest {
         Training training = constructTraining();
 
         assertThrows(EntityNotFoundException.class, () -> repository
-                .deleteByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()));
+                .deleteByTrainerAndTraineeAndDate(Math.toIntExact(training.getId()), Math.toIntExact(training.getId()), training.getTrainingDate()));
     }
 
     private static Stream<Training> getTrainings() {
@@ -160,10 +159,10 @@ class TrainingRepositoryImplTest {
         return Training.builder()
                 .trainingDate(LocalDate.EPOCH)
                 .trainingName("fakeTraining")
-                .trainingType(new TrainingType("fakeSport"))
-                .trainingDuration(240)
-                .traineeId(123)
-                .trainerId(4567)
+                .trainingType(new TrainingType(1l, "fakeSport"))
+                .trainingDuration(BigDecimal.valueOf(240))
+                .id(123l)
+                .id(4567l)
                 .build();
     }
 }

@@ -4,15 +4,17 @@ import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.model.Training;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class TrainingMapper {
     public static Training mapDtoToEntity(TrainingDto source) {
         return Training.builder()
-                .trainerId(source.getTrainerId())
-                .traineeId(source.getTraineeId())
+                .trainer(source.getTrainer())
+                .trainee(source.getTrainee())
                 .trainingDate(source.getTrainingDate())
                 .trainingType(source.getTrainingType())
-                .trainingDuration(source.getTrainingDuration())
+                .trainingDuration(BigDecimal.valueOf(source.getTrainingDuration()))
                 .trainingName(source.getTrainingName())
                 .build();
     }

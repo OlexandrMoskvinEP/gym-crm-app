@@ -36,14 +36,14 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public List<Training> findByTrainerId(int trainerId) {
         return findAll().stream()
-                .filter(t -> t.getTrainerId() == trainerId)
+                .filter(t -> t.getId() == trainerId)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Training> findByTraineeId(int traineeId) {
         return findAll().stream()
-                .filter(t -> t.getTraineeId() == traineeId)
+                .filter(t -> t.getId() == traineeId)
                 .collect(Collectors.toList());
     }
 
@@ -57,19 +57,15 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Optional<Training> findByTrainerAndTraineeAndDate(int trainerId, int traineeId, LocalDate date) {
         return findAll().stream()
-                .filter(t -> t.getTrainerId() == trainerId)
-                .filter(t -> t.getTraineeId() == traineeId)
+                .filter(t -> t.getId() == trainerId)
+                .filter(t -> t.getId() == traineeId)
                 .filter(t -> t.getTrainingDate().equals(date))
                 .findFirst();
     }
 
     @Override
     public Training saveTraining(Training training) {
-        if (!findByTrainerAndTraineeAndDate(training.getTrainerId(), training.getTraineeId(), training.getTrainingDate()).isEmpty()) {
-            throw new DuplicateUsernameException("Entity already exists!");
-        }
-
-        String key = training.getTrainerId() + training.getTraineeId() + training.getTrainingDate().toString();
+       String key = training.getId() + training.getId() + training.getTrainingDate().toString();
 
         trainingStorage.put(key, training);
 

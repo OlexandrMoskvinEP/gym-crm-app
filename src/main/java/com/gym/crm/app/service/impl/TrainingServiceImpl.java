@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -117,17 +118,17 @@ public class TrainingServiceImpl implements TrainingService {
 
         Training updated = Training.builder()
                 .trainingDate(existing.getTrainingDate())
-                .trainingDuration(trainingDto.getTrainingDuration())
+                .trainingDuration(BigDecimal.valueOf(trainingDto.getTrainingDuration()))
                 .trainingName(trainingDto.getTrainingName())
                 .trainingType(trainingDto.getTrainingType())
-                .traineeId(existing.getTraineeId())
-                .trainerId(existing.getTrainerId())
+                .trainee(existing.getTrainee())
+                .trainer(existing.getTrainer())
                 .build();
 
         trainingRepository.saveTraining(updated);
 
         logger.info("Training for trainer {} and trainee {} on {} updated",
-                updated.getTrainerId(), updated.getTraineeId(), updated.getTrainingDate());
+                updated.getTrainer(), updated.getTrainee(), updated.getTrainingDate());
 
         return modelMapper.map(updated, TrainingDto.class);
     }

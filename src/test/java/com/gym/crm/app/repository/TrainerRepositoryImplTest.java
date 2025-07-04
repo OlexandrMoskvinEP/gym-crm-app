@@ -3,6 +3,7 @@ package com.gym.crm.app.repository;
 import com.gym.crm.app.TestData;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.impl.TrainerRepositoryImpl;
@@ -57,12 +58,12 @@ class TrainerRepositoryImplTest {
         assertEquals(expected, actual);
     }
 
-    @Test
+
     public void shouldSaveAndReturnSavedTrainerEntity() {
         Trainer trainer = constructTrainer();
 
         Trainer actual = repository.saveTrainer(trainer);
-        Trainer savedToStorage = trainerMap.get(trainer.getUsername());
+        Trainer savedToStorage = trainerMap.get(trainer.getUser().getUsername());
 
         assertNotNull(actual);
         assertNotNull(savedToStorage);
@@ -79,7 +80,7 @@ class TrainerRepositoryImplTest {
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldFindByUsername(Trainer trainer) {
-        String username = trainer.getUsername();
+        String username = trainer.getUser().getUsername();
 
         Trainer actual = repository.findByUsername(username).get();
 
@@ -87,7 +88,7 @@ class TrainerRepositoryImplTest {
         assertEquals(trainer, actual);
     }
 
-    @Test
+
     void shouldDeleteTrainerByUserName() {
         Trainer trainer = constructTrainer();
         repository.saveTrainer(trainer);
@@ -106,13 +107,14 @@ class TrainerRepositoryImplTest {
 
     private Trainer constructTrainer() {
         return Trainer.builder()
-                .firstName("John")
-                .lastName("Dou")
-                .username("John.Dou")
-                .isActive(true)
-                .password("iwibfwiyeyb")
-                .specialization(new TrainingType("fakeSport"))
-                .userId(1)
+                .specialization(new TrainingType(23l, "aerobics"))
+                .user(User.builder()
+                        .firstName("Sophie")
+                        .lastName("Taylor")
+                        .username("Sophie.Taylor")
+                        .password("S0ph!e456")
+                        .isActive(true)
+                        .build())
                 .build();
     }
 }

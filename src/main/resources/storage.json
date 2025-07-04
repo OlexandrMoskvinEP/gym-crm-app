@@ -1,183 +1,51 @@
 {
-  "TRAINEE" : {
-    "trainee5" : {
-      "id" : 0,
-      "firstName" : "Eva",
-      "lastName" : "Green",
-      "username" : "Eva.Green",
-      "password" : "Poi098!We",
-      "dateOfBirth" : "1992-07-03",
-      "address" : "Park Lane 5",
-      "userId" : 105,
-      "isActive" : true
-    },
-    "trainee4" : {
-      "id" : 0,
-      "firstName" : "David",
-      "lastName" : "Lee",
-      "username" : "David.Lee",
-      "password" : "Xyz321$Tf",
-      "dateOfBirth" : "1995-11-10",
-      "address" : null,
-      "userId" : 104,
-      "isActive" : true
-    },
-    "trainee3" : {
-      "id" : 0,
-      "firstName" : "Carol",
-      "lastName" : "Johnson",
-      "username" : "Carol.Johnson",
-      "password" : "Ytr789#Rr",
-      "dateOfBirth" : "1988-08-15",
-      "address" : "2nd Avenue",
-      "userId" : 103,
-      "isActive" : false
-    },
-    "trainee2" : {
-      "id" : 0,
-      "firstName" : "Bob",
-      "lastName" : "Miller",
-      "username" : "Bob.Miller",
-      "password" : "Pwd456Xy!",
-      "dateOfBirth" : "1993-05-20",
-      "address" : "Main Street 1",
-      "userId" : 102,
-      "isActive" : true
-    },
-    "trainee1" : {
-      "id" : 0,
-      "firstName" : "Alice",
-      "lastName" : "Brown",
-      "username" : "Alice.Brown",
-      "password" : "Zxc987Qwe!",
-      "dateOfBirth" : "1990-12-12",
-      "address" : null,
-      "userId" : 101,
-      "isActive" : true
+  "TRAINEE": {
+    "trainee1": {
+      "id": 0,
+      "user": {
+        "firstName": "Alice",
+        "lastName": "Brown",
+        "username": "Alice.Brown",
+        "password": "Zxc987Qwe!",
+        "isActive": true
+      },
+      "dateOfBirth": "1990-12-12",
+      "address": "Main Street 1"
     }
   },
-  "TRAINER" : {
-    "trainer4" : {
-      "id" : 0,
-      "firstName" : "Sophie",
-      "lastName" : "Taylor",
-      "username" : "Sophie.Taylor",
-      "password" : "S0ph!e456",
-      "specialization" : {
-        "trainingTypeName" : "aerobics"
+  "TRAINER": {
+    "trainer1": {
+      "id": 0,
+      "user": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "username": "John.Smith",
+        "password": "Abc123XyZ!",
+        "isActive": true
       },
-      "userId" : 204,
-      "isActive" : true
-    },
-    "trainer3" : {
-      "id" : 0,
-      "firstName" : "Michael",
-      "lastName" : "Green",
-      "username" : "Michael.Green",
-      "password" : "MmM222@Bb",
-      "specialization" : {
-        "trainingTypeName" : "crossfit"
-      },
-      "userId" : 203,
-      "isActive" : false
-    },
-    "trainer2" : {
-      "id" : 0,
-      "firstName" : "Linda",
-      "lastName" : "White",
-      "username" : "Linda.White",
-      "password" : "XxX111!Aa",
-      "specialization" : {
-        "trainingTypeName" : "yoga"
-      },
-      "userId" : 202,
-      "isActive" : true
-    },
-    "trainer1" : {
-      "id" : 0,
-      "firstName" : "John",
-      "lastName" : "Smith",
-      "username" : "John.Smith",
-      "password" : "Abc123XyZ!",
-      "specialization" : {
-        "trainingTypeName" : "fitness"
-      },
-      "userId" : 201,
-      "isActive" : true
-    },
-    "trainer5" : {
-      "id" : 0,
-      "firstName" : "Mark",
-      "lastName" : "Black",
-      "username" : "Mark.Black",
-      "password" : "MkBl789*",
-      "specialization" : {
-        "trainingTypeName" : "pilates"
-      },
-      "userId" : 205,
-      "isActive" : true
+      "specialization": {
+        "trainingTypeName": "fitness"
+      }
     }
   },
-  "TRAINING" : {
-    "9752025-06-28" : {
-      "trainerId" : 321,
-      "traineeId" : 654,
-      "trainingName" : "Pokatushka",
-      "trainingType" : {
-        "trainingTypeName" : "Cycling"
+  "TRAINING": {
+    "training1": {
+      "trainer": {
+        "user": {
+          "username": "John.Smith"
+        }
       },
-      "trainingDate" : "2025-06-28",
-      "trainingDuration" : 120
-    },
-    "training1" : {
-      "trainerId" : 201,
-      "traineeId" : 101,
-      "trainingName" : "Morning Cardio",
-      "trainingType" : {
-        "trainingTypeName" : "fitness"
+      "trainee": {
+        "user": {
+          "username": "Alice.Brown"
+        }
       },
-      "trainingDate" : "2025-06-25",
-      "trainingDuration" : 60
-    },
-    "training3" : {
-      "trainerId" : 203,
-      "traineeId" : 103,
-      "trainingName" : "Power Crossfit",
-      "trainingType" : {
-        "trainingTypeName" : "crossfit"
+      "trainingName": "Morning Cardio",
+      "trainingType": {
+        "trainingTypeName": "fitness"
       },
-      "trainingDate" : "2025-06-27",
-      "trainingDuration" : 50
-    },
-    "training2" : {
-      "trainerId" : 202,
-      "traineeId" : 102,
-      "trainingName" : "Evening Yoga",
-      "trainingType" : {
-        "trainingTypeName" : "yoga"
-      },
-      "trainingDate" : "2025-06-26",
-      "trainingDuration" : 45
-    },
-    "training5" : {
-      "trainerId" : 205,
-      "traineeId" : 105,
-      "trainingName" : "Pilates Flow",
-      "trainingType" : {
-        "trainingTypeName" : "pilates"
-      },
-      "trainingDate" : "2025-06-29",
-      "trainingDuration" : 55
-    },
-    "training4" : {
-      "trainerId" : 204,
-      "traineeId" : 104,
-      "trainingName" : "Light Aerobics",
-      "trainingType" : {
-        "trainingTypeName" : "aerobics"
-      },
-      "trainingDate" : "2025-06-28",
-      "trainingDuration" : 40
+      "trainingDate": "2025-07-01",
+      "trainingDuration": 60
     }
   }
 }

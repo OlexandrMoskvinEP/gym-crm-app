@@ -9,11 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "users")
@@ -21,7 +22,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @EqualsAndHashCode
 @ToString
-@SuperBuilder(toBuilder = true)
+@Builder(toBuilder = true)
+@AllArgsConstructor
 @NoArgsConstructor
 public class User {
     @Id
@@ -44,9 +46,4 @@ public class User {
     @JsonProperty("isActive")
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
-
-    @JsonProperty("isActive")
-    public boolean getIsActive() {
-        return isActive;
-    }
 }

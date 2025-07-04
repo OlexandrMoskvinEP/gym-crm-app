@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TrainerMapper {
-    public static Trainer mapToEntityWithUserId(Trainer source, int userId) {
+    public static Trainer mapToEntityWithUserId(Trainer source, long userId) {
         return source.toBuilder()
-                .userId(userId)
+                .id(userId)
                 .build();
     }
 }

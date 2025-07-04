@@ -47,9 +47,12 @@ public class HibernateConfig {
                 .build();
 
         MetadataSources sources = new org.hibernate.boot.MetadataSources(registry)
+                .addAnnotatedClass(com.gym.crm.app.domain.model.User.class)
                 .addAnnotatedClass(com.gym.crm.app.domain.model.Trainer.class)
                 .addAnnotatedClass(com.gym.crm.app.domain.model.Trainee.class)
-                .addAnnotatedClass(com.gym.crm.app.domain.model.Training.class);
+                .addAnnotatedClass(com.gym.crm.app.domain.model.Training.class)
+                .addAnnotatedClass(com.gym.crm.app.domain.model.TrainingType.class);
+
 
         org.hibernate.boot.Metadata metadata = sources.buildMetadata();
 
