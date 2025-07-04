@@ -35,10 +35,10 @@ public class Training {
     @Column(name = "training_name", nullable = false, length = 32)
     private String trainingName;
 
-    @Column(name = "training_date")
+    @Column(name = "training_date", nullable = false)
     private LocalDate trainingDate;
 
-    @Column(name = "training_duration")
+    @Column(name = "training_duration", nullable = false)
     private BigDecimal trainingDuration;
 
     @ManyToOne
