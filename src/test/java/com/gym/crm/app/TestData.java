@@ -27,7 +27,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainee.builder()
                     .dateOfBirth(LocalDate.of(1992, 6, 23))
                     .address("Broadway")
@@ -39,7 +38,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainee.builder()
                     .dateOfBirth(LocalDate.of(1988, 8, 15))
                     .address("2nd Avenue")
@@ -51,7 +49,6 @@ public class TestData {
                             .isActive(false)
                             .build())
                     .build(),
-
             Trainee.builder()
                     .dateOfBirth(LocalDate.of(1985, 11, 5))
                     .address("Elm Street")
@@ -63,7 +60,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainee.builder()
                     .dateOfBirth(LocalDate.of(1995, 1, 30))
                     .address("Pine Avenue")
@@ -88,7 +84,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainer.builder()
                     .specialization(new TrainingType(2l, "crossfit"))
                     .user(User.builder()
@@ -99,7 +94,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainer.builder()
                     .specialization(new TrainingType(3l, "yoga"))
                     .user(User.builder()
@@ -110,7 +104,6 @@ public class TestData {
                             .isActive(false)
                             .build())
                     .build(),
-
             Trainer.builder()
                     .specialization(new TrainingType(4l, "boxing"))
                     .user(User.builder()
@@ -121,7 +114,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             Trainer.builder()
                     .specialization(new TrainingType(5l, "pilates"))
                     .user(User.builder()
@@ -145,7 +137,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 28))
                     .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
-
             Training.builder()
                     .id(2L)
                     .trainingName("Morning Yoga")
@@ -155,7 +146,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 27))
                     .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
-
             Training.builder()
                     .id(3L)
                     .trainingName("CrossFit Blast")
@@ -165,7 +155,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 26))
                     .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
-
             Training.builder()
                     .id(4L)
                     .trainingName("Pilates Session")
@@ -175,7 +164,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 25))
                     .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
-
             Training.builder()
                     .id(5L)
                     .trainingName("Boxing Drills")
@@ -206,7 +194,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Liam.Johnson", Trainer.builder()
                     .specialization(new TrainingType(2l, "crossfit"))
                     .user(User.builder()
@@ -217,7 +204,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Olivia.Brown", Trainer.builder()
                     .specialization(new TrainingType(3l, "yoga"))
                     .user(User.builder()
@@ -228,7 +214,6 @@ public class TestData {
                             .isActive(false)
                             .build())
                     .build(),
-
             "James.Wilson", Trainer.builder()
                     .specialization(new TrainingType(4l, "boxing"))
                     .user(User.builder()
@@ -239,7 +224,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Emily.Clark", Trainer.builder()
                     .specialization(new TrainingType(5l, "pilates"))
                     .user(User.builder()
@@ -265,7 +249,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Bob.Williams", Trainee.builder()
                     .dateOfBirth(LocalDate.of(1992, 6, 23))
                     .address("Broadway")
@@ -277,7 +260,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Carol.Johnson", Trainee.builder()
                     .dateOfBirth(LocalDate.of(1988, 8, 15))
                     .address("2nd Avenue")
@@ -289,7 +271,6 @@ public class TestData {
                             .isActive(false)
                             .build())
                     .build(),
-
             "David.Brown", Trainee.builder()
                     .dateOfBirth(LocalDate.of(1985, 11, 5))
                     .address("Elm Street")
@@ -301,7 +282,6 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .build(),
-
             "Eva.Davis", Trainee.builder()
                     .dateOfBirth(LocalDate.of(1995, 1, 30))
                     .address("Pine Avenue")
@@ -326,7 +306,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 28))
                     .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
-
             "204_121_2025-06-27", Training.builder()
                     .id(2L)
                     .trainer(Trainer.builder().id(204L).build())
@@ -336,7 +315,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 27))
                     .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
-
             "205_122_2025-06-26", Training.builder()
                     .id(3L)
                     .trainer(Trainer.builder().id(205L).build())
@@ -346,7 +324,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 26))
                     .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
-
             "206_123_2025-06-25", Training.builder()
                     .id(4L)
                     .trainer(Trainer.builder().id(206L).build())
@@ -356,7 +333,6 @@ public class TestData {
                     .trainingDate(LocalDate.of(2025, 6, 25))
                     .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
-
             "207_124_2025-06-24", Training.builder()
                     .id(5L)
                     .trainer(Trainer.builder().id(207L).build())

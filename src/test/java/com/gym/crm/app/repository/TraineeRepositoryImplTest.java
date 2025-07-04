@@ -113,13 +113,17 @@ class TraineeRepositoryImplTest {
         return Trainee.builder()
                 .dateOfBirth(LocalDate.of(1990, 3, 12))
                 .address("Main Street")
-                .user(User.builder()
-                        .firstName("Alice")
-                        .lastName("Moro")
-                        .username("Alice.Moro")
-                        .password("Abc123!@#")
-                        .isActive(true)
-                        .build())
+                .user(constructUser())
+                .build();
+    }
+
+    private static User constructUser() {
+        return User.builder()
+                .firstName("Alice")
+                .lastName("Moro")
+                .username("Alice.Moro")
+                .password("Abc123!@#")
+                .isActive(true)
                 .build();
     }
 }

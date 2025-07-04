@@ -111,14 +111,18 @@ class TrainerRepositoryImplTest {
 
     private Trainer constructTrainer() {
         return Trainer.builder()
-                .specialization(new TrainingType(23l, "aerobics"))
-                .user(User.builder()
-                        .firstName("Sophie1")
-                        .lastName("Taylor1")
-                        .username("Sophie1.Taylor1")
-                        .password("S0ph!e456")
-                        .isActive(true)
-                        .build())
+                .specialization(new TrainingType(23L, "aerobics"))
+                .user(constractUser())
+                .build();
+    }
+
+    private User constractUser() {
+        return User.builder()
+                .firstName("Sophie1")
+                .lastName("Taylor1")
+                .username("Sophie1.Taylor1")
+                .password("S0ph!e456")
+                .isActive(true)
                 .build();
     }
 }
