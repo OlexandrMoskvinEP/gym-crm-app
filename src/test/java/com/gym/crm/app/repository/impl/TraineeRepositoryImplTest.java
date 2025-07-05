@@ -1,11 +1,9 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.repository.impl.TraineeRepositoryImpl;
 import com.gym.crm.app.storage.CommonStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.gym.crm.app.data.mapper.UserMapper.constructUser;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -114,16 +113,6 @@ class TraineeRepositoryImplTest {
                 .dateOfBirth(LocalDate.of(1990, 3, 12))
                 .address("Main Street")
                 .user(constructUser())
-                .build();
-    }
-
-    private static User constructUser() {
-        return User.builder()
-                .firstName("Alice")
-                .lastName("Moro")
-                .username("Alice.Moro")
-                .password("Abc123!@#")
-                .isActive(true)
                 .build();
     }
 }

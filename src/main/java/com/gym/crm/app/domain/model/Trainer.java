@@ -51,5 +51,6 @@ public class Trainer {
     private Set<Trainee> trainees = new HashSet<>();
 
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Training> trainings = new ArrayList<>();
 }

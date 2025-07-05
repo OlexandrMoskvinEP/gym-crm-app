@@ -50,6 +50,7 @@ public class Trainee {
     private User user;
 
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Training> trainings = new ArrayList<>();
 
     @Builder.Default

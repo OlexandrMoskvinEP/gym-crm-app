@@ -1,6 +1,6 @@
-package com.gym.crm.app.repository;
+package com.gym.crm.app.repository.impl;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.repository.impl.TrainingRepositoryImpl;
 import com.gym.crm.app.storage.CommonStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

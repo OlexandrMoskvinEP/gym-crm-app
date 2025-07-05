@@ -49,4 +49,23 @@ public class UserRepositoryImpl implements UserRepository {
 
         txExecutor.performWithinTx(em -> em.merge(user));
     }
+
+    @Override
+    public void deleteByUsername(String username) {
+        log.debug("Deleting user with username: {}", username);
+
+        txExecutor.performWithinTx(em -> {
+            Optional<User> userOpt = em.createQuery(
+                            "SELECT u FROM User u WHERE u.username = :username", User.class)
+                    .setParameter("username", username)
+                    .getResultStream()
+                    .findFirst();
+
+            userOpt.ifPresent(user -> {
+                User managed = em.contains(user) ? user : em.merge(user);
+                em.remove(managed);
+                log.debug("User deleted: {}", username);
+            });
+        });
+    }
 }

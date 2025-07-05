@@ -1,6 +1,6 @@
 package com.gym.crm.app.storage;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;

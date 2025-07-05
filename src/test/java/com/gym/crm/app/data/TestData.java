@@ -1,4 +1,4 @@
-package com.gym.crm.app;
+package com.gym.crm.app.data;
 
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Trainee;

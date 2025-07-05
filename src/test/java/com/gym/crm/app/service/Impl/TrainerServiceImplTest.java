@@ -1,6 +1,6 @@
 package com.gym.crm.app.service.Impl;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;

@@ -1,6 +1,6 @@
 package com.gym.crm.app.facade;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.dto.TrainingDto;
@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
