@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.security.SecureRandom;
@@ -63,10 +64,10 @@ public class AppConfig {
     }
 
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
+    public SpringLiquibase liquibase(DataSource dataSource, Environment environment) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:db/changelog/changelog-master.xml");
+        liquibase.setChangeLog(environment.getProperty("liquibase.change-log"));
         return liquibase;
     }
 }
