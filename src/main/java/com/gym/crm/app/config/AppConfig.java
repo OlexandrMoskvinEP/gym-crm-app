@@ -66,8 +66,10 @@ public class AppConfig {
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, Environment environment) {
         SpringLiquibase liquibase = new SpringLiquibase();
+
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(environment.getProperty("liquibase.change-log"));
+
         return liquibase;
     }
 }
