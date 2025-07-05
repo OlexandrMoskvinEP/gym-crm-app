@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.32.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="GCA-59-Create-Sequence-TrainingTypes-1751656001894-1" author="AlexM">
+        <createSequence incrementBy="50" sequenceName="training_types_seq" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="GCA-59-Add-Table-TrainingTypes-1751656001894-2" author="AlexM">
+        <createTable tableName="training_types">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_training_types"/>
+            </column>
+            <column name="training_type_name" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
