@@ -26,6 +26,7 @@ class UserRepositoryImplTest {
 
     @BeforeAll
     static void setUp() {
+        System.setProperty("env", "test");
         context = new AnnotationConfigApplicationContext(AppConfig.class);
         userRepository = context.getBean(UserRepositoryImpl.class);
     }

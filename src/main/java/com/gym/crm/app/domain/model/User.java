@@ -37,7 +37,7 @@ public class User {
     private String username;
 
     @ToString.Exclude
-    @Column(name = "password", nullable = false, length = 16)
+    @Column(name = "password", nullable = false, length = 64)
     private String password;
 
     @JsonProperty("isActive")

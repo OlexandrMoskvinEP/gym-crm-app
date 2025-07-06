@@ -14,17 +14,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Configuration
 @ComponentScan(basePackages = "com.gym.crm.app")
-@PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 @Import(HibernateConfig.class)
 public class AppConfig {
 
@@ -65,6 +67,12 @@ public class AppConfig {
 
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, Environment environment) {
+        boolean enabled = Boolean.parseBoolean(environment.getProperty("liquibase.enabled", "true"));
+
+        if (!enabled) {
+            System.out.println("❌ Liquibase disabled");
+            return null;
+        }
         SpringLiquibase liquibase = new SpringLiquibase();
 
         liquibase.setDataSource(dataSource);
