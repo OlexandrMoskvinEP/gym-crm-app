@@ -11,14 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@Configuration
 public class TransactionExecutor {
     private static final Logger log = LoggerFactory.getLogger(TransactionExecutor.class);
 
     private EntityManagerFactory entityManagerFactory;
 
-    @Autowired
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+    public TransactionExecutor(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 

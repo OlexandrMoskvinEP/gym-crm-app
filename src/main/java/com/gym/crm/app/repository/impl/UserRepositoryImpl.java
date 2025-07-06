@@ -3,6 +3,7 @@ package com.gym.crm.app.repository.impl;
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.UserRepository;
+import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,12 @@ import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-
     private static final Logger log = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
     private TransactionExecutor txExecutor;
 
-    @Autowired
-    public void setTxExecutor(TransactionExecutor txExecutor) {
-        this.txExecutor = txExecutor;
+    public UserRepositoryImpl(EntityManagerFactory emf) {
+        this.txExecutor = new TransactionExecutor(emf);
     }
 
     @Override
