@@ -17,8 +17,5 @@ hibernate:
   format_sql: true
   hbm2ddl.auto: create-drop
 
-storage:
-  filePath: src/main/resources/storage.json
-
 liquibase:
   enabled: false

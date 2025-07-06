@@ -49,11 +49,11 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         return txExecutor.performReturningWithinTx(entityManager -> {
             boolean exists = !entityManager.createQuery("""
-                SELECT t.id FROM Training t 
-                WHERE t.trainingDate = :date 
-                  AND t.trainer.id = :trainerId 
-                  AND t.trainee.id = :traineeId
-                """, Long.class)
+                            SELECT t.id FROM Training t 
+                            WHERE t.trainingDate = :date 
+                              AND t.trainer.id = :trainerId 
+                              AND t.trainee.id = :traineeId
+                            """, Long.class)
                     .setParameter("date", training.getTrainingDate())
                     .setParameter("trainerId", training.getTrainer().getId())
                     .setParameter("traineeId", training.getTrainee().getId())

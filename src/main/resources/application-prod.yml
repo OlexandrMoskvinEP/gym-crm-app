@@ -17,9 +17,6 @@ hibernate:
   format_sql: true
   hbm2ddl.auto: validate
 
-storage:
-  filePath: src/main/resources/storage.json
-
 liquibase:
   change-log: classpath:db/changelog/changelog-master.xml
   enabled: true
