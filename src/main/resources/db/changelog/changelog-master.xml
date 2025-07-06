@@ -10,6 +10,8 @@
     <include file="/db/changelog/2025/07/trainer-changelog.xml"/>
     <include file="/db/changelog/2025/07/trainee-changelog.xml"/>
     <include file="/db/changelog/2025/07/training-changelog.xml"/>
+    <include file="/db/changelog/2025/07/init-data-changelog.xml"/>
+
     <include file="/db/changelog/2025/07/base-changelog.xml"/>
 
 </databaseChangeLog>
