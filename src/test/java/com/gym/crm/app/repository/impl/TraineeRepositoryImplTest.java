@@ -71,7 +71,7 @@ class TraineeRepositoryImplTest {
 //    void shouldSaveEntity(Trainee trainee) {
 //        repository.save(trainee);
 //
-//        assertThrows(DuplicateUsernameException.class, () -> repository.save(trainee));
+//        assertThrows(DuplicateEntityException.class, () -> repository.save(trainee));
 //    }
 
     //todo fix test

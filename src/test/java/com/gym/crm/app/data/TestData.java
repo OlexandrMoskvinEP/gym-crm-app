@@ -129,7 +129,6 @@ public class TestData {
 
     List<Training> trainings = List.of(
             Training.builder()
-                    .id(1L)
                     .trainingName("Pokatushka")
                     .trainer(Trainer.builder().id(321L).build())
                     .trainee(Trainee.builder().id(654L).build())
@@ -138,7 +137,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
             Training.builder()
-                    .id(2L)
                     .trainingName("Morning Yoga")
                     .trainer(Trainer.builder().id(204L).build())
                     .trainee(Trainee.builder().id(121L).build())
@@ -147,7 +145,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
             Training.builder()
-                    .id(3L)
                     .trainingName("CrossFit Blast")
                     .trainer(Trainer.builder().id(205L).build())
                     .trainee(Trainee.builder().id(122L).build())
@@ -156,7 +153,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
             Training.builder()
-                    .id(4L)
                     .trainingName("Pilates Session")
                     .trainer(Trainer.builder().id(206L).build())
                     .trainee(Trainee.builder().id(123L).build())
@@ -165,7 +161,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
             Training.builder()
-                    .id(5L)
                     .trainingName("Boxing Drills")
                     .trainer(Trainer.builder().id(207L).build())
                     .trainee(Trainee.builder().id(124L).build())

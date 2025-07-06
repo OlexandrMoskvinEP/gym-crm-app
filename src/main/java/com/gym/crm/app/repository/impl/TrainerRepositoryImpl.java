@@ -82,6 +82,5 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
             logger.debug("Trainer deleted: {}", username);
         });
-
     }
 }

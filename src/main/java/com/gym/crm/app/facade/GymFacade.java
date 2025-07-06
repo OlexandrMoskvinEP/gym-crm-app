@@ -73,21 +73,21 @@ public class GymFacade {
         return trainingService.getAllTrainings();
     }
 
-    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
-        return trainingService.getTrainingByTrainerId(trainerId);
-    }
+//    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
+//        return trainingService.getTrainingByTrainerId(trainerId);
+//    }
 
-    public List<TrainingDto> getTrainingByTraineeId(Long trainerId) {
-        return trainingService.getTrainingByTraineeId(trainerId);
-    }
+//    public List<TrainingDto> getTrainingByTraineeId(Long trainerId) {
+//        return trainingService.getTrainingByTraineeId(trainerId);
+//    }
 
-    public List<TrainingDto> getTrainingByDate(LocalDate date) {
-        return trainingService.getTrainingByDate(date);
-    }
+  //  public List<TrainingDto> getTrainingByDate(LocalDate date) {
+//        return trainingService.getTrainingByDate(date);
+//    }
 
-    public Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        return trainingService.getTrainingByTrainerAndTraineeAndDate(identityDto);
-    }
+//    public Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
+//        return trainingService.getTrainingByTrainerAndTraineeAndDate(identityDto);
+//    }
 
     public TrainingDto addTraining(TrainingDto training) {
         return trainingService.addTraining(training);
@@ -97,7 +97,7 @@ public class GymFacade {
         return trainingService.updateTraining(trainingDto);
     }
 
-    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        trainingService.deleteTrainingByTrainerAndTraineeAndDate(identityDto);
-    }
+//    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
+//        trainingService.deleteTrainingByTrainerAndTraineeAndDate(identityDto);
+//    }
 }

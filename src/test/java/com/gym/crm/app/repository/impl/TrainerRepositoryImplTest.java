@@ -2,19 +2,13 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.AppConfig;
 import com.gym.crm.app.data.TestData;
-import com.gym.crm.app.data.mapper.UserMapper;
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -76,7 +70,7 @@ class TrainerRepositoryImplTest {
 //    @ParameterizedTest
 //    @MethodSource("getTrainers")
 //    void shouldSaveEntity(Trainer trainer) {
-//        assertThrows(DuplicateUsernameException.class, () -> repository.save(trainer));
+//        assertThrows(DuplicateEntityException.class, () -> repository.save(trainer));
 //    }
 
     //todo fix test
