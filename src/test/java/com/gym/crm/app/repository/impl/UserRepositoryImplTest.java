@@ -80,6 +80,7 @@ class UserRepositoryImplTest {
         assertFalse(found.isPresent());
     }
 
+    //todo добавить проверку викидання ексепшенов
     @AfterAll
     static void tearDown() {
         context.close();

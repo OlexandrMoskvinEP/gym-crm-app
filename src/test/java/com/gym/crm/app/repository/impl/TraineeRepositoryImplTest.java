@@ -8,8 +8,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -29,10 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class TraineeRepositoryImplTest {
     private static final TestData data = new TestData();
-    private static AnnotationConfigApplicationContext context;
-
     private final Map<String, Trainee> traineeMap = new HashMap<>(data.getTRAINEE_STORAGE());
 
+    private static AnnotationConfigApplicationContext context;
     private static TraineeRepositoryImpl repository;
 
     @BeforeAll
@@ -46,7 +43,7 @@ class TraineeRepositoryImplTest {
     @Test
     void shouldReturnAllTrainees() {
         List<Trainee> expected = new ArrayList<>(traineeMap.values());
-        //todo rewrite test
+        //todo fix test
 
         //   List<Trainee> actual = repository.findAll();
 
@@ -61,7 +58,7 @@ class TraineeRepositoryImplTest {
         Trainee trainee = constructTrainee();
 
         Trainee actual = repository.save(trainee);
-        //todo добавить каптор
+        //todo добавить каптор и savedToStorage
         assertNotNull(actual);
         //  assertNotNull(savedToStorage);
         assertEquals(trainee, actual);
@@ -93,7 +90,7 @@ class TraineeRepositoryImplTest {
     void shouldDeleteTraineeByUserName() {
         Trainee trainee = constructTrainee();
 
-     assertThrows(EntityNotFoundException.class, () -> repository.deleteByUsername("John.Dou"));
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUsername("John.Dou"));
 
         repository.save(trainee);
 

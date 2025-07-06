@@ -56,8 +56,8 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Optional<Trainee> findByUsername(String username) {
-        return txExecutor.performReturningWithinTx(em ->
-                em.createQuery("SELECT t FROM Trainee t WHERE t.user.username = :username", Trainee.class)
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery("SELECT t FROM Trainee t WHERE t.user.username = :username", Trainee.class)
                         .setParameter("username", username)
                         .getResultStream()
                         .findFirst()

@@ -1,69 +1,87 @@
 package com.gym.crm.app.repository.impl;
 
+import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.exception.DuplicateUsernameException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.storage.CommonStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
 
-    private final AtomicLong trainerCounter = new AtomicLong(1);
-
-    private Map<String, Trainer> trainerStorage;
+    private TransactionExecutor txExecutor;
 
     @Autowired
-    public void setTrainerStorage(CommonStorage commonStorage) {
-        this.trainerStorage = commonStorage.getTrainerStorage();
+    public void setTxExecutor(TransactionExecutor txExecutor) {
+        this.txExecutor = txExecutor;
     }
 
     @Override
     public List<Trainer> findAll() {
-        return new ArrayList<>(trainerStorage.values());
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery("SELECT t FROM Trainer t ", Trainer.class)
+                        .getResultStream()
+                        .toList()
+        );
     }
 
     @Override
-    public Trainer saveTrainer(Trainer trainer) {
-        String key = trainer.getUser().getUsername();
+    public Trainer save(Trainer trainer) {
+        logger.debug("Saving trainee: {}", trainer.getUser().getUsername());
 
-        if (trainerStorage.containsKey(key)) {
-            throw new DuplicateUsernameException("Entity already exists!");
-        }
+        return txExecutor.performReturningWithinTx(entityManager -> {
+            entityManager.persist(trainer);
 
-        Trainer trainerWithId = trainer.toBuilder()
-                .id(trainerCounter.getAndIncrement())
-                .build();
+            logger.debug("Trainee: {} successfully saved", trainer.getUser().getUsername());
 
-        trainerStorage.put(key, trainerWithId);
+            return trainer;
+        });
+    }
 
-        return trainerWithId;
+    @Override
+    public void update(Trainer trainer) {
+        logger.debug("Updating trainee: {}", trainer.getUser().getUsername());
+
+        txExecutor.performWithinTx(entityManager -> {
+            entityManager.merge(trainer);
+        });
     }
 
     @Override
     public Optional<Trainer> findByUsername(String username) {
-        Trainer trainer = trainerStorage.get(username);
-
-        return Optional.ofNullable(trainer);
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery("SELECT t FROM Trainer t WHERE t.user.username = :username", Trainer.class)
+                        .setParameter("username", username)
+                        .getResultStream()
+                        .findFirst()
+        );
     }
 
     @Override
     public void deleteByUserName(String username) {
-        if (!trainerStorage.containsKey(username)) {
-            throw new EntityNotFoundException("Failed while deleting trainer!");
-        }
+        logger.debug("Deleting trainer with username: {}", username);
 
-        trainerStorage.remove(username);
+        txExecutor.performWithinTx(entityManager -> {
+            Trainer existing = entityManager.createQuery(
+                            "SELECT t FROM Trainer t WHERE t.user.username = :username", Trainer.class)
+                    .setParameter("username", username)
+                    .getResultStream()
+                    .findFirst().orElseThrow(
+                            () -> new EntityNotFoundException("Cant delete trainer with username - " + username));
+
+            Trainer managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
+
+            entityManager.remove(managed);
+
+            logger.debug("Trainer deleted: {}", username);
+        });
+
     }
 }

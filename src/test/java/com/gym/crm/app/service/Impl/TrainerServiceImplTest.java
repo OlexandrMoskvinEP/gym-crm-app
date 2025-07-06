@@ -104,11 +104,11 @@ class TrainerServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainer.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
 
-        when(repository.saveTrainer(any(Trainer.class))).thenReturn(entityToReturn);
+        when(repository.save(any(Trainer.class))).thenReturn(entityToReturn);
 
         TrainerDto actual = trainerService.addTrainer(expected);
 
-        verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
+        verify(repository, atLeastOnce()).save(trainerCaptor.capture());
         Trainer savedTrainer = trainerCaptor.getValue();
 
         assertNotNull(savedTrainer);
@@ -139,11 +139,11 @@ class TrainerServiceImplTest {
         String username = trainer.getUser().getFirstName() + "." + trainer.getUser().getLastName();
 
         when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
-        when(repository.saveTrainer(any(Trainer.class))).thenReturn(trainerToReturn);
+        when(repository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
         TrainerDto actual = trainerService.updateTrainerByUsername(username, expected);
 
-        verify(repository, atLeastOnce()).saveTrainer(trainerCaptor.capture());
+        verify(repository, atLeastOnce()).save(trainerCaptor.capture());
 
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
 
