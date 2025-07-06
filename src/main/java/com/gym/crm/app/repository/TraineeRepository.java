@@ -9,9 +9,11 @@ public interface TraineeRepository {
 
     List<Trainee> findAll();
 
-    Trainee saveTrainee(Trainee trainee);
+    Trainee save(Trainee trainee);
+
+    void update(Trainee trainee);
 
     Optional<Trainee> findByUsername(String username);
 
-    void deleteByUserName(String userName);
+    void deleteByUsername(String userName);
 }

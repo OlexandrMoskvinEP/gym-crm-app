@@ -104,12 +104,12 @@ class TraineeServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
 
-        when(repository.saveTrainee(any(Trainee.class))).thenReturn(entityToReturn);
+        when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
         when(repository.findByUsername(username)).thenReturn(Optional.of(entityToReturn));
 
         TraineeDto actual = traineeService.addTrainee(expected);
 
-        verify(repository, atLeastOnce()).saveTrainee(traineeCaptor.capture());
+        verify(repository, atLeastOnce()).save(traineeCaptor.capture());
         Trainee savedTrainee = traineeCaptor.getValue();
 
         assertNotNull(savedTrainee);
@@ -141,11 +141,11 @@ class TraineeServiceImplTest {
         String username = trainee.getUser().getFirstName() + "." + trainee.getUser().getLastName();
 
         when(repository.findByUsername(username)).thenReturn(Optional.of(traineeToReturn));
-        when(repository.saveTrainee(any(Trainee.class))).thenReturn(traineeToReturn);
+        when(repository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
         TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
 
-        verify(repository, atLeastOnce()).saveTrainee(traineeCaptor.capture());
+        verify(repository, atLeastOnce()).save(traineeCaptor.capture());
 
         TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
 
