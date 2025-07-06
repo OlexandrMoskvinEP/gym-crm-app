@@ -25,11 +25,11 @@ public class Main {
                 .isActive(true)
                 .build();
 
-//        // Сохранение
-//        userDao.save(user);
-//        System.out.println("User saved!");
+        // Сохранение
+        userDao.save(user);
+        System.out.println("User saved!");
 
-        // Поиск
+         //Поиск
         Optional<User> found = userDao.findByUsername("john.doe");
 
         found.ifPresentOrElse(
