@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.maker.TrainingTypeMaker.constructTrainingType;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -95,5 +94,11 @@ class TrainingTypeRepositoryImplTest {
         repository.deleteById(2L);
 
         verify(entityManager).remove(type);
+    }
+
+    private TrainingType constructTrainingType() {
+        return TrainingType.builder()
+                .trainingTypeName("some awesome kind of training")
+                .build();
     }
 }

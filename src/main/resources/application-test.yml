@@ -18,4 +18,7 @@ hibernate:
   hbm2ddl.auto: create-drop
 
 liquibase:
-  isEnabled: false
+  change-log: classpath:db/changelog/changelog-master.xml
+  enabled: true
+  contexts: dev
+  drop-first: false

@@ -12,10 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.maker.TraineeMaker.constructTrainee;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -96,5 +96,12 @@ class TraineeRepositoryImplTest {
         repository.deleteById(5L);
 
         verify(entityManager).remove(trainee);
+    }
+
+    private Trainee constructTrainee() {
+        return Trainee.builder()
+                .address("Fake test address")
+                .dateOfBirth(LocalDate.now())
+                .build();
     }
 }

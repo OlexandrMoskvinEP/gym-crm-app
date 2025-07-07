@@ -1,6 +1,7 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainer;
+import com.gym.crm.app.domain.model.TrainingType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -15,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.maker.TrainerMaker.constructTrainer;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -95,5 +95,17 @@ class TrainerRepositoryImplTest {
         repository.deleteById(5L);
 
         verify(entityManager).remove(trainer);
+    }
+
+    private Trainer constructTrainer() {
+        return Trainer.builder()
+                .specialization(constructTrainingType())
+                .build();
+    }
+
+    private TrainingType constructTrainingType() {
+        return TrainingType.builder()
+                .trainingTypeName("some awesome kind of training")
+                .build();
     }
 }

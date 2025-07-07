@@ -62,12 +62,6 @@ public class AppConfig {
 
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, Environment environment) {
-        boolean isEnabled = Boolean.parseBoolean(environment.getProperty("liquibase.isEnabled", "true"));
-
-        if (!isEnabled) {
-            System.out.println("❌ Liquibase disabled");
-            return null;
-        }
         SpringLiquibase liquibase = new SpringLiquibase();
 
         liquibase.setDataSource(dataSource);

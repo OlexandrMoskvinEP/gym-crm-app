@@ -1,7 +1,9 @@
 package com.gym.crm.app.repository.impl;
 
+import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.domain.model.TrainingType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -13,12 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.maker.TrainerMaker.constructTrainer;
-import static com.gym.crm.app.data.maker.TrainingMaker.constructTraining;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -105,5 +107,35 @@ class TrainingRepositoryImplTest {
         repository.deleteById(6L);
 
         verify(entityManager).remove(training);
+    }
+
+    public Training constructTraining() {
+        return Training.builder()
+                .trainingName("some awesome training today")
+                .trainingType(constructTrainingType())
+                .trainingDate(LocalDate.now().minusDays(365))
+                .trainingDuration(BigDecimal.valueOf(240))
+                .trainer(constructTrainer())
+                .trainee(constructTrainee())
+                .build();
+    }
+
+    private Trainer constructTrainer() {
+        return Trainer.builder()
+                .specialization(constructTrainingType())
+                .build();
+    }
+
+    private TrainingType constructTrainingType() {
+        return TrainingType.builder()
+                .trainingTypeName("some awesome kind of training")
+                .build();
+    }
+
+    private Trainee constructTrainee() {
+        return Trainee.builder()
+                .address("Fake test address")
+                .dateOfBirth(LocalDate.now())
+                .build();
     }
 }

@@ -15,9 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.maker.UserMaker.constructUser;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserRepositoryImplTest {
@@ -89,5 +93,15 @@ class UserRepositoryImplTest {
         userRepository.deleteByUsername(user.getUsername());
 
         verify(entityManager).remove(user);
+    }
+
+    private User constructUser() {
+        return User.builder()
+                .firstName("Alice")
+                .lastName("Moro")
+                .username("Alice.Moro")
+                .password("Abc123!@#")
+                .isActive(true)
+                .build();
     }
 }

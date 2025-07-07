@@ -54,7 +54,6 @@ public class TransactionExecutor {
             transaction.commit();
 
             return result;
-
         } catch (Exception ex) {
             if (transaction.isActive()) {
                 log.debug("Transaction with returning failed");
