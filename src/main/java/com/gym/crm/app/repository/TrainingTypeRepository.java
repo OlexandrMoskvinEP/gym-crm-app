@@ -10,6 +10,8 @@ public interface TrainingTypeRepository {
 
     Optional<TrainingType> findById(Long id);
 
+    void update (TrainingType trainingType);
+
     List<TrainingType> findAll();
 
     void deleteById(Long id);

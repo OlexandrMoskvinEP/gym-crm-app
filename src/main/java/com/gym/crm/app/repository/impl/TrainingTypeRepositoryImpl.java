@@ -46,6 +46,15 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     }
 
     @Override
+    public void update(TrainingType trainingType) {
+        logger.debug("Updating training type");
+
+        txExecutor.performWithinTx(entityManager -> {
+            entityManager.merge(trainingType);
+        });
+    }
+
+    @Override
     public List<TrainingType> findAll() {
         return txExecutor.performReturningWithinTx(entityManager ->
                 entityManager.createQuery("SELECT t FROM TrainingType t ", TrainingType.class)
