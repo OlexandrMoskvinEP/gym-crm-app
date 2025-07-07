@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.mapper.TraineeMapper.constructTrainee;
+import static com.gym.crm.app.data.maker.TraineeMaker.constructTrainee;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;

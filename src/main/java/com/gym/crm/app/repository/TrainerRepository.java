@@ -12,7 +12,13 @@ public interface TrainerRepository {
 
     void update(Trainer trainer);
 
-    Optional<Trainer> findByUsername(String username);
+    Optional<Trainer> findById(Long id);
 
-    void deleteByUserName(String username);
+    void deleteById(Long id);
+
+    //thees methods are deprecated and will be removed soon
+    @Deprecated
+    Optional<Trainer> findByUsername(String username);
+    @Deprecated
+    void deleteByUsername(String username);
 }

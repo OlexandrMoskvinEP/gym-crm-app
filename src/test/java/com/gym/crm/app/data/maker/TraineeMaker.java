@@ -1,12 +1,12 @@
-package com.gym.crm.app.data.mapper;
+package com.gym.crm.app.data.maker;
 
 import com.gym.crm.app.domain.model.Trainee;
 
 import java.time.LocalDate;
 
-import static com.gym.crm.app.data.mapper.UserMapper.constructUser;
+import static com.gym.crm.app.data.maker.UserMaker.constructUser;
 
-public class TraineeMapper {
+public class TraineeMaker {
     public static Trainee constructTrainee() {
         return Trainee.builder()
                 .address("Fake test address")

@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.mapper.UserMapper.constructUser;
+import static com.gym.crm.app.data.maker.UserMaker.constructUser;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 

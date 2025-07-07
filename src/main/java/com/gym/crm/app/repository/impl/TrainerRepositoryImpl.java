@@ -33,12 +33,12 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer save(Trainer trainer) {
-        logger.debug("Saving trainee: {}", trainer.getUser().getUsername());
+        logger.debug("Saving trainer");
 
         return txExecutor.performReturningWithinTx(entityManager -> {
             entityManager.persist(trainer);
 
-            logger.debug("Trainee: {} successfully saved", trainer.getUser().getUsername());
+            logger.debug("Trainer successfully saved");
 
             return trainer;
         });
@@ -46,13 +46,44 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public void update(Trainer trainer) {
-        logger.debug("Updating trainee: {}", trainer.getUser().getUsername());
+        logger.debug("Updating trainer");
 
         txExecutor.performWithinTx(entityManager -> {
             entityManager.merge(trainer);
         });
     }
 
+    @Override
+    public Optional<Trainer> findById(Long id) {
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery("SELECT t FROM Trainer t WHERE t.id = :id", Trainer.class)
+                        .setParameter("id", id)
+                        .getResultStream()
+                        .findFirst()
+        );
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        logger.debug("Deleting trainer with id: {}", id);
+
+        txExecutor.performWithinTx(entityManager -> {
+            Trainer existing = entityManager.createQuery(
+                            "SELECT t FROM Trainer t WHERE t.id = :id", Trainer.class)
+                    .setParameter("id", id)
+                    .getResultStream()
+                    .findFirst().orElseThrow(
+                            () -> new EntityNotFoundException("Cant deleteById trainer with id - " + id));
+
+            Trainer managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
+
+            entityManager.remove(managed);
+
+            logger.debug("Trainer with id : {} deleted", id);
+        });
+    }
+
+    @Deprecated
     @Override
     public Optional<Trainer> findByUsername(String username) {
         return txExecutor.performReturningWithinTx(entityManager ->
@@ -63,8 +94,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         );
     }
 
+    @Deprecated
     @Override
-    public void deleteByUserName(String username) {
+    public void deleteByUsername(String username) {
         logger.debug("Deleting trainer with username: {}", username);
 
         txExecutor.performWithinTx(entityManager -> {

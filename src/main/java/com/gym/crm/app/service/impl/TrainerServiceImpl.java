@@ -101,7 +101,7 @@ public class TrainerServiceImpl implements TrainerService {
             throw new EntityNotFoundException("Trainer not found!");
         }
 
-        trainerRepository.deleteByUserName(username);
+        trainerRepository.deleteByUsername(username);
 
         logger.info("Trainer {} deleted", username);
     }

@@ -1,8 +1,8 @@
-package com.gym.crm.app.data.mapper;
+package com.gym.crm.app.data.maker;
 
 import com.gym.crm.app.domain.model.User;
 
-public class UserMapper {
+public class UserMaker {
     public static User constructUser() {
         return User.builder()
                 .firstName("Alice")

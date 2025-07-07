@@ -1,120 +1,99 @@
 package com.gym.crm.app.repository.impl;
 
-import com.gym.crm.app.config.AppConfig;
-import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.exception.EntityNotFoundException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.gym.crm.app.data.mapper.UserMapper.constructUser;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.gym.crm.app.data.maker.TrainerMaker.constructTrainer;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerRepositoryImplTest {
-    private static final TestData data = new TestData();
-    private final Map<String, Trainer> trainerMap = new HashMap<>(data.getTRAINER_STORAGE());
+    @Mock
+    EntityManagerFactory entityManagerFactory;
 
-    private static AnnotationConfigApplicationContext context;
-    private static TrainerRepositoryImpl repository;
+    @Mock
+    EntityManager entityManager;
 
-    @BeforeAll
-    static void setUp() {
-        System.setProperty("env", "test");
+    @Mock
+    EntityTransaction tx;
 
-        context = new AnnotationConfigApplicationContext(AppConfig.class);
-        repository = context.getBean(TrainerRepositoryImpl.class);
+    @InjectMocks
+    TrainerRepositoryImpl repository;
+
+    @BeforeEach
+    void setUp() {
+        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
+        when(entityManager.getTransaction()).thenReturn(tx);
+        repository = new TrainerRepositoryImpl(entityManagerFactory);
     }
 
     @Test
-    void shouldReturnAllTrainers() {
-        List<Trainer> expected = new ArrayList<>(trainerMap.values());
-        //todo fix test
+    void shouldSaveAndFindTrainer() {
+        Trainer trainer = constructTrainer();
 
-        //   List<Trainer> actual = repository.findAll();
+        doNothing().when(entityManager).persist(trainer);
 
-        List<Trainer> actual = expected;
-        assertNotNull(actual);
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected, actual);
+        TypedQuery<Trainer> mockQuery = mock(TypedQuery.class);
+
+        when(entityManager.createQuery(anyString(), eq(Trainer.class))).thenReturn(mockQuery);
+        when(mockQuery.setParameter(eq("id"), anyLong())).thenReturn(mockQuery);
+        when(mockQuery.getResultStream()).thenReturn(Stream.of(trainer));
+
+        repository.save(trainer);
+
+        Optional<Trainer> found = repository.findById(2L);
+
+        verify(entityManager).persist(trainer);
+        assertTrue(found.isPresent());
     }
-
-    //todo will work after adding trainingType repo
-//    @Test
-//    public void shouldSaveAndReturnSavedTrainerEntity() {
-//        Trainer trainer = constructTrainer();
-//
-//        Trainer actual = repository.save(trainer);
-//        //todo добавить каптор и savedToStorage
-//        assertNotNull(actual);
-//        //  assertNotNull(savedToStorage);
-//        assertEquals(trainer, actual);
-//        //  assertEquals(trainee, savedToStorage);
-//    }
-
-    //todo fix test
-//    @ParameterizedTest
-//    @MethodSource("getTrainers")
-//    void shouldSaveEntity(Trainer trainer) {
-//        assertThrows(DuplicateEntityException.class, () -> repository.save(trainer));
-//    }
-
-    //todo fix test
-//    @ParameterizedTest
-//    @MethodSource("getTrainers")
-//    void shouldFindByUsername(Trainer trainer) {
-//        String username = trainer.getUser().getUsername();
-//
-//        Trainer actual = repository.findByUsername(username).get();
-//
-//        assertNotNull(actual);
-//        assertEquals(trainer, actual);
-//    }
-
-    //todo will work after adding trainingType repo
-//    @Test
-//    void shouldDeleteTrainerByUserName() {
-//        Trainer trainer = constructTrainer();
-//
-//        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("Sophie1.Taylor1"));
-//
-//        repository.save(trainer);
-//
-//        assertDoesNotThrow(() -> repository.deleteByUserName("Sophie1.Taylor1"));
-//    }
 
     @Test
-    void shouldTrowExceptionWhenCantDelete() {
-        assertThrows(EntityNotFoundException.class, () -> repository.deleteByUserName("John.Dou"));
+    void shouldUpdateTrainer() {
+        Trainer trainer = constructTrainer();
+
+        when(entityManager.merge(trainer)).thenReturn(trainer);
+
+        repository.update(trainer);
+
+        verify(entityManager).merge(trainer);
     }
 
-    private static Stream<Trainer> getTrainers() {
-        return data.getTrainers().stream();
-    }
+    @Test
+    void shouldDeleteByIdById() {
+        Trainer trainer = constructTrainer();
 
-    private Trainer constructTrainer() {
-        return Trainer.builder()
-                .specialization(TrainingType.builder().trainingTypeName("fake sport").build())
-                .user(constructUser())
-                .build();
-    }
+        TypedQuery<Trainer> mockQuery = mock(TypedQuery.class);
 
-    @AfterAll
-    static void tearDown() {
-        context.close();
+        when(entityManager.createQuery(anyString(), eq(Trainer.class))).thenReturn(mockQuery);
+        when(mockQuery.setParameter(eq("id"), anyLong())).thenReturn(mockQuery);
+        when(mockQuery.getResultStream()).thenReturn(Stream.of(trainer));
+
+        when(entityManager.contains(trainer)).thenReturn(false);
+        when(entityManager.merge(trainer)).thenReturn(trainer);
+
+        doNothing().when(entityManager).remove(trainer);
+
+        repository.deleteById(5L);
+
+        verify(entityManager).remove(trainer);
     }
 }
