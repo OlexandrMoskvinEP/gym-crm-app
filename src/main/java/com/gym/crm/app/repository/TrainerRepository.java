@@ -19,5 +19,6 @@ public interface TrainerRepository {
     //This method will be removed in subsequent MR in scope of GCA-61
     Optional<Trainer> findByUsername(String username);
 
+    //This method will be removed in subsequent MR in scope of GCA-61
     void deleteByUsername(String username);
 }

@@ -20,5 +20,6 @@ public interface TraineeRepository {
     //This method will be removed in subsequent MR in scope of GCA-61
     Optional<Trainee> findByUsername(String username);
 
+    //This method will be removed in subsequent MR in scope of GCA-61
     void deleteByUsername(String userName);
 }
