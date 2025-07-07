@@ -48,6 +48,7 @@ class UserRepositoryImplTest {
         doNothing().when(entityManager).persist(user);
 
         TypedQuery<User> mockQuery = mock(TypedQuery.class);
+
         when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
         when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
         when(mockQuery.getResultStream()).thenReturn(Stream.of(user));
@@ -75,8 +76,8 @@ class UserRepositoryImplTest {
     void shouldDeleteByUsername() {
         User user = constructUser();
 
-        // найдем его по JPQL
         TypedQuery<User> mockQuery = mock(TypedQuery.class);
+
         when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
         when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
         when(mockQuery.getResultStream()).thenReturn(Stream.of(user));

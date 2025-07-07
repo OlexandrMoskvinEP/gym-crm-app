@@ -4,9 +4,9 @@ import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingTypeRepository;
+import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,11 +16,10 @@ import java.util.Optional;
 public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainingTypeRepositoryImpl.class);
 
-    private TransactionExecutor txExecutor;
+    private final TransactionExecutor txExecutor;
 
-    @Autowired
-    public void setTxExecutor(TransactionExecutor txExecutor) {
-        this.txExecutor = txExecutor;
+    public TrainingTypeRepositoryImpl(EntityManagerFactory managerFactory) {
+        this.txExecutor = new TransactionExecutor(managerFactory);
     }
 
     @Override
@@ -60,7 +59,7 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
                     .setParameter("id", id)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new EntityNotFoundException("Cant delete training typr with id - " + id));
+                            () -> new EntityNotFoundException("Cant deleteById training typr with id - " + id));
 
 
             TrainingType managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);

@@ -5,9 +5,9 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.DuplicateEntityException;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
+import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,11 +17,10 @@ import java.util.Optional;
 public class TrainingRepositoryImpl implements TrainingRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainingRepositoryImpl.class);
 
-    private TransactionExecutor txExecutor;
+    private final TransactionExecutor txExecutor;
 
-    @Autowired
-    public void setTxExecutor(TransactionExecutor txExecutor) {
-        this.txExecutor = txExecutor;
+    public TrainingRepositoryImpl(EntityManagerFactory managerFactory) {
+        this.txExecutor = new TransactionExecutor(managerFactory);
     }
 
     @Override
@@ -80,7 +79,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                     .setParameter("id", id)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new EntityNotFoundException("Cant delete training with id - " + id));
+                            () -> new EntityNotFoundException("Cant deleteById training with id - " + id));
 
             Training managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
 

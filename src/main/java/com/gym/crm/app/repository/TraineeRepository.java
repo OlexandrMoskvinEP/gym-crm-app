@@ -13,7 +13,14 @@ public interface TraineeRepository {
 
     void update(Trainee trainee);
 
-    Optional<Trainee> findByUsername(String username);
+    Optional<Trainee> findById(Long id);
 
+    void deleteById(Long id);
+
+    //todo remove methods
+    //thees methods are deprecated and will be removed soon
+    @Deprecated
+    Optional<Trainee> findByUsername(String username);
+    @Deprecated
     void deleteByUsername(String userName);
 }
