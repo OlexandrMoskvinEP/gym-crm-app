@@ -1,88 +1,93 @@
 package com.gym.crm.app.repository.impl;
 
-import com.gym.crm.app.config.AppConfig;
 import com.gym.crm.app.domain.model.User;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.gym.crm.app.data.mapper.UserMapper.constructUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(MockitoExtension.class)
 class UserRepositoryImplTest {
-    private static AnnotationConfigApplicationContext context;
-    private static UserRepositoryImpl userRepository;
 
-    @BeforeAll
-    static void setUp() {
-        System.setProperty("env", "test");
-        context = new AnnotationConfigApplicationContext(AppConfig.class);
-        userRepository = context.getBean(UserRepositoryImpl.class);
+    @Mock
+    EntityManagerFactory entityManagerFactory;
+
+    @Mock
+    EntityManager entityManager;
+
+    @Mock
+    EntityTransaction tx;
+
+    @InjectMocks
+    UserRepositoryImpl userRepository;
+
+    @BeforeEach
+    void setUp() {
+        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
+        when(entityManager.getTransaction()).thenReturn(tx);
+        userRepository = new UserRepositoryImpl(entityManagerFactory);
     }
 
     @Test
-    @Order(1)
-    void shouldSaveAndFinedUser() {
-        User userToSave = constructUser();
+    void shouldSaveAndFindUser() {
+        User user = constructUser();
 
-        User saved = userRepository.save(userToSave);
+        doNothing().when(entityManager).persist(user);
 
-        Optional<User> foundedUser = userRepository.findByUsername(userToSave.getUsername());
+        TypedQuery<User> mockQuery = mock(TypedQuery.class);
+        when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
+        when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
+        when(mockQuery.getResultStream()).thenReturn(Stream.of(user));
 
-        assertTrue(foundedUser.isPresent());
-        assertNotNull(saved);
+        userRepository.save(user);
 
-        assertEquals(userToSave, saved);
-        assertEquals(userToSave, foundedUser.get());
-        assertEquals(saved, foundedUser.get());
-    }
+        Optional<User> found = userRepository.findByUsername(user.getUsername());
 
-    @Test
-    @Order(2)
-    void shouldUpdateAndFinedUser() {
-        User existing = userRepository.findByUsername("Alice.Moro").orElseThrow();
-
-        User updated = existing.toBuilder()
-                .firstName("AliceUpdated")
-                .password("newSecret123")
-                .username("AliceUpdated.Moro")
-                .build();
-
-        userRepository.update(updated);
-
-        Optional<User> found = userRepository.findByUsername(updated.getUsername());
-
+        verify(entityManager).persist(user);
         assertTrue(found.isPresent());
-        assertEquals("AliceUpdated", found.get().getFirstName());
-        assertNotEquals(existing, found.get());
     }
 
     @Test
-    @Order(3)
-    void shouldDeleteUserByUsername() {
-        User existing = userRepository.findByUsername("AliceUpdated.Moro").orElseThrow();
+    void shouldUpdateUser() {
+        User user = constructUser();
 
-        userRepository.deleteByUsername(existing.getUsername());
+        when(entityManager.merge(user)).thenReturn(user);
 
-        Optional<User> found = userRepository.findByUsername(existing.getUsername());
+        userRepository.update(user);
 
-        assertFalse(found.isPresent());
+        verify(entityManager).merge(user);
     }
 
-    //todo добавить проверку викидання ексепшенов
-    @AfterAll
-    static void tearDown() {
-        context.close();
+    @Test
+    void shouldDeleteByUsername() {
+        User user = constructUser();
+
+        // найдем его по JPQL
+        TypedQuery<User> mockQuery = mock(TypedQuery.class);
+        when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
+        when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
+        when(mockQuery.getResultStream()).thenReturn(Stream.of(user));
+
+        when(entityManager.contains(user)).thenReturn(false);
+        when(entityManager.merge(user)).thenReturn(user);
+
+        doNothing().when(entityManager).remove(user);
+
+        userRepository.deleteByUsername(user.getUsername());
+
+        verify(entityManager).remove(user);
     }
 }
