@@ -3,7 +3,6 @@ package com.gym.crm.app.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gym.crm.app.YamlPropertySourceFactory;
 import com.gym.crm.app.config.hibernate.HibernateConfig;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
@@ -14,16 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Configuration
 @ComponentScan(basePackages = "com.gym.crm.app")
@@ -67,9 +62,9 @@ public class AppConfig {
 
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, Environment environment) {
-        boolean enabled = Boolean.parseBoolean(environment.getProperty("liquibase.enabled", "true"));
+        boolean isEnabled = Boolean.parseBoolean(environment.getProperty("liquibase.isEnabled", "true"));
 
-        if (!enabled) {
+        if (!isEnabled) {
             System.out.println("❌ Liquibase disabled");
             return null;
         }

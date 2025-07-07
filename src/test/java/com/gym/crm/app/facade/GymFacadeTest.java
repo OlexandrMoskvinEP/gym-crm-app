@@ -165,53 +165,53 @@ class GymFacadeTest {
         assertEquals(expected, actual);
     }
 
-//    @Test
-//    void shouldReturnTrainingByTrainerId() {
-//        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-//        when(trainingService.getTrainingByTrainerId(1L)).thenReturn(List.of(trainingDto));
-//
-//        List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1L);
-//
-//        verify(trainingService).getTrainingByTrainerId(1L);
-//        assertEquals(List.of(trainingDto), actual);
-//    }
+    @Test
+    void shouldReturnTrainingByTrainerId() {
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.getTrainingByTrainerId(1L)).thenReturn(List.of(trainingDto));
 
-//    @Test
-//    void shouldReturnTrainingByTraineeId() {
-//        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-//        when(trainingService.getTrainingByTraineeId(1L)).thenReturn(List.of(trainingDto));
-//
-//        List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1L);
-//
-//        verify(trainingService).getTrainingByTraineeId(1L);
-//        assertEquals(List.of(trainingDto), actual);
-//    }
+        List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1L);
 
-//    @Test
-//    void shouldReturnTrainingByDate() {
-//        LocalDate date = LocalDate.now();
-//        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-//        when(trainingService.getTrainingByDate(date)).thenReturn(List.of(trainingDto));
-//
-//        List<TrainingDto> actual = gymFacade.getTrainingByDate(date);
-//
-//        verify(trainingService).getTrainingByDate(date);
-//        assertEquals(List.of(trainingDto), actual);
-//    }
+        verify(trainingService).getTrainingByTrainerId(1L);
+        assertEquals(List.of(trainingDto), actual);
+    }
 
-//    @Test
-//    void shouldReturnTrainingByTrainerAndTraineeAndDate() {
-//        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
-//        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-//        when(trainingService.getTrainingByTrainerAndTraineeAndDate(dto)).thenReturn(Optional.of(trainingDto));
-//
-//        Optional<TrainingDto> actual = gymFacade.getTrainingByTrainerAndTraineeAndDate(dto);
-//
-//        verify(trainingService).getTrainingByTrainerAndTraineeAndDate(dto);
-//
-//        assertNotNull(actual);
-//        assertEquals(Optional.of(trainingDto), actual);
-//    }
+    @Test
+    void shouldReturnTrainingByTraineeId() {
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.getTrainingByTraineeId(1L)).thenReturn(List.of(trainingDto));
+
+        List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1L);
+
+        verify(trainingService).getTrainingByTraineeId(1L);
+        assertEquals(List.of(trainingDto), actual);
+    }
+
+    @Test
+    void shouldReturnTrainingByDate() {
+        LocalDate date = LocalDate.now();
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.getTrainingByDate(date)).thenReturn(List.of(trainingDto));
+
+        List<TrainingDto> actual = gymFacade.getTrainingByDate(date);
+
+        verify(trainingService).getTrainingByDate(date);
+        assertEquals(List.of(trainingDto), actual);
+    }
+
+    @Test
+    void shouldReturnTrainingByTrainerAndTraineeAndDate() {
+        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.getTrainingByTrainerAndTraineeAndDate(dto)).thenReturn(Optional.of(trainingDto));
+
+        Optional<TrainingDto> actual = gymFacade.getTrainingByTrainerAndTraineeAndDate(dto);
+
+        verify(trainingService).getTrainingByTrainerAndTraineeAndDate(dto);
+
+        assertNotNull(actual);
+        assertEquals(Optional.of(trainingDto), actual);
+    }
 
     @Test
     void shouldAddTraining() {
@@ -235,13 +235,13 @@ class GymFacadeTest {
         assertEquals(trainingDto, actual);
     }
 
-//    @Test
-//    void shouldDeleteTrainingByTrainerAndTraineeAndDate() {
-//        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
-//        doNothing().when(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
-//
-//        gymFacade.deleteTrainingByTrainerAndTraineeAndDate(dto);
-//
-//        verify(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
-//    }
+    @Test
+    void shouldDeleteTrainingByTrainerAndTraineeAndDate() {
+        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
+        doNothing().when(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
+
+        gymFacade.deleteTrainingByTrainerAndTraineeAndDate(dto);
+
+        verify(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
+    }
 }

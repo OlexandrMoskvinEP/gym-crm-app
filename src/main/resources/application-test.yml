@@ -18,4 +18,4 @@ hibernate:
   hbm2ddl.auto: create-drop
 
 liquibase:
-  enabled: false
+  isEnabled: false
