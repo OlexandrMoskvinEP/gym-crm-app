@@ -99,31 +99,26 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         });
     }
 
-    @Deprecated
     @Override
     public List<Training> findByTrainerId(Long trainerId) {
         return List.of();
     }
 
-    @Deprecated
     @Override
     public List<Training> findByDate(LocalDate date) {
         return List.of();
     }
 
-    @Deprecated
     @Override
     public List<Training> findByTraineeId(Long traineeId) {
         return List.of();
     }
 
-    @Deprecated
     @Override
     public Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
         return Optional.empty();
-    }
 
-    @Deprecated
+    }
     @Override
     public void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
 

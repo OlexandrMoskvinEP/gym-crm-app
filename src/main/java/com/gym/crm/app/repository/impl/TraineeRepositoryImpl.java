@@ -83,7 +83,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         });
     }
 
-    @Deprecated
     @Override
     public Optional<Trainee> findByUsername(String username) {
         return txExecutor.performReturningWithinTx(entityManager ->
@@ -94,7 +93,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         );
     }
 
-    @Deprecated
     @Override
     public void deleteByUsername(String username) {
         logger.debug("Deleting trainee with username: {}", username);

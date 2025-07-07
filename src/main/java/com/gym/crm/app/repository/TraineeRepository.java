@@ -17,11 +17,8 @@ public interface TraineeRepository {
 
     void deleteById(Long id);
 
-    //todo remove methods
-    //thees methods are deprecated and will be removed soon
-    @Deprecated
+    //This method will be removed in subsequent MR in scope of GCA-61
     Optional<Trainee> findByUsername(String username);
 
-    @Deprecated
     void deleteByUsername(String userName);
 }

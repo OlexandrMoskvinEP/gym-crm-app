@@ -83,7 +83,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         });
     }
 
-    @Deprecated
     @Override
     public Optional<Trainer> findByUsername(String username) {
         return txExecutor.performReturningWithinTx(entityManager ->
@@ -94,7 +93,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         );
     }
 
-    @Deprecated
     @Override
     public void deleteByUsername(String username) {
         logger.debug("Deleting trainer with username: {}", username);

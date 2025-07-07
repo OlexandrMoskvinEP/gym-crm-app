@@ -37,10 +37,4 @@
         <modifyDataType tableName="users" columnName="password" newDataType="VARCHAR(64)"/>
     </changeSet>
 
-    <changeSet id="GCA-59-Fix-Users-Sequence--1751656045355-4" author="you">
-        <sql>
-            SELECT setval('public.users_id_seq', (SELECT MAX(id) FROM public.users));
-        </sql>
-    </changeSet>
-
 </databaseChangeLog>

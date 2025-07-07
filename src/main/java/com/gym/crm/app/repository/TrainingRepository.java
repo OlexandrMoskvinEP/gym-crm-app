@@ -18,21 +18,15 @@ public interface TrainingRepository {
 
     void deleteById(Long id);
 
-    //thees methods are deprecated and will be removed
-    //todo remove methods
-    @Deprecated
+    //This method will be removed in subsequent MR in scope of GCA-61
     List<Training> findByTrainerId(Long trainerId);
 
-    @Deprecated
     List<Training> findByDate(LocalDate date);
 
-    @Deprecated
     List<Training> findByTraineeId(Long traineeId);
 
-    @Deprecated
     Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date);
 
-    @Deprecated
     void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date);
 
 

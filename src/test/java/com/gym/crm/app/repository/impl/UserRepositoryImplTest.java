@@ -64,7 +64,6 @@ class UserRepositoryImplTest {
     @Test
     void shouldUpdateUser() {
         User user = constructUser();
-
         when(entityManager.merge(user)).thenReturn(user);
 
         userRepository.update(user);
