@@ -1,7 +1,6 @@
 package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.TrainingDto;
-import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
@@ -14,9 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {

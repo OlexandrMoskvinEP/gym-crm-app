@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,16 +44,25 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
+    public void update(Training training) {
+        logger.debug("Updating training");
+
+        txExecutor.performWithinTx(entityManager -> {
+            entityManager.merge(training);
+        });
+    }
+
+    @Override
     public Training save(Training training) {
         logger.debug("Saving training: {}", training.getTrainingName());
 
         return txExecutor.performReturningWithinTx(entityManager -> {
             boolean exists = !entityManager.createQuery("""
-                            SELECT t.id FROM Training t 
-                            WHERE t.trainingDate = :date 
-                              AND t.trainer.id = :trainerId 
-                              AND t.trainee.id = :traineeId
-                            """, Long.class)
+                             SELECT t.id FROM Training t\s
+                             WHERE t.trainingDate = :date\s
+                               AND t.trainer.id = :trainerId\s
+                               AND t.trainee.id = :traineeId
+                            \s""", Long.class)
                     .setParameter("date", training.getTrainingDate())
                     .setParameter("trainerId", training.getTrainer().getId())
                     .setParameter("traineeId", training.getTrainee().getId())
@@ -71,7 +81,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public void deleteById(Long id) {
-        logger.debug("Deleting trainer with id: {}", id);
+        logger.debug("Deleting training with id: {}", id);
 
         txExecutor.performWithinTx(entityManager -> {
             Training existing = entityManager.createQuery(
@@ -85,7 +95,37 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
             entityManager.remove(managed);
 
-            logger.debug("Training deleted: {}", managed.getTrainingName());
+            logger.debug("Training: {} deleted", managed.getTrainingName());
         });
+    }
+
+    @Deprecated
+    @Override
+    public List<Training> findByTrainerId(Long trainerId) {
+        return List.of();
+    }
+
+    @Deprecated
+    @Override
+    public List<Training> findByDate(LocalDate date) {
+        return List.of();
+    }
+
+    @Deprecated
+    @Override
+    public List<Training> findByTraineeId(Long traineeId) {
+        return List.of();
+    }
+
+    @Deprecated
+    @Override
+    public Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
+        return Optional.empty();
+    }
+
+    @Deprecated
+    @Override
+    public void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
+
     }
 }

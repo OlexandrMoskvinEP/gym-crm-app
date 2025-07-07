@@ -21,6 +21,7 @@ public interface TraineeRepository {
     //thees methods are deprecated and will be removed soon
     @Deprecated
     Optional<Trainee> findByUsername(String username);
+
     @Deprecated
     void deleteByUsername(String userName);
 }

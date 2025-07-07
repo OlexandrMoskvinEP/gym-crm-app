@@ -5,7 +5,7 @@ import com.gym.crm.app.domain.model.TrainingType;
 public class TrainingTypeMaker {
     public static TrainingType constructTrainingType(){
         return TrainingType.builder()
-                .trainingTypeName("some awesome training")
+                .trainingTypeName("some awesome kind of training")
                 .build();
     }
 }

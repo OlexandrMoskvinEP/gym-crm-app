@@ -17,8 +17,10 @@ public interface TrainerRepository {
     void deleteById(Long id);
 
     //thees methods are deprecated and will be removed soon
+    //todo remove methods
     @Deprecated
     Optional<Trainer> findByUsername(String username);
+
     @Deprecated
     void deleteByUsername(String username);
 }
