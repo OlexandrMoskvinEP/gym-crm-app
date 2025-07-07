@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Configuration
 @ComponentScan(basePackages = "com.gym.crm.app")
-@PropertySource(value = "classpath:application-${env:prod}.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:application${env:}.yml", factory = YamlPropertySourceFactory.class)
 public class HibernateConfig {
     @Bean
     public DataSource dataSource(Environment env) {

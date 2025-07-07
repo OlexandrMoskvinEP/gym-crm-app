@@ -5,6 +5,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 public class Main {
     public static void main(String[] args) {
+        System.setProperty("env", "-local");
+
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 
         context.register(AppConfig.class);

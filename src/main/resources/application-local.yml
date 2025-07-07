@@ -15,10 +15,10 @@ hibernate:
   dialect: org.hibernate.dialect.H2Dialect
   show_sql: true
   format_sql: true
-  hbm2ddl.auto: create-drop
+  hbm2ddl.auto: none
 
 liquibase:
   change-log: classpath:db/changelog/changelog-master.xml
   enabled: true
   contexts: dev
-  drop-first: false
+  drop-first: true
