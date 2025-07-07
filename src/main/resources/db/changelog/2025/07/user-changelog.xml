@@ -33,6 +33,7 @@
         <addUniqueConstraint columnNames="username" constraintName="uc_users_username" tableName="users"/>
     </changeSet>
 
+
     <changeSet id="GCA-59-Modify-Password-Length-On-Users--1751656045355-3" author="AlexM">
         <modifyDataType tableName="users" columnName="password" newDataType="VARCHAR(64)"/>
     </changeSet>
