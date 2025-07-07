@@ -4,13 +4,17 @@ import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Training;
+import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.service.impl.TrainingServiceImpl;
+import com.gym.crm.app.service.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -18,8 +22,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,64 +68,64 @@ class TrainingServiceImplTest {
         assertEquals(expected, actual);
     }
 
-//    @ParameterizedTest
-//    @ValueSource(longs = {321L, 204L, 205L, 206L, 207L})
-//    void getTrainingByTrainerId(Long trainerId) {
-//        Training training = constructTrainingByTrainerId(trainerId);
-//        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
-//
-//        when(repository.findByTrainerId(trainerId)).thenReturn(List.of(training));
-//
-//        TrainingDto actual = trainingService.getTrainingByTrainerId(trainerId).iterator().next();
-//
-//        assertEquals(expected.getTrainerId(), actual.getTrainerId());
-//        assertEquals(expected, actual);
-//    }
+    @ParameterizedTest
+    @ValueSource(longs = {321L, 204L, 205L, 206L, 207L})
+    void getTrainingByTrainerId(Long trainerId) {
+        Training training = constructTrainingByTrainerId(trainerId);
+        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
-//    @ParameterizedTest
-//    @ValueSource(longs = {654, 121, 122, 123, 124})
-//    void getTrainingByTraineeId(Long traineeId) {
-//        Training training = constructTrainingByTraineeId(traineeId);
-//        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
-//
-//        when(repository.findByTrainerId(traineeId)).thenReturn(List.of(training));
-//
-//        TrainingDto actual = trainingService.getTrainingByTrainerId(traineeId).iterator().next();
-//
-//        assertEquals(expected.getTrainerId(), actual.getTrainerId());
-//        assertEquals(expected, actual);
-//    }
+        when(repository.findByTrainerId(trainerId)).thenReturn(List.of(training));
 
-//    @ParameterizedTest
-//    @MethodSource("getDates")
-//    void getTrainingByDate(LocalDate date) {
-//        Training training = constructTrainingByDate(date);
-//        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
-//
-//        when(repository.findByDate(date)).thenReturn(List.of(training));
-//
-//        TrainingDto actual = trainingService.getTrainingByDate(date).iterator().next();
-//
-//        assertEquals(expected.getTrainerId(), actual.getTrainerId());
-//        assertEquals(expected, actual);
-//    }
+        TrainingDto actual = trainingService.getTrainingByTrainerId(trainerId).iterator().next();
+
+        assertEquals(expected.getTrainerId(), actual.getTrainerId());
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {654, 121, 122, 123, 124})
+    void getTrainingByTraineeId(Long traineeId) {
+        Training training = constructTrainingByTraineeId(traineeId);
+        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
+
+        when(repository.findByTrainerId(traineeId)).thenReturn(List.of(training));
+
+        TrainingDto actual = trainingService.getTrainingByTrainerId(traineeId).iterator().next();
+
+        assertEquals(expected.getTrainerId(), actual.getTrainerId());
+        assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getDates")
+    void getTrainingByDate(LocalDate date) {
+        Training training = constructTrainingByDate(date);
+        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
+
+        when(repository.findByDate(date)).thenReturn(List.of(training));
+
+        TrainingDto actual = trainingService.getTrainingByDate(date).iterator().next();
+
+        assertEquals(expected.getTrainerId(), actual.getTrainerId());
+        assertEquals(expected, actual);
+    }
 
 
-//    @ParameterizedTest
-//    @MethodSource("getTrainingId")
-//    void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
-//        Training training1 = getTraining(dto);
-//
-//        when(repository.findByTrainerAndTraineeAndDate(dto.getTrainerId(), dto.getTraineeId(), dto.getTrainingDate()))
-//                .thenReturn(Optional.of(training1));
-//
-//        Optional<TrainingDto> expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
-//
-//        Optional<TrainingDto> actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
-//
-//        assertNotNull(actual);
-//        assertEquals(expected, actual);
-//    }
+    @ParameterizedTest
+    @MethodSource("getTrainingId")
+    void getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto dto) {
+        Training training1 = getTraining(dto);
+
+        when(repository.findByTrainerAndTraineeAndDate(dto.getTrainerId(), dto.getTraineeId(), dto.getTrainingDate()))
+                .thenReturn(Optional.of(training1));
+
+        Optional<TrainingDto> expected = Optional.of(modelMapper.map(training1, TrainingDto.class));
+
+        Optional<TrainingDto> actual = trainingService.getTrainingByTrainerAndTraineeAndDate(dto);
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+    }
 
     @ParameterizedTest
     @MethodSource("getTrainings")
@@ -138,40 +144,40 @@ class TrainingServiceImplTest {
         assertEquals(expected, actual);
     }
 
-//    @ParameterizedTest
-//    @MethodSource("getTrainings")
-//    void shouldUpdateTraining(Training training) {
-//        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
-//
-//        expected.setTrainingName("fakeTrainingName");
-//        expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
-//        expected.setTrainingDuration(BigDecimal.valueOf(240));
-//
-//        long trainerId = training.getTrainer().getId();
-//        long traineeId = training.getTrainee().getId();
-//        LocalDate trainingDate = training.getTrainingDate();
-//
-//        when(repository.findByTrainerAndTraineeAndDate(trainerId, traineeId, trainingDate))
-//                .thenReturn(Optional.of(modelMapper.map(training, Training.class)));
-//        when(repository.save(any(Training.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        TrainingDto actual = trainingService.updateTraining(modelMapper.map(expected, TrainingDto.class));
-//
-//        verify(repository, atLeastOnce()).save(trainingCaptor.capture());
-//
-//        TrainingDto savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingDto.class);
-//
-//        assertEquals(expected, savedTraining);
-//        assertEquals(expected, actual);
-//    }
+    @ParameterizedTest
+    @MethodSource("getTrainings")
+    void shouldUpdateTraining(Training training) {
+        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
 
-//    @Test
-//    void shouldThrowExceptionWhetCantDeleteTrainingByTrainerAndTraineeAndDate() {
-//        when(repository.findByTrainerAndTraineeAndDate(1L, 2L, LocalDate.EPOCH)).thenReturn(Optional.empty());
-//
-//        assertThrows(EntityNotFoundException.class, () -> trainingService.deleteTrainingByTrainerAndTraineeAndDate(
-//                new TrainingIdentityDto(1L, 2L, LocalDate.EPOCH)));
-//    }
+        expected.setTrainingName("fakeTrainingName");
+        expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
+        expected.setTrainingDuration(BigDecimal.valueOf(240));
+
+        when(repository.findAll()).thenReturn(trainings);
+        when(repository.save(any(Training.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        TrainingDto actual = trainingService.updateTraining(modelMapper.map(expected, TrainingDto.class));
+
+        verify(repository, atLeastOnce()).save(trainingCaptor.capture());
+
+        TrainingDto savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingDto.class);
+
+        assertEquals("fakeTrainingName", savedTraining.getTrainingName());
+        assertEquals("fakeTrainingType", savedTraining.getTrainingType().getTrainingTypeName());
+        assertEquals(BigDecimal.valueOf(240), savedTraining.getTrainingDuration());
+
+        assertEquals("fakeTrainingName", actual.getTrainingName());
+        assertEquals(BigDecimal.valueOf(240), actual.getTrainingDuration());
+    }
+
+    @Test
+    void shouldThrowExceptionWhetCantDeleteTrainingByTrainerAndTraineeAndDate() {
+        when(repository.findByTrainerAndTraineeAndDate(1L, 2L, LocalDate.EPOCH)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> trainingService.deleteTrainingByTrainerAndTraineeAndDate(
+                new TrainingIdentityDto(1L, 2L, LocalDate.EPOCH)));
+    }
 
     private static Stream<Training> getTrainings() {
         return data.getTrainings().stream();

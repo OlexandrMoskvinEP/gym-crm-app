@@ -10,18 +10,25 @@ import java.util.Optional;
 public interface TrainingService {
     List<TrainingDto> getAllTrainings();
 
-   // List<TrainingDto> getTrainingByTrainerId(Long trainerId);
-
-  // List<TrainingDto> getTrainingByTraineeId(Long traineeId);
-
-   // List<TrainingDto> getTrainingByDate(LocalDate date);
-
-   // Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
-
     TrainingDto addTraining(TrainingDto training);
 
     TrainingDto updateTraining(TrainingDto trainingDto);
 
-  //  void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
+    //todo remove methods
+    //thees methods are deprecated and will be removed soon
+    @Deprecated
+    List<TrainingDto> getTrainingByTrainerId(Long trainerId);
+
+    @Deprecated
+    List<TrainingDto> getTrainingByTraineeId(Long traineeId);
+
+    @Deprecated
+    List<TrainingDto> getTrainingByDate(LocalDate date);
+
+    @Deprecated
+    Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
+
+    @Deprecated
+    void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
 
 }
