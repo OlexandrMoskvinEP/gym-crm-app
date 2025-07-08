@@ -338,5 +338,59 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(90))
                     .build()
     );
+    List<User> testUsers = List.of(
+            User.builder()
+                    .id(1L)
+                    .firstName("John")
+                    .lastName("Smith")
+                    .username("john.smith")
+                    .password("$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe")
+                    .isActive(true)
+                    .build(),
 
+            User.builder()
+                    .id(2L)
+                    .firstName("Olga")
+                    .lastName("Ivanova")
+                    .username("olga.ivanova")
+                    .password("$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe")
+                    .isActive(true)
+                    .build(),
+
+            User.builder()
+                    .id(3L)
+                    .firstName("Irina")
+                    .lastName("Petrova")
+                    .username("irina.petrova")
+                    .password("$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q")
+                    .isActive(true)
+                    .build(),
+
+            User.builder()
+                    .id(4L)
+                    .firstName("Boris")
+                    .lastName("Krasnov")
+                    .username("boris.krasnov")
+                    .password("$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C")
+                    .isActive(true)
+                    .build(),
+
+            User.builder()
+                    .id(5L)
+                    .firstName("Mykyta")
+                    .lastName("Solntcev")
+                    .username("mykyta.solntcev")
+                    .password("$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe.")
+                    .isActive(true)
+                    .build(),
+
+            User.builder()
+                    .id(6L)
+                    .firstName("Arnold")
+                    .lastName("Schwarzenegger")
+                    .username("arnold.schwarzenegger")
+                    .password("$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6")
+                    .isActive(true)
+                    .build()
+    );
 }

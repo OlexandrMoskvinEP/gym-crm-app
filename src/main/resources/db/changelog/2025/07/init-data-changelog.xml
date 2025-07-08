@@ -34,7 +34,7 @@
 
     <changeSet id="GCA-59-Insert-Users-Init" author="AlexM">
         <insert tableName="users">
-            <column name="id" valueNumeric="1"/>
+<!--            <column name="id" valueNumeric="1"/>-->
             <column name="first_name" value="John"/>
             <column name="last_name" value="Smith"/>
             <column name="username" value="john.smith"/>
@@ -42,7 +42,7 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="2"/>
+<!--            <column name="id" valueNumeric="2"/>-->
             <column name="first_name" value="Olga"/>
             <column name="last_name" value="Ivanova"/>
             <column name="username" value="olga.ivanova"/>
@@ -50,7 +50,7 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="3"/>
+<!--            <column name="id" valueNumeric="3"/>-->
             <column name="first_name" value="Irina"/>
             <column name="last_name" value="Petrova"/>
             <column name="username" value="irina.petrova"/>
@@ -58,7 +58,7 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="4"/>
+<!--            <column name="id" valueNumeric="4"/>-->
             <column name="first_name" value="Boris"/>
             <column name="last_name" value="Krasnov"/>
             <column name="username" value="boris.krasnov"/>
@@ -66,7 +66,7 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="5"/>
+<!--            <column name="id" valueNumeric="5"/>-->
             <column name="first_name" value="Mykyta"/>
             <column name="last_name" value="Solntcev"/>
             <column name="username" value="mykyta.solntcev"/>
@@ -74,7 +74,7 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="6"/>
+<!--            <column name="id" valueNumeric="6"/>-->
             <column name="first_name" value="Arnold"/>
             <column name="last_name" value="Schwarzenegger"/>
             <column name="username" value="arnold.schwarzenegger"/>

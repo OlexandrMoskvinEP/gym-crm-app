@@ -1,105 +1,104 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
-import org.junit.jupiter.api.BeforeEach;
+import com.gym.crm.app.repository.RepositoryIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class UserRepositoryImplTest {
+class UserRepositoryImplTest extends RepositoryIntegrationTest {
+    private final List<User> allUsers = data.getTestUsers();
 
-    @Mock
-    EntityManagerFactory entityManagerFactory;
+    @Test
+    void shouldReturnAllUsers() {
+        List<User> actual = userRepository.findAll();
 
-    @Mock
-    EntityManager entityManager;
+        assertFalse(actual.isEmpty());
+        assertTrue(actual.containsAll(allUsers));
+    }
 
-    @Mock
-    EntityTransaction tx;
+    @ParameterizedTest
+    @ValueSource(strings = {"arnold.schwarzenegger", "irina.petrova", "john.smith"})
+    void shouldFindByUsername(String username) {
+        Optional<User> expected = allUsers.stream().filter(user -> user.getUsername().equals(username)).findFirst();
+        Optional<User> actual = userRepository.findByUsername(username);
 
-    @InjectMocks
-    UserRepositoryImpl userRepository;
-
-    @BeforeEach
-    void setUp() {
-        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
-        when(entityManager.getTransaction()).thenReturn(tx);
-        userRepository = new UserRepositoryImpl(entityManagerFactory);
+        assertFalse(actual.isEmpty());
+        assertEquals(expected.get(), actual.get());
     }
 
     @Test
-    void shouldSaveAndFindUser() {
-        User user = constructUser();
+    void shouldSaveEntity() {
+        User toSave = constructUser(1);
 
-        doNothing().when(entityManager).persist(user);
+        User saved = userRepository.save(toSave);
+        User founded = userRepository.findByUsername(toSave.getUsername()).orElse(null);
 
-        TypedQuery<User> mockQuery = mock(TypedQuery.class);
-
-        when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
-        when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
-        when(mockQuery.getResultStream()).thenReturn(Stream.of(user));
-
-        userRepository.save(user);
-
-        Optional<User> found = userRepository.findByUsername(user.getUsername());
-
-        verify(entityManager).persist(user);
-        assertTrue(found.isPresent());
+        assertEquals(toSave, saved);
+        assertNotNull(founded);
+        assertEquals(toSave, founded);
     }
 
     @Test
-    void shouldUpdateUser() {
-        User user = constructUser();
-        when(entityManager.merge(user)).thenReturn(user);
+    void shouldUpdate() {
+        User toUpdate = constructUser(2);
+        userRepository.update(toUpdate);
 
-        userRepository.update(user);
+        User founded = userRepository.findByUsername(toUpdate.getUsername()).orElse(null);
 
-        verify(entityManager).merge(user);
+        assertNotNull(founded);
+
+        assertEquals(toUpdate.getFirstName(), founded.getFirstName());
+        assertEquals(toUpdate.getLastName(), founded.getLastName());
+        assertEquals(toUpdate.getPassword(), founded.getPassword());
+        assertEquals(toUpdate.isActive(), founded.isActive());
     }
 
     @Test
-    void shouldDeleteByUsername() {
-        User user = constructUser();
+    void shouldDeleteEntityByUsername() {
+        User toDelete = constructUser(3);
 
-        TypedQuery<User> mockQuery = mock(TypedQuery.class);
+        userRepository.save(toDelete);
+        userRepository.deleteByUsername(toDelete.getUsername());
+        userRepository.deleteByUsername(toDelete.getUsername());
 
-        when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(mockQuery);
-        when(mockQuery.setParameter(eq("username"), anyString())).thenReturn(mockQuery);
-        when(mockQuery.getResultStream()).thenReturn(Stream.of(user));
+        User founded = userRepository.findByUsername(toDelete.getUsername()).orElse(null);
 
-        when(entityManager.contains(user)).thenReturn(false);
-        when(entityManager.merge(user)).thenReturn(user);
-
-        doNothing().when(entityManager).remove(user);
-
-        userRepository.deleteByUsername(user.getUsername());
-
-        verify(entityManager).remove(user);
+        assertNull(founded);
     }
 
-    private User constructUser() {
-        return User.builder()
-                .firstName("Alice")
-                .lastName("Moro")
-                .username("Alice.Moro")
+    private static User constructUser(int index) {
+        if (index == 1) {
+            return User.builder()
+                    .firstName("Alice")
+                    .lastName("Moro")
+                    .username("Alice.Moro")
+                    .password("Abc123!@#")
+                    .isActive(true)
+                    .build();
+
+        } else if (index == 2) {
+            return User.builder()
+                    .firstName("Bingo")
+                    .lastName("Bongo")
+                    .username("Bingo.Bongo")
+                    .password("Abc123!@#")
+                    .isActive(true)
+                    .build();
+
+        } else return User.builder()
+                .firstName("Papa")
+                .lastName("Carlo")
+                .username("Papa.Carlo")
                 .password("Abc123!@#")
                 .isActive(true)
                 .build();
