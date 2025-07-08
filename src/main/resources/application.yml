@@ -22,4 +22,3 @@ liquibase:
   enabled: true
   contexts: dev
   drop-first: false
-
