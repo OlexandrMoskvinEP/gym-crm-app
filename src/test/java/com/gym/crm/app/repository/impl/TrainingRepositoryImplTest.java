@@ -1,5 +1,6 @@
 package com.gym.crm.app.repository.impl;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
@@ -14,30 +15,30 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataSet(value = {"datasets/training_types.xml", "datasets/users.xml",
+        "datasets/trainers.xml", "datasets/trainees.xml", "datasets/trainings.xml"}, cleanBefore = true, cleanAfter = true)
 public class TrainingRepositoryImplTest extends RepositoryIntegrationTest {
-    private static final AtomicInteger counter = new AtomicInteger(300);
-
-    private final List<Training> allTrainings = data.getTestTrainings();
+    private final List<Training> expected = data.getTestTrainings();
 
     @Test
     void findAll() {
         List<Training> actual = trainingRepository.findAll();
 
         assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(allTrainings));
+        assertTrue(actual.containsAll(expected));
     }
 
     @ParameterizedTest
     @ValueSource(longs = {1, 2, 3})
     void shouldFindTrainingById(Long id) {
-        Optional<Training> expected = allTrainings.stream().filter(training -> training.getId().equals(id)).findFirst();
+        Optional<Training> expected = this.expected.stream().filter(training -> training.getId().equals(id)).findFirst();
         Optional<Training> actual = trainingRepository.findById(id);
 
         assertTrue(actual.isPresent());
@@ -90,7 +91,7 @@ public class TrainingRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     private Training constructTraining() {
-        int count = counter.incrementAndGet();
+        int count = new Random().nextInt(1000);
 
         TrainingType type = trainingTypeRepository.findById(1L).orElseThrow();
         Trainer trainer = Trainer.builder().id(1L).build();

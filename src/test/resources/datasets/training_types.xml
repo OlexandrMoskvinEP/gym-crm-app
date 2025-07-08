@@ -1,0 +1,8 @@
+<dataset>
+    <training_types id="1" training_type_name="Yoga"/>
+    <training_types id="2" training_type_name="Cardio"/>
+    <training_types id="3" training_type_name="CrossFit"/>
+    <training_types id="4" training_type_name="Stretching"/>
+    <training_types id="5" training_type_name="Pilates"/>
+    <training_types id="6" training_type_name="Bodybuilding"/>
+</dataset>

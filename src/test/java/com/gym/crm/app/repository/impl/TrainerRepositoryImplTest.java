@@ -1,5 +1,6 @@
 package com.gym.crm.app.repository.impl;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -11,24 +12,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataSet(value = {"datasets/training_types.xml","datasets/users.xml",
+        "datasets/trainers.xml"}, cleanBefore = true, cleanAfter = true)
 public class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
-    private static final AtomicInteger counter = new AtomicInteger(200);
-
-    private final List<Trainer> allTrainers = data.getTestTrainers();
+    private final List<Trainer> expected = data.getTestTrainers();
 
     @Test
     void shouldReturnAllTrainers() {
         List<Trainer> actual = trainerRepository.findAll();
 
         assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(allTrainers));
+        assertTrue(actual.containsAll(expected));
     }
 
     @Test
@@ -56,7 +57,7 @@ public class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
     @ParameterizedTest
     @ValueSource(longs = {1, 2, 3})
     void shouldFindTrainerById(Long id) {
-        Optional<Trainer> expected = allTrainers.stream().filter(trainer -> trainer.getId().equals(id)).findFirst();
+        Optional<Trainer> expected = this.expected.stream().filter(trainer -> trainer.getId().equals(id)).findFirst();
         Optional<Trainer> actual = trainerRepository.findById(id);
 
         assertTrue(actual.isPresent());
@@ -99,7 +100,7 @@ public class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     private Trainer constructTrainer() {
-        int count = counter.incrementAndGet();
+        int count = new Random().nextInt(300);
         TrainingType type = trainingTypeRepository.findById(1L).orElseThrow();
 
         User user = User.builder()
