@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <trainees id="1" date_of_birth="1995-03-15" address="Kyiv, Ukraine" user_id="1"/>
+    <trainees id="2" date_of_birth="1998-07-10" address="Lviv, Ukraine" user_id="2"/>
+    <trainees id="3" date_of_birth="2000-11-01" address="Dnipro, Ukraine" user_id="3"/>
+</dataset>

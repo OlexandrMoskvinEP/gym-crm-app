@@ -1,5 +1,6 @@
 package com.gym.crm.app.repository.impl;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.RepositoryIntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -16,23 +17,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataSet(value = "datasets/users.xml", cleanBefore = true, cleanAfter = true)
 public class UserRepositoryImplTest extends RepositoryIntegrationTest {
     private static final AtomicInteger counter = new AtomicInteger(0);
 
-    private final List<User> allUsers = data.getTestUsers();
+    private final List<User> expected = data.getTestUsers();
 
     @Test
     void shouldReturnAllUsers() {
         List<User> actual = userRepository.findAll();
 
         assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(allUsers));
+        assertTrue(actual.containsAll(expected));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"arnold.schwarzenegger", "irina.petrova", "john.smith"})
     void shouldFindByUsername(String username) {
-        Optional<User> expected = allUsers.stream().filter(user -> user.getUsername().equals(username)).findFirst();
+        Optional<User> expected = this.expected
+                .stream().filter(user -> user.getUsername().equals(username)).findFirst();
         Optional<User> actual = userRepository.findByUsername(username);
 
         assertFalse(actual.isEmpty());

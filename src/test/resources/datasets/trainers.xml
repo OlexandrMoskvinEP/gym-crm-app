@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <trainers id="1" user_id="4" specialization_id="1"/>
+    <trainers id="2" user_id="5" specialization_id="3"/>
+    <trainers id="3" user_id="6" specialization_id="6"/>
+</dataset>

@@ -17,5 +17,5 @@ hibernate:
 liquibase:
   change-log: classpath:db/changelog/changelog-master.xml
   enabled: true
-  contexts: dev
+  contexts: test
   drop-first: true
