@@ -85,17 +85,17 @@
 
     <changeSet id="GCA-59-Insert-Trainers-Init" author="AlexM">
         <insert tableName="trainers">
-            <column name="id" valueNumeric="1"/>
+<!--            <column name="id" valueNumeric="1"/>-->
             <column name="user_id" valueNumeric="4"/>
             <column name="specialization_id" valueNumeric="1"/> <!-- Yoga -->
         </insert>
         <insert tableName="trainers">
-            <column name="id" valueNumeric="2"/>
+<!--            <column name="id" valueNumeric="2"/>-->
             <column name="user_id" valueNumeric="5"/>
             <column name="specialization_id" valueNumeric="3"/> <!-- CrossFit -->
         </insert>
         <insert tableName="trainers">
-            <column name="id" valueNumeric="3"/>
+<!--            <column name="id" valueNumeric="3"/>-->
             <column name="user_id" valueNumeric="6"/> <!-- Шварценеггер -->
             <column name="specialization_id" valueNumeric="6"/> <!-- Bodybuilding -->
         </insert>

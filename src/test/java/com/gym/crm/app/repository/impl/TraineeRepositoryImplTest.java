@@ -1,6 +1,7 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.RepositoryIntegrationTest;
@@ -33,6 +34,16 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     @ParameterizedTest
+    @ValueSource(longs = {1, 2, 3})
+    void shouldFindTraineeById(Long id) {
+        Optional<Trainee> expected = allTrainees.stream().filter(trainee -> trainee.getId().equals(id)).findFirst();
+        Optional<Trainee> actual = traineeRepository.findById(id);
+
+        assertTrue(actual.isPresent());
+        assertEquals(expected.get().getAddress(), actual.get().getAddress());
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"john.smith", "olga.ivanova", "irina.petrova"})
     void shouldFindByUsername(String username) {
         Optional<Trainee> actual = traineeRepository.findByUsername(username);
@@ -48,7 +59,7 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
         Trainee saved = traineeRepository.save(toSave);
         Trainee found = traineeRepository.findByUsername(toSave.getUser().getUsername()).orElse(null);
 
-        assertNotNull(saved.getId());
+        assertNotNull(saved);
         assertNotNull(found);
         assertEquals(toSave.getUser().getUsername(), found.getUser().getUsername());
     }
@@ -73,6 +84,19 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
         assertEquals("Updated Street", founded.get().getAddress());
         assertEquals(LocalDate.of(1999, 1, 1), founded.get().getDateOfBirth());
         assertEquals(toUpdate.getUser().getFirstName(), founded.get().getUser().getFirstName());
+    }
+
+    @Test
+    void shouldDeleteEntityById() {
+        Trainee toDelete = constructTrainee();
+
+        Long id = (traineeRepository.save(toDelete)).getId();
+        traineeRepository.deleteById(id);
+
+        Optional<Trainee> founded = traineeRepository.findById(id);
+
+        assertTrue(founded.isEmpty());
+        assertThrows(EntityNotFoundException.class, ()->trainerRepository.deleteById(id));
     }
 
     @Test

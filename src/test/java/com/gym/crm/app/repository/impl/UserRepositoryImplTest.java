@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UserRepositoryImplTest extends RepositoryIntegrationTest {
+public class UserRepositoryImplTest extends RepositoryIntegrationTest {
     private static final AtomicInteger counter = new AtomicInteger(0);
 
     private final List<User> allUsers = data.getTestUsers();

@@ -430,5 +430,44 @@ public class TestData {
                             .build())
                     .build()
     );
+    List<Trainer> testTrainers = List.of(
+            Trainer.builder()
+                    .id(1L)
+                    .user(User.builder()
+                            .id(4L)
+                            .firstName("Boris")
+                            .lastName("Krasnov")
+                            .username("boris.krasnov")
+                            .password("$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(1L, "Yoga"))
+                    .build(),
 
+            Trainer.builder()
+                    .id(2L)
+                    .user(User.builder()
+                            .id(5L)
+                            .firstName("Mykyta")
+                            .lastName("Solntcev")
+                            .username("mykyta.solntcev")
+                            .password("$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe.")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(3L, "CrossFit"))
+                    .build(),
+
+            Trainer.builder()
+                    .id(3L)
+                    .user(User.builder()
+                            .id(6L)
+                            .firstName("Arnold")
+                            .lastName("Schwarzenegger")
+                            .username("arnold.schwarzenegger")
+                            .password("$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(6L, "Bodybuilding"))
+                    .build()
+    );
 }
