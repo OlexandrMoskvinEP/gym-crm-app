@@ -103,19 +103,19 @@
 
     <changeSet id="GCA-59-Insert-Trainees-Init" author="AlexM">
         <insert tableName="trainees">
-            <column name="id" valueNumeric="1"/>
+<!--            <column name="id" valueNumeric="1"/>-->
             <column name="date_of_birth" valueDate="1995-03-15"/>
             <column name="address" value="Kyiv, Ukraine"/>
             <column name="user_id" valueNumeric="1"/>
         </insert>
         <insert tableName="trainees">
-            <column name="id" valueNumeric="2"/>
+<!--            <column name="id" valueNumeric="2"/>-->
             <column name="date_of_birth" valueDate="1998-07-10"/>
             <column name="address" value="Lviv, Ukraine"/>
             <column name="user_id" valueNumeric="2"/>
         </insert>
         <insert tableName="trainees">
-            <column name="id" valueNumeric="3"/>
+<!--            <column name="id" valueNumeric="3"/>-->
             <column name="date_of_birth" valueDate="2000-11-01"/>
             <column name="address" value="Dnipro, Ukraine"/>
             <column name="user_id" valueNumeric="3"/>

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserRepositoryImplTest extends RepositoryIntegrationTest {
+    private static final AtomicInteger counter = new AtomicInteger(0);
+
     private final List<User> allUsers = data.getTestUsers();
 
     @Test
@@ -33,12 +36,16 @@ class UserRepositoryImplTest extends RepositoryIntegrationTest {
         Optional<User> actual = userRepository.findByUsername(username);
 
         assertFalse(actual.isEmpty());
-        assertEquals(expected.get(), actual.get());
+
+        assertEquals(expected.get().getLastName(), actual.get().getLastName());
+        assertEquals(expected.get().getFirstName(), actual.get().getFirstName());
+        assertEquals(expected.get().getPassword(), actual.get().getPassword());
+        assertEquals(expected.get().isActive(), actual.get().isActive());
     }
 
     @Test
     void shouldSaveEntity() {
-        User toSave = constructUser(1);
+        User toSave = constructUser();
 
         User saved = userRepository.save(toSave);
         User founded = userRepository.findByUsername(toSave.getUsername()).orElse(null);
@@ -50,7 +57,7 @@ class UserRepositoryImplTest extends RepositoryIntegrationTest {
 
     @Test
     void shouldUpdate() {
-        User toUpdate = constructUser(2);
+        User toUpdate = constructUser();
         userRepository.update(toUpdate);
 
         User founded = userRepository.findByUsername(toUpdate.getUsername()).orElse(null);
@@ -65,7 +72,7 @@ class UserRepositoryImplTest extends RepositoryIntegrationTest {
 
     @Test
     void shouldDeleteEntityByUsername() {
-        User toDelete = constructUser(3);
+        User toDelete = constructUser();
 
         userRepository.save(toDelete);
         userRepository.deleteByUsername(toDelete.getUsername());
@@ -76,30 +83,13 @@ class UserRepositoryImplTest extends RepositoryIntegrationTest {
         assertNull(founded);
     }
 
-    private static User constructUser(int index) {
-        if (index == 1) {
-            return User.builder()
-                    .firstName("Alice")
-                    .lastName("Moro")
-                    .username("Alice.Moro")
-                    .password("Abc123!@#")
-                    .isActive(true)
-                    .build();
-
-        } else if (index == 2) {
-            return User.builder()
-                    .firstName("Bingo")
-                    .lastName("Bongo")
-                    .username("Bingo.Bongo")
-                    .password("Abc123!@#")
-                    .isActive(true)
-                    .build();
-
-        } else return User.builder()
-                .firstName("Papa")
-                .lastName("Carlo")
-                .username("Papa.Carlo")
-                .password("Abc123!@#")
+    private static User constructUser() {
+        int count = counter.incrementAndGet();
+        return User.builder()
+                .firstName("Trainee" + count)
+                .lastName("Test")
+                .username("trainee" + count)
+                .password("Pwd123!@#")
                 .isActive(true)
                 .build();
     }

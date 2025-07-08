@@ -29,8 +29,8 @@ import java.util.Set;
 @Entity
 @Table(name = "trainees")
 @Getter
-@ToString
-@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor

@@ -347,7 +347,6 @@ public class TestData {
                     .password("$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe")
                     .isActive(true)
                     .build(),
-
             User.builder()
                     .id(2L)
                     .firstName("Olga")
@@ -356,7 +355,6 @@ public class TestData {
                     .password("$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe")
                     .isActive(true)
                     .build(),
-
             User.builder()
                     .id(3L)
                     .firstName("Irina")
@@ -365,7 +363,6 @@ public class TestData {
                     .password("$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q")
                     .isActive(true)
                     .build(),
-
             User.builder()
                     .id(4L)
                     .firstName("Boris")
@@ -374,7 +371,6 @@ public class TestData {
                     .password("$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C")
                     .isActive(true)
                     .build(),
-
             User.builder()
                     .id(5L)
                     .firstName("Mykyta")
@@ -383,7 +379,6 @@ public class TestData {
                     .password("$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe.")
                     .isActive(true)
                     .build(),
-
             User.builder()
                     .id(6L)
                     .firstName("Arnold")
@@ -393,4 +388,47 @@ public class TestData {
                     .isActive(true)
                     .build()
     );
+
+    List<Trainee> testTrainees = List.of(
+            Trainee.builder()
+                    .id(1L)
+                    .dateOfBirth(LocalDate.of(1995, 3, 15))
+                    .address("Kyiv, Ukraine")
+                    .user(User.builder()
+                            .id(1L)
+                            .firstName("John")
+                            .lastName("Smith")
+                            .username("john.smith")
+                            .password("$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe")
+                            .isActive(true)
+                            .build())
+                    .build(),
+            Trainee.builder()
+                    .id(2L)
+                    .dateOfBirth(LocalDate.of(1998, 7, 10))
+                    .address("Lviv, Ukraine")
+                    .user(User.builder()
+                            .id(2L)
+                            .firstName("Olga")
+                            .lastName("Ivanova")
+                            .username("olga.ivanova")
+                            .password("$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe")
+                            .isActive(true)
+                            .build())
+                    .build(),
+            Trainee.builder()
+                    .id(3L)
+                    .dateOfBirth(LocalDate.of(2000, 11, 1))
+                    .address("Dnipro, Ukraine")
+                    .user(User.builder()
+                            .id(3L)
+                            .firstName("Irina")
+                            .lastName("Petrova")
+                            .username("irina.petrova")
+                            .password("$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q")
+                            .isActive(true)
+                            .build())
+                    .build()
+    );
+
 }
