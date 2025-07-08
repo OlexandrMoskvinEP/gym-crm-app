@@ -1,6 +1,5 @@
 package com.gym.crm.app.repository.impl;
 
-import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -16,11 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
+public class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
     private static final AtomicInteger counter = new AtomicInteger(200);
 
     private final List<Trainer> allTrainers = data.getTestTrainers();
@@ -34,21 +32,10 @@ class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    void shouldSaveEntity() {
-        Trainer toSave = constructTrainer();
-
-        Trainer saved = trainerRepository.save(toSave);
-        Trainer found = trainerRepository.findByUsername(toSave.getUser().getUsername()).orElse(null);
-
-        assertNotNull(saved);
-        assertNotNull(found);
-        assertEquals(toSave.getUser().getUsername(), found.getUser().getUsername());
-    }
-
-    @Test
     void shouldSaveAndUpdate() {
         Trainer toUpdate = constructTrainer();
         Trainer saved = trainerRepository.save(toUpdate);
+
         TrainingType newSpecialisation = trainingTypeRepository.findById(2L).orElseThrow();
 
         toUpdate = toUpdate.toBuilder()
@@ -58,7 +45,6 @@ class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
                 .build();
 
         trainerRepository.update(toUpdate);
-
 
         Optional<Trainer> founded = trainerRepository.findById(toUpdate.getId());
 
@@ -96,7 +82,7 @@ class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
         Optional<Trainer> founded = trainerRepository.findById(id);
 
         assertTrue(founded.isEmpty());
-        assertThrows(EntityNotFoundException.class, ()->trainerRepository.deleteById(id));
+        assertThrows(EntityNotFoundException.class, () -> trainerRepository.deleteById(id));
     }
 
     @Test

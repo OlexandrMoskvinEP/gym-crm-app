@@ -7,27 +7,27 @@
 
     <changeSet id="GCA-59-Insert-TrainingTypes-Init" author="AlexM">
         <insert tableName="training_types">
-            <column name="id" valueNumeric="1"/>
+<!--            <column name="id" valueNumeric="1"/>-->
             <column name="training_type_name" value="Yoga"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="2"/>
+<!--            <column name="id" valueNumeric="2"/>-->
             <column name="training_type_name" value="Cardio"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="3"/>
+<!--            <column name="id" valueNumeric="3"/>-->
             <column name="training_type_name" value="CrossFit"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="4"/>
+<!--            <column name="id" valueNumeric="4"/>-->
             <column name="training_type_name" value="Stretching"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="5"/>
+<!--            <column name="id" valueNumeric="5"/>-->
             <column name="training_type_name" value="Pilates"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="6"/>
+<!--            <column name="id" valueNumeric="6"/>-->
             <column name="training_type_name" value="Bodybuilding"/>
         </insert>
     </changeSet>
@@ -147,7 +147,7 @@
 
     <changeSet id="GCA-59-Insert-Trainings-Init" author="AlexM">
         <insert tableName="trainings">
-            <column name="id" valueNumeric="1"/>
+<!--            <column name="id" valueNumeric="1"/>-->
             <column name="training_name" value="Morning Cardio"/>
             <column name="training_date" valueDate="2025-06-01"/>
             <column name="training_duration" valueNumeric="1.0"/>
@@ -156,7 +156,7 @@
             <column name="training_type_id" valueNumeric="2"/> <!-- Cardio -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="2"/>
+<!--            <column name="id" valueNumeric="2"/>-->
             <column name="training_name" value="Yoga Flow"/>
             <column name="training_date" valueDate="2025-06-03"/>
             <column name="training_duration" valueNumeric="1.5"/>
@@ -165,7 +165,7 @@
             <column name="training_type_id" valueNumeric="1"/> <!-- Yoga -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="3"/>
+<!--            <column name="id" valueNumeric="3"/>-->
             <column name="training_name" value="CrossFit Burn"/>
             <column name="training_date" valueDate="2025-06-05"/>
             <column name="training_duration" valueNumeric="1.2"/>
@@ -174,7 +174,7 @@
             <column name="training_type_id" valueNumeric="3"/> <!-- CrossFit -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="4"/>
+<!--            <column name="id" valueNumeric="4"/>-->
             <column name="training_name" value="Stretch Focus"/>
             <column name="training_date" valueDate="2025-06-07"/>
             <column name="training_duration" valueNumeric="0.8"/>
@@ -183,7 +183,7 @@
             <column name="training_type_id" valueNumeric="4"/> <!-- Stretching -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="5"/>
+<!--            <column name="id" valueNumeric="5"/>-->
             <column name="training_name" value="Arnold's Power"/>
             <column name="training_date" valueDate="2025-06-10"/>
             <column name="training_duration" valueNumeric="2.0"/>

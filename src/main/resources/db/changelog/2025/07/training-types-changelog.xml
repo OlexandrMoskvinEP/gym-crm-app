@@ -12,7 +12,7 @@
 
     <changeSet id="GCA-59-Add-Table-TrainingTypes-1751656001894-2" author="AlexM">
         <createTable tableName="training_types">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_training_types"/>
             </column>
             <column name="training_type_name" type="VARCHAR(32)">

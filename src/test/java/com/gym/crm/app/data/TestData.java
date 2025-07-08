@@ -430,6 +430,7 @@ public class TestData {
                             .build())
                     .build()
     );
+
     List<Trainer> testTrainers = List.of(
             Trainer.builder()
                     .id(1L)
@@ -443,7 +444,6 @@ public class TestData {
                             .build())
                     .specialization(new TrainingType(1L, "Yoga"))
                     .build(),
-
             Trainer.builder()
                     .id(2L)
                     .user(User.builder()
@@ -456,7 +456,6 @@ public class TestData {
                             .build())
                     .specialization(new TrainingType(3L, "CrossFit"))
                     .build(),
-
             Trainer.builder()
                     .id(3L)
                     .user(User.builder()
@@ -468,6 +467,57 @@ public class TestData {
                             .isActive(true)
                             .build())
                     .specialization(new TrainingType(6L, "Bodybuilding"))
+                    .build()
+    );
+    List<Training> testTrainings = List.of(
+            Training.builder()
+                    .id(1L)
+                    .trainingName("Morning Cardio")
+                    .trainingDate(LocalDate.of(2025, 6, 1))
+                    .trainingDuration(BigDecimal.valueOf(1))
+                    .trainer(Trainer.builder().id(1L).build()) // Boris Krasnov
+                    .trainee(Trainee.builder().id(1L).build()) // John Smith
+                    .trainingType(new TrainingType(2L, "Cardio"))
+                    .build(),
+
+            Training.builder()
+                    .id(2L)
+                    .trainingName("Yoga Flow")
+                    .trainingDate(LocalDate.of(2025, 6, 3))
+                    .trainingDuration(BigDecimal.valueOf(1.5))
+                    .trainer(Trainer.builder().id(1L).build()) // Boris Krasnov
+                    .trainee(Trainee.builder().id(2L).build()) // Olga Ivanova
+                    .trainingType(new TrainingType(1L, "Yoga"))
+                    .build(),
+
+            Training.builder()
+                    .id(3L)
+                    .trainingName("CrossFit Burn")
+                    .trainingDate(LocalDate.of(2025, 6, 5))
+                    .trainingDuration(BigDecimal.valueOf(1.2))
+                    .trainer(Trainer.builder().id(2L).build()) // Mykyta Solntcev
+                    .trainee(Trainee.builder().id(2L).build()) // Olga Ivanova
+                    .trainingType(new TrainingType(3L, "CrossFit"))
+                    .build(),
+
+            Training.builder()
+                    .id(4L)
+                    .trainingName("Stretch Focus")
+                    .trainingDate(LocalDate.of(2025, 6, 7))
+                    .trainingDuration(BigDecimal.valueOf(0.8))
+                    .trainer(Trainer.builder().id(3L).build()) // Arnold Schwarzenegger
+                    .trainee(Trainee.builder().id(3L).build()) // Irina Petrova
+                    .trainingType(new TrainingType(4L, "Stretching"))
+                    .build(),
+
+            Training.builder()
+                    .id(5L)
+                    .trainingName("Arnold's Power")
+                    .trainingDate(LocalDate.of(2025, 6, 10))
+                    .trainingDuration(BigDecimal.valueOf(2))
+                    .trainer(Trainer.builder().id(3L).build()) // Arnold Schwarzenegger
+                    .trainee(Trainee.builder().id(1L).build()) // John Smith
+                    .trainingType(new TrainingType(6L, "Bodybuilding"))
                     .build()
     );
 }

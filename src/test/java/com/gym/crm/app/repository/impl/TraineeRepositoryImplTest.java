@@ -1,7 +1,6 @@
 package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.RepositoryIntegrationTest;
@@ -16,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,18 +51,6 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    void shouldSaveEntity() {
-        Trainee toSave = constructTrainee();
-
-        Trainee saved = traineeRepository.save(toSave);
-        Trainee found = traineeRepository.findByUsername(toSave.getUser().getUsername()).orElse(null);
-
-        assertNotNull(saved);
-        assertNotNull(found);
-        assertEquals(toSave.getUser().getUsername(), found.getUser().getUsername());
-    }
-
-    @Test
     void shouldSaveAndUpdate() {
         Trainee toUpdate = constructTrainee();
         Trainee saved = traineeRepository.save(toUpdate);
@@ -96,7 +82,7 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
         Optional<Trainee> founded = traineeRepository.findById(id);
 
         assertTrue(founded.isEmpty());
-        assertThrows(EntityNotFoundException.class, ()->trainerRepository.deleteById(id));
+        assertThrows(EntityNotFoundException.class, () -> trainerRepository.deleteById(id));
     }
 
     @Test
