@@ -17,9 +17,6 @@ public class TestConfig {
 
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(environment.getProperty("liquibase.change-log"));
-        liquibase.setContexts(environment.getProperty("liquibase.contexts", "test"));
-        liquibase.setDropFirst(Boolean.parseBoolean(environment.getProperty("liquibase.drop-first", "true")));
-        liquibase.setShouldRun(true);
 
         return liquibase;
     }

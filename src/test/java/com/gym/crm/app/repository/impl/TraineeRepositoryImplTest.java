@@ -1,5 +1,6 @@
 package com.gym.crm.app.repository.impl;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -11,30 +12,30 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataSet(value = {"datasets/users.xml",
+        "datasets/trainees.xml"}, cleanBefore = true, cleanAfter = true)
 public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
-    private static final AtomicInteger counter = new AtomicInteger(100);
-
-    private final List<Trainee> allTrainees = data.getTestTrainees();
+    private final List<Trainee> expected = data.getTestTrainees();
 
     @Test
     void shouldReturnAllTrainees() {
         List<Trainee> actual = traineeRepository.findAll();
 
         assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(allTrainees));
+        assertTrue(actual.containsAll(expected));
     }
 
     @ParameterizedTest
     @ValueSource(longs = {1, 2, 3})
     void shouldFindTraineeById(Long id) {
-        Optional<Trainee> expected = allTrainees.stream().filter(trainee -> trainee.getId().equals(id)).findFirst();
+        Optional<Trainee> expected = this.expected.stream().filter(trainee -> trainee.getId().equals(id)).findFirst();
         Optional<Trainee> actual = traineeRepository.findById(id);
 
         assertTrue(actual.isPresent());
@@ -99,7 +100,7 @@ public class TraineeRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     private static Trainee constructTrainee() {
-        int count = counter.incrementAndGet();
+        int count = new Random().nextInt(200);
 
         User user = User.builder()
                 .firstName("Trainee" + count)

@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/users.xml", cleanBefore = true, cleanAfter = true)
 public class UserRepositoryImplTest extends RepositoryIntegrationTest {
-    private static final AtomicInteger counter = new AtomicInteger(0);
-
     private final List<User> expected = data.getTestUsers();
 
     @Test
@@ -87,7 +85,8 @@ public class UserRepositoryImplTest extends RepositoryIntegrationTest {
     }
 
     private static User constructUser() {
-        int count = counter.incrementAndGet();
+        int count = new Random().nextInt(1000);
+
         return User.builder()
                 .firstName("Trainee" + count)
                 .lastName("Test")
