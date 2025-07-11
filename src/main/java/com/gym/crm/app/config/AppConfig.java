@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gym.crm.app.config.hibernate.HibernateConfig;
-import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.domain.model.Training;
 import liquibase.integration.spring.SpringLiquibase;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -14,11 +11,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @ComponentScan(basePackages = "com.gym.crm.app")
@@ -41,18 +38,8 @@ public class AppConfig {
     }
 
     @Bean
-    public Map<String, Trainer> trainerStorage() {
-        return new HashMap<>();
-    }
-
-    @Bean
-    public Map<String, Trainee> traineeStorage() {
-        return new HashMap<>();
-    }
-
-    @Bean
-    public Map<String, Training> trainingStorage() {
-        return new HashMap<>();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

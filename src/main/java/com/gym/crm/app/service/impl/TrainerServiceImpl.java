@@ -1,6 +1,8 @@
 package com.gym.crm.app.service.impl;
 
-import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    private TrainerRepository trainerRepository;
+    private TrainerRepository repository;
     private ModelMapper modelMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
@@ -37,8 +39,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Autowired
-    public void setTrainerRepository(TrainerRepository trainerRepository) {
-        this.trainerRepository = trainerRepository;
+    public void setRepository(TrainerRepository repository) {
+        this.repository = repository;
     }
 
     @Autowired
@@ -48,7 +50,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<TrainerDto> getAllTrainers() {
-        return trainerRepository.findAll()
+        return repository.findAll()
                 .stream()
                 .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
                 .collect(Collectors.toList());
@@ -56,67 +58,76 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto getTrainerByUsername(String username) {
-        Trainer trainer = trainerRepository.findByUsername(username)
+        Trainer trainer = repository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
         return modelMapper.map(trainer, TrainerDto.class);
     }
 
     @Override
-    public TrainerDto addTrainer(TrainerDto trainerDto) {
-        String username = userProfileService.createUsername(trainerDto.getFirstName(), trainerDto.getLastName());
+    public TrainerDto addTrainer(TrainerCreateRequest trainerCreateRequest) {
+        String username = userProfileService.createUsername(trainerCreateRequest.getUser().getFirstName(), trainerCreateRequest.getUser().getFirstName());
         String password = passwordService.generatePassword();
-
-        trainerDto.setPassword(password);
-        trainerDto.setUsername(username);
 
         logger.info("Adding trainer with username {}", username);
 
-        Trainer entityToAdd = mapTrainerWithUser(trainerDto);
-
-        Trainer returned =  trainerRepository.save(entityToAdd);
+        Trainer entityToAdd = mapTrainerWithUser(trainerCreateRequest, username, password);
+        Trainer returned = repository.save(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
-
         return getTrainerDtoFromEntity(returned);
     }
 
     @Override
-    public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
-        Trainer existing = trainerRepository.findByUsername(username)
+    public TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest) {
+        Trainer existTrainer = repository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        Trainer entityToUpdate = mapTrainerWithUser(trainerDto);
+        Trainer entityToUpdate = mapUpdatedTrainerWithUser(updateRequest, existTrainer);
 
-        trainerRepository.save(entityToUpdate);
+        repository.save(entityToUpdate);
 
         logger.info("Trainer {} updated", username);
-
-        return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
+        return modelMapper.map(repository.findByUsername(username), TrainerDto.class);
     }
 
     @Override
     public void deleteTrainerByUsername(String username) {
-        if (trainerRepository.findByUsername(username).isEmpty()) {
+        if (repository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainer not found!");
         }
 
-        trainerRepository.deleteByUsername(username);
+        repository.deleteByUsername(username);
 
         logger.info("Trainer {} deleted", username);
     }
 
-    private Trainer mapTrainerWithUser(TrainerDto trainerDto) {
+    private Trainer mapTrainerWithUser(TrainerCreateRequest createRequest, String username, String password) {
         User user = User.builder()
-                .username(trainerDto.getUsername())
-                .password(trainerDto.getPassword())
-                .isActive(trainerDto.isActive())
-                .firstName(trainerDto.getFirstName())
-                .lastName(trainerDto.getLastName())
+                .username(username)
+                .password(password)
+                .firstName(createRequest.getUser().getFirstName())
+                .lastName(createRequest.getUser().getLastName())
+                .isActive(createRequest.getUser().getIsActive())
                 .build();
 
         return Trainer.builder()
-                .specialization(trainerDto.getSpecialization())
+                .specialization(createRequest.getSpecialization())
+                .user(user)
+                .build();
+    }
+
+    private Trainer mapUpdatedTrainerWithUser(TrainerUpdateRequest createRequest, Trainer existTrainer) {
+        User user = User.builder()
+                .username(existTrainer.getUser().getUsername())
+                .password(existTrainer.getUser().getPassword())
+                .firstName(createRequest.getUser().getFirstName())
+                .lastName(createRequest.getUser().getLastName())
+                .isActive(createRequest.getUser().getIsActive())
+                .build();
+
+        return Trainer.builder()
+                .specialization(createRequest.getSpecialization())
                 .user(user)
                 .build();
     }

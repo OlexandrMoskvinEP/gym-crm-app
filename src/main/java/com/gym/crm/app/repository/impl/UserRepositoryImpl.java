@@ -2,8 +2,10 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.UserRepository;
 import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -75,4 +77,22 @@ public class UserRepositoryImpl implements UserRepository {
                         .getResultList()
         );
     }
+
+    @Override
+    public void updatePassword(String username, String encodedPassword) {
+        txExecutor.performWithinTx(session -> {
+            Query<?> query = (Query<?>) session.createQuery("""
+                        UPDATE User u SET u.password = :password WHERE u.username = :username
+                    """);
+            query.setParameter("password", encodedPassword);
+            query.setParameter("username", username);
+
+            int updatedRows = query.executeUpdate();
+
+            if (updatedRows == 0) {
+                throw new EntityNotFoundException("User not found: " + username);
+            }
+        });
+    }
+
 }

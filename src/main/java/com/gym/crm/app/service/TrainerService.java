@@ -1,6 +1,8 @@
 package com.gym.crm.app.service;
 
-import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 
 import java.util.List;
 
@@ -9,9 +11,9 @@ public interface TrainerService {
 
     TrainerDto getTrainerByUsername (String username);
 
-    TrainerDto addTrainer(TrainerDto trainerDto);
+    TrainerDto addTrainer(TrainerCreateRequest createRequest);
 
-    TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto);
+    TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest);
 
     void deleteTrainerByUsername(String username);
 }

@@ -1,9 +1,8 @@
-package com.gym.crm.app.domain.dto;
+package com.gym.crm.app.domain.dto.training;
 
-import com.gym.crm.app.domain.model.Trainee;
-import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +11,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 @Data
 public class TrainingDto {
     private Long trainerId;
@@ -20,12 +20,4 @@ public class TrainingDto {
     private TrainingType trainingType;
     private LocalDate trainingDate;
     private BigDecimal trainingDuration;
-
-    public Trainer getTrainer() {
-        return new Trainer();
-    }
-
-    public Trainee getTrainee() {
-        return new Trainee();
-    }
 }
