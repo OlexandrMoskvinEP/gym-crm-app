@@ -35,7 +35,7 @@ class AuthenticationServiceTest {
     private static final String USERNAME = "maximus.cena";
 
     private static final String PLAIN_PASSWORD = "PASSWORD123";
-    private static final String INVALID_PASSWORD = "PASSWORD123";
+    private static final String INVALID_PASSWORD = "PASSWORD321";
     private static final String ENCODED_PASSWORD = "gfjSl34so$#1";
 
     @Mock
