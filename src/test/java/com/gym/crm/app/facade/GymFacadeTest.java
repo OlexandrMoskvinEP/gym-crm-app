@@ -38,8 +38,6 @@ class GymFacadeTest {
     private TrainerService trainerService;
     @Mock
     private TrainingService trainingService;
-    @Mock
-    private UserProfileService userProfileService;
 
     @InjectMocks
     private GymFacade gymFacade;

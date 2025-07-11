@@ -89,9 +89,8 @@ public class GymFacade {
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest) {
         return trainingService.updateTraining(updateRequest);
     }
-
+    //todo create test!!
     public void changePassword(String username, String password) {
         userProfileService.changePassword(username, password);
     }
-
 }
