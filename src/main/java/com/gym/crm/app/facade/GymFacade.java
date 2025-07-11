@@ -6,6 +6,7 @@ import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
+import com.gym.crm.app.service.common.UserProfileService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,18 @@ public class GymFacade {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainingService trainingService;
+    private final UserProfileService userProfileService;
 
     @Autowired
-    public GymFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
+    public GymFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService, UserProfileService userProfileService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
+        this.userProfileService = userProfileService;
+    }
+
+    public void changePassword(String username, String password) {
+        userProfileService.changePassword(username, password);
     }
 
     public List<TrainerDto> getAllTrainers() {

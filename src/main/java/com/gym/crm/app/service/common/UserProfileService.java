@@ -41,16 +41,10 @@ public class UserProfileService {
         return username;
     }
 
-    public boolean changePassword(String username, String password) {
+    public void changePassword(String username, String password) {
         String encodedPassword = passwordService.encodePassword(password);
 
-        try {
-            userRepository.updatePassword(username, encodedPassword);
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        userRepository.updatePassword(username, encodedPassword);
     }
 
     private List<String> retrieveAllUsernames() {
