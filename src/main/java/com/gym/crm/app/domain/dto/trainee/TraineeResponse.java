@@ -1,6 +1,7 @@
-package com.gym.crm.app.domain.dto;
+package com.gym.crm.app.domain.dto.trainee;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +9,10 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
+
 @Data
-public class TraineeDto {
+public class TraineeResponse {
     private String firstName;
     private String lastName;
     private String username;

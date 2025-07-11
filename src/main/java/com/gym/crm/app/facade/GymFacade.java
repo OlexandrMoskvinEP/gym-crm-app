@@ -1,6 +1,6 @@
 package com.gym.crm.app.facade;
 
-import com.gym.crm.app.domain.dto.TraineeDto;
+import com.gym.crm.app.domain.dto.trainee.TraineeResponse;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.dto.TrainingDto;
 import com.gym.crm.app.service.TraineeService;
@@ -46,20 +46,20 @@ public class GymFacade {
         trainerService.deleteTrainerByUsername(username);
     }
 
-    public List<TraineeDto> getAllTrainees() {
+    public List<TraineeResponse> getAllTrainees() {
         return traineeService.getAllTrainees();
     }
 
-    public TraineeDto getTraineeByUsername(String username) {
+    public TraineeResponse getTraineeByUsername(String username) {
         return traineeService.getTraineeByUsername(username);
     }
 
-    public TraineeDto addTrainee(TraineeDto trainerDto) {
+    public TraineeResponse addTrainee(TraineeResponse trainerDto) {
         return traineeService.addTrainee(trainerDto);
     }
 
-    public TraineeDto updateTraineeByUsername(String username, TraineeDto traineeDto) {
-        return traineeService.updateTraineeByUsername(username, traineeDto);
+    public TraineeResponse updateTraineeByUsername(String username, TraineeResponse traineeResponse) {
+        return traineeService.updateTraineeByUsername(username, traineeResponse);
     }
 
     public void deleteTraineeByUsername(String username) {

@@ -5,11 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
+
 @Data
 public class UserUpdateRequest {
     @Size(min = 3, max = 16, message = "First name shouldn`t be blank and should have 3-16 characters!")
