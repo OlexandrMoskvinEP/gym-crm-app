@@ -74,7 +74,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         Trainer entityToAdd = mapTrainerWithUser(trainerDto);
 
-        Trainer returned =  trainerRepository.saveTrainer(entityToAdd);
+        Trainer returned =  trainerRepository.save(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
 
@@ -88,7 +88,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         Trainer entityToUpdate = mapTrainerWithUser(trainerDto);
 
-        trainerRepository.saveTrainer(entityToUpdate);
+        trainerRepository.save(entityToUpdate);
 
         logger.info("Trainer {} updated", username);
 
@@ -101,7 +101,7 @@ public class TrainerServiceImpl implements TrainerService {
             throw new EntityNotFoundException("Trainer not found!");
         }
 
-        trainerRepository.deleteByUserName(username);
+        trainerRepository.deleteByUsername(username);
 
         logger.info("Trainer {} deleted", username);
     }

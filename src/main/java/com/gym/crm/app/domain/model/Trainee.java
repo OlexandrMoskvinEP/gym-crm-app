@@ -29,8 +29,8 @@ import java.util.Set;
 @Entity
 @Table(name = "trainees")
 @Getter
-@ToString
-@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -50,6 +50,7 @@ public class Trainee {
     private User user;
 
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Training> trainings = new ArrayList<>();
 
     @Builder.Default

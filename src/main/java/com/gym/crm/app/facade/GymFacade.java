@@ -3,7 +3,6 @@ package com.gym.crm.app.facade;
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.dto.TrainingDto;
-import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -11,9 +10,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Component
@@ -73,22 +70,6 @@ public class GymFacade {
         return trainingService.getAllTrainings();
     }
 
-    public List<TrainingDto> getTrainingByTrainerId(Long trainerId) {
-        return trainingService.getTrainingByTrainerId(trainerId);
-    }
-
-    public List<TrainingDto> getTrainingByTraineeId(Long trainerId) {
-        return trainingService.getTrainingByTraineeId(trainerId);
-    }
-
-    public List<TrainingDto> getTrainingByDate(LocalDate date) {
-        return trainingService.getTrainingByDate(date);
-    }
-
-    public Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        return trainingService.getTrainingByTrainerAndTraineeAndDate(identityDto);
-    }
-
     public TrainingDto addTraining(TrainingDto training) {
         return trainingService.addTraining(training);
     }
@@ -97,7 +78,4 @@ public class GymFacade {
         return trainingService.updateTraining(trainingDto);
     }
 
-    public void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto) {
-        trainingService.deleteTrainingByTrainerAndTraineeAndDate(identityDto);
-    }
 }

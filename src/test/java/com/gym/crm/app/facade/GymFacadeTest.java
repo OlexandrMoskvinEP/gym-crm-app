@@ -1,14 +1,12 @@
 package com.gym.crm.app.facade;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.TraineeDto;
 import com.gym.crm.app.domain.dto.TrainerDto;
 import com.gym.crm.app.domain.dto.TrainingDto;
-import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,12 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,6 +86,7 @@ class GymFacadeTest {
     @Test
     void shouldDeleteTrainerByUsername() {
         doNothing().when(trainerService).deleteTrainerByUsername("username");
+
         gymFacade.deleteTrainerByUsername("username");
 
         verify(trainerService).deleteTrainerByUsername("username");
@@ -167,54 +163,6 @@ class GymFacadeTest {
     }
 
     @Test
-    void shouldReturnTrainingByTrainerId() {
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByTrainerId(1L)).thenReturn(List.of(trainingDto));
-
-        List<TrainingDto> actual = gymFacade.getTrainingByTrainerId(1L);
-
-        verify(trainingService).getTrainingByTrainerId(1L);
-        assertEquals(List.of(trainingDto), actual);
-    }
-
-    @Test
-    void shouldReturnTrainingByTraineeId() {
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByTraineeId(1L)).thenReturn(List.of(trainingDto));
-
-        List<TrainingDto> actual = gymFacade.getTrainingByTraineeId(1L);
-
-        verify(trainingService).getTrainingByTraineeId(1L);
-        assertEquals(List.of(trainingDto), actual);
-    }
-
-    @Test
-    void shouldReturnTrainingByDate() {
-        LocalDate date = LocalDate.now();
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByDate(date)).thenReturn(List.of(trainingDto));
-
-        List<TrainingDto> actual = gymFacade.getTrainingByDate(date);
-
-        verify(trainingService).getTrainingByDate(date);
-        assertEquals(List.of(trainingDto), actual);
-    }
-
-    @Test
-    void shouldReturnTrainingByTrainerAndTraineeAndDate() {
-        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.getTrainingByTrainerAndTraineeAndDate(dto)).thenReturn(Optional.of(trainingDto));
-
-        Optional<TrainingDto> actual = gymFacade.getTrainingByTrainerAndTraineeAndDate(dto);
-
-        verify(trainingService).getTrainingByTrainerAndTraineeAndDate(dto);
-
-        assertNotNull(actual);
-        assertEquals(Optional.of(trainingDto), actual);
-    }
-
-    @Test
     void shouldAddTraining() {
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
         when(trainingService.addTraining(trainingDto)).thenReturn(trainingDto);
@@ -236,13 +184,4 @@ class GymFacadeTest {
         assertEquals(trainingDto, actual);
     }
 
-    @Test
-    void shouldDeleteTrainingByTrainerAndTraineeAndDate() {
-        TrainingIdentityDto dto = new TrainingIdentityDto(1L, 2L, LocalDate.now());
-        doNothing().when(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
-
-        gymFacade.deleteTrainingByTrainerAndTraineeAndDate(dto);
-
-        verify(trainingService).deleteTrainingByTrainerAndTraineeAndDate(dto);
-    }
 }

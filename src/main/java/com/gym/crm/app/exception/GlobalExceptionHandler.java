@@ -16,8 +16,8 @@ public class GlobalExceptionHandler {
         return exception.getMessage();
     }
 
-    @ExceptionHandler(DuplicateUsernameException.class)
-    public String handleAlreadyExist(DuplicateUsernameException exception) {
+    @ExceptionHandler(DuplicateEntityException.class)
+    public String handleAlreadyExist(DuplicateEntityException exception) {
         log.error("AlreadyExist exception occurred", exception);
 
         return exception.getMessage();

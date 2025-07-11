@@ -3,50 +3,66 @@ package com.gym.crm.app.config.hibernate;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@Configuration
 public class TransactionExecutor {
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
+    private static final Logger log = LoggerFactory.getLogger(TransactionExecutor.class);
+
+    private final EntityManagerFactory entityManagerFactory;
+
+    public TransactionExecutor(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
 
     public void performWithinTx(Consumer<EntityManager> action) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
-            tx.begin();
-            action.accept(em);
-            tx.commit();
+            transaction.begin();
+
+            log.debug("Transaction started");
+            action.accept(entityManager);
+
+            transaction.commit();
         } catch (Exception ex) {
-            tx.rollback();
+            if (transaction.isActive()) {
+                log.debug("Transaction failed");
+
+                transaction.rollback();
+            }
             throw ex;
         } finally {
-            em.close();
+            entityManager.close();
         }
     }
 
-    public <T> T performReturningWithinTx(Function<EntityManager, T> action) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        EntityTransaction tx = null;
 
-        try (em) {
-            tx = em.getTransaction();
-            tx.begin();
-            T result = action.apply(em);
-            tx.commit();
+    public <T> T performReturningWithinTx(Function<EntityManager, T> action) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+
+            log.debug("Transaction with returning started");
+            T result = action.apply(entityManager);
+            transaction.commit();
 
             return result;
-
         } catch (Exception ex) {
-            if (tx != null) {
-                tx.rollback();
+            if (transaction.isActive()) {
+                log.debug("Transaction with returning failed");
+
+                transaction.rollback();
             }
             throw ex;
+        } finally {
+            entityManager.close();
         }
     }
 }

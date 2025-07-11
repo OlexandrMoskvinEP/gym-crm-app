@@ -1,91 +1,69 @@
 package com.gym.crm.app.repository.impl;
 
+import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.exception.DuplicateUsernameException;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DuplicateEntityException;
 import com.gym.crm.app.repository.TrainingRepository;
-import com.gym.crm.app.storage.CommonStorage;
+import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class TrainingRepositoryImpl implements TrainingRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainingRepositoryImpl.class);
 
-    private Map<String, Training> trainingStorage;
+    private final TransactionExecutor txExecutor;
 
-    @Autowired
-    public void setTrainingStorage(CommonStorage commonStorage) {
-        this.trainingStorage = commonStorage.getTrainingStorage();
+    public TrainingRepositoryImpl(EntityManagerFactory managerFactory) {
+        this.txExecutor = new TransactionExecutor(managerFactory);
     }
 
     @Override
     public List<Training> findAll() {
-        return new ArrayList<>(trainingStorage.values());
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery("SELECT t FROM Training t ", Training.class)
+                        .getResultStream()
+                        .toList()
+        );
     }
 
     @Override
-    public List<Training> findByTrainerId(Long trainerId) {
-        return findAll().stream()
-                .filter(t -> t.getId().equals(trainerId))
-                .collect(Collectors.toList());
+    public void update(Training training) {
+        logger.debug("Updating training");
+
+        txExecutor.performWithinTx(entityManager -> {
+            entityManager.merge(training);
+        });
     }
 
     @Override
-    public List<Training> findByTraineeId(Long traineeId) {
-        return findAll().stream()
-                .filter(t -> t.getId().equals(traineeId))
-                .collect(Collectors.toList());
+    public Training save(Training training) {
+        logger.debug("Saving training: {}", training.getTrainingName());
+
+        return txExecutor.performReturningWithinTx(entityManager -> {
+            boolean isExist = !entityManager.createQuery("""
+                             SELECT t.id FROM Training t\s
+                             WHERE t.trainingDate = :date\s
+                               AND t.trainer.id = :trainerId\s
+                               AND t.trainee.id = :traineeId
+                            \s""", Long.class)
+                    .setParameter("date", training.getTrainingDate())
+                    .setParameter("trainerId", training.getTrainer().getId())
+                    .setParameter("traineeId", training.getTrainee().getId())
+                    .getResultList()
+                    .isEmpty();
+
+            if (isExist) {
+                throw new DuplicateEntityException("Such training already exists");
+            }
+
+            entityManager.persist(training);
+            logger.debug("Training: {} successfully saved", training.getTrainingName());
+            return training;
+        });
     }
 
-    @Override
-    public List<Training> findByDate(LocalDate date) {
-        return findAll().stream()
-                .filter(t -> t.getTrainingDate().equals(date))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Training> findByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
-        return findAll().stream()
-                .filter(t -> t.getTrainer().getId().equals(trainerId))
-                .filter(t -> t.getTrainee().getId().equals(traineeId))
-                .filter(t -> t.getTrainingDate().equals(date))
-                .findFirst();
-    }
-
-    @Override
-    public Training saveTraining(Training training) {
-        String key = String.format("%d_%d_%s",
-                training.getTrainer().getId(),
-                training.getTrainee().getId(),
-                training.getTrainingDate());
-
-        if (trainingStorage.containsKey(key)) {
-            throw new DuplicateUsernameException("Entity already exists!");
-        }
-        trainingStorage.put(key, training);
-
-        return trainingStorage.get(key);
-    }
-
-    @Override
-    public void deleteByTrainerAndTraineeAndDate(Long trainerId, Long traineeId, LocalDate date) {
-        String key = trainerId + "_" + traineeId + "_" + date.toString();
-
-        if (!trainingStorage.containsKey(key)) {
-            throw new EntityNotFoundException("Unable to delete training!");
-        }
-
-        trainingStorage.remove(key);
-    }
 }

@@ -7,34 +7,27 @@
 
     <changeSet id="GCA-59-Insert-TrainingTypes-Init" author="AlexM">
         <insert tableName="training_types">
-            <column name="id" valueNumeric="1"/>
             <column name="training_type_name" value="Yoga"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="2"/>
             <column name="training_type_name" value="Cardio"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="3"/>
             <column name="training_type_name" value="CrossFit"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="4"/>
             <column name="training_type_name" value="Stretching"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="5"/>
             <column name="training_type_name" value="Pilates"/>
         </insert>
         <insert tableName="training_types">
-            <column name="id" valueNumeric="6"/>
             <column name="training_type_name" value="Bodybuilding"/>
         </insert>
     </changeSet>
 
     <changeSet id="GCA-59-Insert-Users-Init" author="AlexM">
         <insert tableName="users">
-            <column name="id" valueNumeric="1"/>
             <column name="first_name" value="John"/>
             <column name="last_name" value="Smith"/>
             <column name="username" value="john.smith"/>
@@ -42,7 +35,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="2"/>
             <column name="first_name" value="Olga"/>
             <column name="last_name" value="Ivanova"/>
             <column name="username" value="olga.ivanova"/>
@@ -50,7 +42,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="3"/>
             <column name="first_name" value="Irina"/>
             <column name="last_name" value="Petrova"/>
             <column name="username" value="irina.petrova"/>
@@ -58,7 +49,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="4"/>
             <column name="first_name" value="Boris"/>
             <column name="last_name" value="Krasnov"/>
             <column name="username" value="boris.krasnov"/>
@@ -66,7 +56,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="5"/>
             <column name="first_name" value="Mykyta"/>
             <column name="last_name" value="Solntcev"/>
             <column name="username" value="mykyta.solntcev"/>
@@ -74,7 +63,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         <insert tableName="users">
-            <column name="id" valueNumeric="6"/>
             <column name="first_name" value="Arnold"/>
             <column name="last_name" value="Schwarzenegger"/>
             <column name="username" value="arnold.schwarzenegger"/>
@@ -85,17 +73,14 @@
 
     <changeSet id="GCA-59-Insert-Trainers-Init" author="AlexM">
         <insert tableName="trainers">
-            <column name="id" valueNumeric="1"/>
             <column name="user_id" valueNumeric="4"/>
             <column name="specialization_id" valueNumeric="1"/> <!-- Yoga -->
         </insert>
         <insert tableName="trainers">
-            <column name="id" valueNumeric="2"/>
             <column name="user_id" valueNumeric="5"/>
             <column name="specialization_id" valueNumeric="3"/> <!-- CrossFit -->
         </insert>
         <insert tableName="trainers">
-            <column name="id" valueNumeric="3"/>
             <column name="user_id" valueNumeric="6"/> <!-- Шварценеггер -->
             <column name="specialization_id" valueNumeric="6"/> <!-- Bodybuilding -->
         </insert>
@@ -103,19 +88,16 @@
 
     <changeSet id="GCA-59-Insert-Trainees-Init" author="AlexM">
         <insert tableName="trainees">
-            <column name="id" valueNumeric="1"/>
             <column name="date_of_birth" valueDate="1995-03-15"/>
             <column name="address" value="Kyiv, Ukraine"/>
             <column name="user_id" valueNumeric="1"/>
         </insert>
         <insert tableName="trainees">
-            <column name="id" valueNumeric="2"/>
             <column name="date_of_birth" valueDate="1998-07-10"/>
             <column name="address" value="Lviv, Ukraine"/>
             <column name="user_id" valueNumeric="2"/>
         </insert>
         <insert tableName="trainees">
-            <column name="id" valueNumeric="3"/>
             <column name="date_of_birth" valueDate="2000-11-01"/>
             <column name="address" value="Dnipro, Ukraine"/>
             <column name="user_id" valueNumeric="3"/>
@@ -147,7 +129,6 @@
 
     <changeSet id="GCA-59-Insert-Trainings-Init" author="AlexM">
         <insert tableName="trainings">
-            <column name="id" valueNumeric="1"/>
             <column name="training_name" value="Morning Cardio"/>
             <column name="training_date" valueDate="2025-06-01"/>
             <column name="training_duration" valueNumeric="1.0"/>
@@ -156,7 +137,6 @@
             <column name="training_type_id" valueNumeric="2"/> <!-- Cardio -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="2"/>
             <column name="training_name" value="Yoga Flow"/>
             <column name="training_date" valueDate="2025-06-03"/>
             <column name="training_duration" valueNumeric="1.5"/>
@@ -165,7 +145,6 @@
             <column name="training_type_id" valueNumeric="1"/> <!-- Yoga -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="3"/>
             <column name="training_name" value="CrossFit Burn"/>
             <column name="training_date" valueDate="2025-06-05"/>
             <column name="training_duration" valueNumeric="1.2"/>
@@ -174,7 +153,6 @@
             <column name="training_type_id" valueNumeric="3"/> <!-- CrossFit -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="4"/>
             <column name="training_name" value="Stretch Focus"/>
             <column name="training_date" valueDate="2025-06-07"/>
             <column name="training_duration" valueNumeric="0.8"/>
@@ -183,7 +161,6 @@
             <column name="training_type_id" valueNumeric="4"/> <!-- Stretching -->
         </insert>
         <insert tableName="trainings">
-            <column name="id" valueNumeric="5"/>
             <column name="training_name" value="Arnold's Power"/>
             <column name="training_date" valueDate="2025-06-10"/>
             <column name="training_duration" valueNumeric="2.0"/>

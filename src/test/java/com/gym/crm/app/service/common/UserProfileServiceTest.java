@@ -1,6 +1,6 @@
 package com.gym.crm.app.service.common;
 
-import com.gym.crm.app.TestData;
+import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;

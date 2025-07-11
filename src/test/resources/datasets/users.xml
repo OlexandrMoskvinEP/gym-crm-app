@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <users id="1" first_name="John" last_name="Smith" username="john.smith" password="$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe" is_active="true"/>
+    <users id="2" first_name="Olga" last_name="Ivanova" username="olga.ivanova" password="$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe" is_active="true"/>
+    <users id="3" first_name="Irina" last_name="Petrova" username="irina.petrova" password="$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q" is_active="true"/>
+    <users id="4" first_name="Boris" last_name="Krasnov" username="boris.krasnov" password="$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C" is_active="true"/>
+    <users id="5" first_name="Mykyta" last_name="Solntcev" username="mykyta.solntcev" password="$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe." is_active="true"/>
+    <users id="6" first_name="Arnold" last_name="Schwarzenegger" username="arnold.schwarzenegger" password="$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6" is_active="true"/>
+</dataset>

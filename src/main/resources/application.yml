@@ -15,14 +15,10 @@ hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
   show_sql: true
   format_sql: true
-  hbm2ddl.auto: validate
-
-storage:
-  filePath: src/main/resources/storage.json
+  hbm2ddl.auto: none
 
 liquibase:
   change-log: classpath:db/changelog/changelog-master.xml
   enabled: true
   contexts: dev
   drop-first: false
-

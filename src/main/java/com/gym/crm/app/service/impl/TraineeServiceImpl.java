@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,7 +74,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee entityToAdd = getTraineeWithUser(traineeDto);
 
-        traineeRepository.saveTrainee(entityToAdd);
+        traineeRepository.save(entityToAdd);
 
         logger.info("Trainee {} successfully added", username);
 
@@ -89,7 +88,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee entityToUpdate = getTraineeWithUser(traineeDto);
 
-        traineeRepository.saveTrainee(entityToUpdate);
+        traineeRepository.save(entityToUpdate);
 
         logger.info("Trainee {} updated", username);
 
@@ -102,7 +101,7 @@ public class TraineeServiceImpl implements TraineeService {
             throw new EntityNotFoundException("Trainee not found!");
         }
 
-        traineeRepository.deleteByUserName(username);
+        traineeRepository.deleteByUsername(username);
 
         logger.info("Trainee {} deleted", username);
     }

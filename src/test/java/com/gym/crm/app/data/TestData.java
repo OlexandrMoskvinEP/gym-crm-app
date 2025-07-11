@@ -1,4 +1,4 @@
-package com.gym.crm.app;
+package com.gym.crm.app.data;
 
 import com.gym.crm.app.domain.dto.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Trainee;
@@ -129,7 +129,6 @@ public class TestData {
 
     List<Training> trainings = List.of(
             Training.builder()
-                    .id(1L)
                     .trainingName("Pokatushka")
                     .trainer(Trainer.builder().id(321L).build())
                     .trainee(Trainee.builder().id(654L).build())
@@ -138,7 +137,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(120))
                     .build(),
             Training.builder()
-                    .id(2L)
                     .trainingName("Morning Yoga")
                     .trainer(Trainer.builder().id(204L).build())
                     .trainee(Trainee.builder().id(121L).build())
@@ -147,7 +145,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(60))
                     .build(),
             Training.builder()
-                    .id(3L)
                     .trainingName("CrossFit Blast")
                     .trainer(Trainer.builder().id(205L).build())
                     .trainee(Trainee.builder().id(122L).build())
@@ -156,7 +153,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(75))
                     .build(),
             Training.builder()
-                    .id(4L)
                     .trainingName("Pilates Session")
                     .trainer(Trainer.builder().id(206L).build())
                     .trainee(Trainee.builder().id(123L).build())
@@ -165,7 +161,6 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(50))
                     .build(),
             Training.builder()
-                    .id(5L)
                     .trainingName("Boxing Drills")
                     .trainer(Trainer.builder().id(207L).build())
                     .trainee(Trainee.builder().id(124L).build())
@@ -343,5 +338,186 @@ public class TestData {
                     .trainingDuration(BigDecimal.valueOf(90))
                     .build()
     );
+    List<User> testUsers = List.of(
+            User.builder()
+                    .id(1L)
+                    .firstName("John")
+                    .lastName("Smith")
+                    .username("john.smith")
+                    .password("$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe")
+                    .isActive(true)
+                    .build(),
+            User.builder()
+                    .id(2L)
+                    .firstName("Olga")
+                    .lastName("Ivanova")
+                    .username("olga.ivanova")
+                    .password("$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe")
+                    .isActive(true)
+                    .build(),
+            User.builder()
+                    .id(3L)
+                    .firstName("Irina")
+                    .lastName("Petrova")
+                    .username("irina.petrova")
+                    .password("$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q")
+                    .isActive(true)
+                    .build(),
+            User.builder()
+                    .id(4L)
+                    .firstName("Boris")
+                    .lastName("Krasnov")
+                    .username("boris.krasnov")
+                    .password("$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C")
+                    .isActive(true)
+                    .build(),
+            User.builder()
+                    .id(5L)
+                    .firstName("Mykyta")
+                    .lastName("Solntcev")
+                    .username("mykyta.solntcev")
+                    .password("$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe.")
+                    .isActive(true)
+                    .build(),
+            User.builder()
+                    .id(6L)
+                    .firstName("Arnold")
+                    .lastName("Schwarzenegger")
+                    .username("arnold.schwarzenegger")
+                    .password("$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6")
+                    .isActive(true)
+                    .build()
+    );
 
+    List<Trainee> testTrainees = List.of(
+            Trainee.builder()
+                    .id(1L)
+                    .dateOfBirth(LocalDate.of(1995, 3, 15))
+                    .address("Kyiv, Ukraine")
+                    .user(User.builder()
+                            .id(1L)
+                            .firstName("John")
+                            .lastName("Smith")
+                            .username("john.smith")
+                            .password("$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe")
+                            .isActive(true)
+                            .build())
+                    .build(),
+            Trainee.builder()
+                    .id(2L)
+                    .dateOfBirth(LocalDate.of(1998, 7, 10))
+                    .address("Lviv, Ukraine")
+                    .user(User.builder()
+                            .id(2L)
+                            .firstName("Olga")
+                            .lastName("Ivanova")
+                            .username("olga.ivanova")
+                            .password("$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe")
+                            .isActive(true)
+                            .build())
+                    .build(),
+            Trainee.builder()
+                    .id(3L)
+                    .dateOfBirth(LocalDate.of(2000, 11, 1))
+                    .address("Dnipro, Ukraine")
+                    .user(User.builder()
+                            .id(3L)
+                            .firstName("Irina")
+                            .lastName("Petrova")
+                            .username("irina.petrova")
+                            .password("$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q")
+                            .isActive(true)
+                            .build())
+                    .build()
+    );
+
+    List<Trainer> testTrainers = List.of(
+            Trainer.builder()
+                    .id(1L)
+                    .user(User.builder()
+                            .id(4L)
+                            .firstName("Boris")
+                            .lastName("Krasnov")
+                            .username("boris.krasnov")
+                            .password("$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(1L, "Yoga"))
+                    .build(),
+            Trainer.builder()
+                    .id(2L)
+                    .user(User.builder()
+                            .id(5L)
+                            .firstName("Mykyta")
+                            .lastName("Solntcev")
+                            .username("mykyta.solntcev")
+                            .password("$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe.")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(3L, "CrossFit"))
+                    .build(),
+            Trainer.builder()
+                    .id(3L)
+                    .user(User.builder()
+                            .id(6L)
+                            .firstName("Arnold")
+                            .lastName("Schwarzenegger")
+                            .username("arnold.schwarzenegger")
+                            .password("$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6")
+                            .isActive(true)
+                            .build())
+                    .specialization(new TrainingType(6L, "Bodybuilding"))
+                    .build()
+    );
+    List<Training> testTrainings = List.of(
+            Training.builder()
+                    .id(1L)
+                    .trainingName("Morning Cardio")
+                    .trainingDate(LocalDate.of(2025, 6, 1))
+                    .trainingDuration(BigDecimal.valueOf(1))
+                    .trainer(Trainer.builder().id(1L).build()) // Boris Krasnov
+                    .trainee(Trainee.builder().id(1L).build()) // John Smith
+                    .trainingType(new TrainingType(2L, "Cardio"))
+                    .build(),
+
+            Training.builder()
+                    .id(2L)
+                    .trainingName("Yoga Flow")
+                    .trainingDate(LocalDate.of(2025, 6, 3))
+                    .trainingDuration(BigDecimal.valueOf(1.5))
+                    .trainer(Trainer.builder().id(1L).build()) // Boris Krasnov
+                    .trainee(Trainee.builder().id(2L).build()) // Olga Ivanova
+                    .trainingType(new TrainingType(1L, "Yoga"))
+                    .build(),
+
+            Training.builder()
+                    .id(3L)
+                    .trainingName("CrossFit Burn")
+                    .trainingDate(LocalDate.of(2025, 6, 5))
+                    .trainingDuration(BigDecimal.valueOf(1.2))
+                    .trainer(Trainer.builder().id(2L).build()) // Mykyta Solntcev
+                    .trainee(Trainee.builder().id(2L).build()) // Olga Ivanova
+                    .trainingType(new TrainingType(3L, "CrossFit"))
+                    .build(),
+
+            Training.builder()
+                    .id(4L)
+                    .trainingName("Stretch Focus")
+                    .trainingDate(LocalDate.of(2025, 6, 7))
+                    .trainingDuration(BigDecimal.valueOf(0.8))
+                    .trainer(Trainer.builder().id(3L).build()) // Arnold Schwarzenegger
+                    .trainee(Trainee.builder().id(3L).build()) // Irina Petrova
+                    .trainingType(new TrainingType(4L, "Stretching"))
+                    .build(),
+
+            Training.builder()
+                    .id(5L)
+                    .trainingName("Arnold's Power")
+                    .trainingDate(LocalDate.of(2025, 6, 10))
+                    .trainingDuration(BigDecimal.valueOf(2))
+                    .trainer(Trainer.builder().id(3L).build()) // Arnold Schwarzenegger
+                    .trainee(Trainee.builder().id(1L).build()) // John Smith
+                    .trainingType(new TrainingType(6L, "Bodybuilding"))
+                    .build()
+    );
 }
