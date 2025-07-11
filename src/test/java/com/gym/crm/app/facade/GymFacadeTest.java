@@ -1,6 +1,5 @@
 package com.gym.crm.app.facade;
 
-import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
@@ -9,6 +8,9 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -18,181 +20,242 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GymFacadeTest {
-    private final ModelMapper modelMapper = new ModelMapper();
-    private final TestData data = new TestData();
+    private static final String FIRST_NAME = "Anna";
+    private static final String LAST_NAME = "Smith";
+    private static final String USERNAME = "anna.smith";
+    private static final TrainingType TRAINING_TYPE = TrainingType.builder().build();
+    private static final Long USER_ID = 1L;
+    private static final String ADDRESS = "Independence Avenue 57/23";
+    private static final LocalDate DATE_OF_BIRTH = LocalDate.parse("1990-12-27");
 
+    private static final TrainerDto TRAINER_DTO = buildTrainerDto();
+    private static final TraineeDto TRAINEE_DTO = buildTraineeDto();
+    private static final TrainingDto TRAINING_DTO = buildTrainingDto();
+    private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
+
+    @Mock
+    private UserProfileService userProfileService;
     @Mock
     private TraineeService traineeService;
     @Mock
     private TrainerService trainerService;
     @Mock
     private TrainingService trainingService;
+    @Mock
+    private AuthenticationService authService;
 
     @InjectMocks
-    private GymFacade gymFacade;
+    private GymFacade facade;
 
     @Test
     void shouldReturnAllTrainers() {
-        List<TrainerDto> expected = data.getTrainers().stream()
-                .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
-                .toList();
+        List<TrainerDto> expected = List.of(TRAINER_DTO);
         when(trainerService.getAllTrainers()).thenReturn(expected);
 
-        List<TrainerDto> actual = gymFacade.getAllTrainers();
+        List<TrainerDto> actual = facade.getAllTrainers(USER_CREDENTIALS);
 
-        verify(trainerService).getAllTrainers();
         assertEquals(expected, actual);
+        verify(trainerService).getAllTrainers();
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldReturnTrainerByUsername() {
-        TrainerDto expected = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-        when(trainerService.getTrainerByUsername("username")).thenReturn(expected);
+        when(trainerService.getTrainerByUsername(USERNAME)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = gymFacade.getTrainerByUsername("username");
+        TrainerDto actual = facade.getTrainerByUsername(USERNAME, USER_CREDENTIALS);
 
-        verify(trainerService).getTrainerByUsername("username");
-        assertEquals(expected, actual);
+        assertEquals(TRAINER_DTO, actual);
+        verify(trainerService).getTrainerByUsername(USERNAME);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldAddTrainer() {
         TrainerCreateRequest createRequest = TrainerCreateRequest.builder().build();
-        TrainerDto serviceResponse = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-        when(trainerService.addTrainer(createRequest)).thenReturn(serviceResponse);
+        when(trainerService.addTrainer(createRequest)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = gymFacade.addTrainer(createRequest);
+        TrainerDto actual = facade.addTrainer(createRequest);
 
+        assertEquals(TRAINER_DTO, actual);
         verify(trainerService).addTrainer(createRequest);
-        assertEquals(serviceResponse, actual);
+        verifyNoInteractions(authService);
     }
 
     @Test
     void shouldUpdateTrainerByUsername() {
         TrainerUpdateRequest updateRequest = TrainerUpdateRequest.builder().build();
-        TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-        when(trainerService.updateTrainerByUsername("username", updateRequest)).thenReturn(trainerDto);
+        when(trainerService.updateTrainerByUsername(USERNAME, updateRequest)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = gymFacade.updateTrainerByUsername("username", updateRequest);
+        TrainerDto actual = facade.updateTrainerByUsername(USERNAME, updateRequest, USER_CREDENTIALS);
 
-        verify(trainerService).updateTrainerByUsername("username", updateRequest);
-        assertEquals(trainerDto, actual);
+        assertEquals(TRAINER_DTO, actual);
+        verify(trainerService).updateTrainerByUsername(USERNAME, updateRequest);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldDeleteTrainerByUsername() {
-        doNothing().when(trainerService).deleteTrainerByUsername("username");
+        doNothing().when(trainerService).deleteTrainerByUsername(USERNAME);
 
-        gymFacade.deleteTrainerByUsername("username");
+        facade.deleteTrainerByUsername(USERNAME, USER_CREDENTIALS);
 
-        verify(trainerService).deleteTrainerByUsername("username");
+        verify(trainerService).deleteTrainerByUsername(USERNAME);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldReturnAllTrainees() {
-        List<TraineeDto> expected = data.getTrainees().stream()
-                .map(trainee -> modelMapper.map(trainee, TraineeDto.class))
-                .toList();
-
+        List<TraineeDto> expected = List.of(TRAINEE_DTO);
         when(traineeService.getAllTrainees()).thenReturn(expected);
 
-        List<TraineeDto> actual = gymFacade.getAllTrainees();
+        List<TraineeDto> actual = facade.getAllTrainees(USER_CREDENTIALS);
 
-        verify(traineeService).getAllTrainees();
         assertEquals(expected, actual);
+        verify(traineeService).getAllTrainees();
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldReturnTraineeByUsername() {
-        TraineeDto expected = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-        when(traineeService.getTraineeByUsername("username")).thenReturn(expected);
+        when(traineeService.getTraineeByUsername(USERNAME)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = gymFacade.getTraineeByUsername("username");
+        TraineeDto actual = facade.getTraineeByUsername(USERNAME, USER_CREDENTIALS);
 
-        verify(traineeService).getTraineeByUsername("username");
-        assertEquals(expected, actual);
+        assertEquals(TRAINEE_DTO, actual);
+        verify(traineeService).getTraineeByUsername(USERNAME);
     }
 
     @Test
     void shouldAddTrainee() {
         TraineeCreateRequest createRequest = TraineeCreateRequest.builder().build();
-        TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-        when(traineeService.addTrainee(createRequest)).thenReturn(traineeDto);
+        when(traineeService.addTrainee(createRequest)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = gymFacade.addTrainee(createRequest);
+        TraineeDto actual = facade.addTrainee(createRequest);
 
+        assertEquals(TRAINEE_DTO, actual);
         verify(traineeService).addTrainee(createRequest);
-        assertEquals(traineeDto, actual);
+        verifyNoInteractions(authService);
     }
 
     @Test
     void shouldUpdateTraineeByUsername() {
         TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
-        TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-        when(traineeService.updateTraineeByUsername("username", updateRequest)).thenReturn(traineeDto);
+        when(traineeService.updateTraineeByUsername(USERNAME, updateRequest)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = gymFacade.updateTraineeByUsername("username", updateRequest);
+        TraineeDto actual = facade.updateTraineeByUsername(USERNAME, updateRequest, USER_CREDENTIALS);
 
-        verify(traineeService).updateTraineeByUsername("username", updateRequest);
-        assertEquals(traineeDto, actual);
+        assertEquals(TRAINEE_DTO, actual);
+        verify(traineeService).updateTraineeByUsername(USERNAME, updateRequest);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldDeleteTraineeByUsername() {
-        doNothing().when(traineeService).deleteTraineeByUsername("username");
+        doNothing().when(traineeService).deleteTraineeByUsername(USERNAME);
 
-        gymFacade.deleteTraineeByUsername("username");
+        facade.deleteTraineeByUsername(USERNAME, USER_CREDENTIALS);
 
-        verify(traineeService).deleteTraineeByUsername("username");
+        verify(traineeService).deleteTraineeByUsername(USERNAME);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldReturnAllTrainings() {
-        List<TrainingDto> expected = data.getTrainings().stream()
-                .map(training -> modelMapper.map(training, TrainingDto.class))
-                .toList();
+        List<TrainingDto> expected = List.of(TRAINING_DTO);
 
         when(trainingService.getAllTrainings()).thenReturn(expected);
 
-        List<TrainingDto> actual = gymFacade.getAllTrainings();
+        List<TrainingDto> actual = facade.getAllTrainings(USER_CREDENTIALS);
 
-        verify(trainingService).getAllTrainings();
         assertEquals(expected, actual);
+        verify(trainingService).getAllTrainings();
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldAddTraining() {
         TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.addTraining(saveRequest)).thenReturn(trainingDto);
+        when(trainingService.addTraining(saveRequest)).thenReturn(TRAINING_DTO);
 
-        TrainingDto actual = gymFacade.addTraining(saveRequest);
+        TrainingDto actual = facade.addTraining(saveRequest, USER_CREDENTIALS);
 
+        assertEquals(TRAINING_DTO, actual);
         verify(trainingService).addTraining(saveRequest);
-        assertEquals(trainingDto, actual);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     @Test
     void shouldUpdateTraining() {
         TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
-        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.updateTraining(saveRequest)).thenReturn(trainingDto);
+        when(trainingService.updateTraining(saveRequest)).thenReturn(TRAINING_DTO);
 
-        TrainingDto actual = gymFacade.updateTraining(saveRequest);
+        TrainingDto actual = facade.updateTraining(saveRequest, USER_CREDENTIALS);
 
+        assertEquals(TRAINING_DTO, actual);
         verify(trainingService).updateTraining(saveRequest);
-        assertEquals(trainingDto, actual);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
+    @Test
+    void shouldChangePassword() {
+        String username = "username";
+        String password = "password";
+
+        facade.changePassword(username, password, USER_CREDENTIALS);
+
+        verify(userProfileService).changePassword(username, password);
+    }
+
+    private static UserCredentialsDto buildCredentials() {
+        return UserCredentialsDto.builder()
+                .username("username")
+                .password("password")
+                .build();
+    }
+
+    private static TrainerDto buildTrainerDto() {
+        return TrainerDto.builder()
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .username(USERNAME)
+                .userId(USER_ID)
+                .specialization(TRAINING_TYPE)
+                .build();
+    }
+
+    private static TraineeDto buildTraineeDto() {
+        return TraineeDto.builder()
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .username(USERNAME)
+                .userId(USER_ID)
+                .address(ADDRESS)
+                .dateOfBirth(DATE_OF_BIRTH)
+                .build();
+    }
+
+    private static TrainingDto buildTrainingDto() {
+        return TrainingDto.builder()
+                .traineeId(1L)
+                .trainerId(2L)
+                .trainingDate(LocalDate.now())
+                .trainingDuration(BigDecimal.ONE)
+                .trainingName("Yoga")
+                .trainingType(TRAINING_TYPE)
+                .build();
+    }
 }
