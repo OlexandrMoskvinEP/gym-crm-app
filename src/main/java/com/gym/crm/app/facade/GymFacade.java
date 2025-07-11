@@ -8,6 +8,8 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
+import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -26,23 +28,30 @@ public class GymFacade {
     private final TrainerService trainerService;
     private final TrainingService trainingService;
     private final UserProfileService userProfileService;
+    private final AuthenticationService authService;
 
     @Autowired
     public GymFacade(TraineeService traineeService,
                      TrainerService trainerService,
                      TrainingService trainingService,
-                     UserProfileService userProfileService) {
+                     UserProfileService userProfileService,
+                     AuthenticationService authService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
         this.userProfileService = userProfileService;
+        this.authService = authService;
     }
 
-    public List<TrainerDto> getAllTrainers() {
+    public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainerService.getAllTrainers();
     }
 
-    public TrainerDto getTrainerByUsername(String username) {
+    public TrainerDto getTrainerByUsername(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainerService.getTrainerByUsername(username);
     }
 
@@ -50,19 +59,29 @@ public class GymFacade {
         return trainerService.addTrainer(createRequest);
     }
 
-    public TrainerDto updateTrainerByUsername(String username, @Valid TrainerUpdateRequest updateRequest) {
+    public TrainerDto updateTrainerByUsername(String username,
+                                              @Valid TrainerUpdateRequest updateRequest,
+                                              UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainerService.updateTrainerByUsername(username, updateRequest);
     }
 
-    public void deleteTrainerByUsername(String username) {
+    public void deleteTrainerByUsername(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         trainerService.deleteTrainerByUsername(username);
     }
 
-    public List<TraineeDto> getAllTrainees() {
+    public List<TraineeDto> getAllTrainees(UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return traineeService.getAllTrainees();
     }
 
-    public TraineeDto getTraineeByUsername(String username) {
+    public TraineeDto getTraineeByUsername(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return traineeService.getTraineeByUsername(username);
     }
 
@@ -70,28 +89,41 @@ public class GymFacade {
         return traineeService.addTrainee(createRequest);
     }
 
-    public TraineeDto updateTraineeByUsername(String username, @Valid TraineeUpdateRequest updateRequest) {
+    public TraineeDto updateTraineeByUsername(String username,
+                                              @Valid TraineeUpdateRequest updateRequest,
+                                              UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return traineeService.updateTraineeByUsername(username, updateRequest);
     }
 
-    public void deleteTraineeByUsername(String username) {
+    public void deleteTraineeByUsername(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         traineeService.deleteTraineeByUsername(username);
     }
 
-    public List<TrainingDto> getAllTrainings() {
+    public List<TrainingDto> getAllTrainings(UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainingService.getAllTrainings();
     }
 
-    public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest) {
+    public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainingService.addTraining(createRequest);
     }
 
-    public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest) {
+    public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         return trainingService.updateTraining(updateRequest);
     }
 
-    public void changePassword(String username, String password) {
+    public void changePassword(String username, String password, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
         userProfileService.changePassword(username, password);
     }
-
 }
