@@ -1,8 +1,8 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.data.TestData;
-import com.gym.crm.app.domain.dto.TrainingDto;
-import com.gym.crm.app.domain.dto.TrainingIdentityDto;
+import com.gym.crm.app.domain.dto.training.TrainingResponse;
+import com.gym.crm.app.domain.dto.training.TrainingIdentityDto;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingRepository;
@@ -52,11 +52,11 @@ class TrainingServiceImplTest {
 
     @Test
     void shouldReturnAllTrainings() {
-        List<TrainingDto> expected = trainings.stream().map(training -> modelMapper.map(training, TrainingDto.class)).toList();
+        List<TrainingResponse> expected = trainings.stream().map(training -> modelMapper.map(training, TrainingResponse.class)).toList();
 
         when(repository.findAll()).thenReturn(trainings);
 
-        List<TrainingDto> actual = trainingService.getAllTrainings();
+        List<TrainingResponse> actual = trainingService.getAllTrainings();
 
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
@@ -65,15 +65,15 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainings")
     void shouldAddTraining(Training training) {
-        TrainingDto expected = getTrainingDtoFromEntity(training);
+        TrainingResponse expected = getTrainingDtoFromEntity(training);
 
         when(repository.save(any(Training.class))).thenReturn(training);
 
-        TrainingDto actual = trainingService.addTraining(expected);
+        TrainingResponse actual = trainingService.addTraining(expected);
 
         verify(repository, atLeastOnce()).save(trainingCaptor.capture());
 
-        TrainingDto savedTraining = getTrainingDtoFromEntity(trainingCaptor.getValue());
+        TrainingResponse savedTraining = getTrainingDtoFromEntity(trainingCaptor.getValue());
 
         assertEquals(expected, savedTraining);
         assertEquals(expected, actual);
@@ -82,7 +82,7 @@ class TrainingServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainings")
     void shouldUpdateTraining(Training training) {
-        TrainingDto expected = modelMapper.map(training, TrainingDto.class);
+        TrainingResponse expected = modelMapper.map(training, TrainingResponse.class);
 
         expected.setTrainingName("fakeTrainingName");
         expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
@@ -92,11 +92,11 @@ class TrainingServiceImplTest {
         when(repository.save(any(Training.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        TrainingDto actual = trainingService.updateTraining(modelMapper.map(expected, TrainingDto.class));
+        TrainingResponse actual = trainingService.updateTraining(modelMapper.map(expected, TrainingResponse.class));
 
         verify(repository, atLeastOnce()).save(trainingCaptor.capture());
 
-        TrainingDto savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingDto.class);
+        TrainingResponse savedTraining = modelMapper.map(trainingCaptor.getValue(), TrainingResponse.class);
 
         assertEquals("fakeTrainingName", savedTraining.getTrainingName());
         assertEquals("fakeTrainingType", savedTraining.getTrainingType().getTrainingTypeName());
@@ -150,8 +150,8 @@ class TrainingServiceImplTest {
                 .findFirst().get();
     }
 
-    private TrainingDto getTrainingDtoFromEntity(Training training) {
-        return new TrainingDto(training.getTrainer().getId(),
+    private TrainingResponse getTrainingDtoFromEntity(Training training) {
+        return new TrainingResponse(training.getTrainer().getId(),
                 training.getTrainee().getId(),
                 training.getTrainingName(),
                 training.getTrainingType(),

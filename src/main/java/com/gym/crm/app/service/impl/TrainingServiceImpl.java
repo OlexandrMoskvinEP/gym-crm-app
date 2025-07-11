@@ -1,6 +1,6 @@
 package com.gym.crm.app.service.impl;
 
-import com.gym.crm.app.domain.dto.TrainingDto;
+import com.gym.crm.app.domain.dto.training.TrainingResponse;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
@@ -33,15 +33,15 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getAllTrainings() {
+    public List<TrainingResponse> getAllTrainings() {
         return trainingRepository.findAll()
                 .stream()
-                .map(training -> modelMapper.map(training, TrainingDto.class))
+                .map(training -> modelMapper.map(training, TrainingResponse.class))
                 .toList();
     }
 
     @Override
-    public TrainingDto addTraining(TrainingDto training) {
+    public TrainingResponse addTraining(TrainingResponse training) {
         Training trainingToSave = mapDtoToEntity(training);
         logger.info("Adding training for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
@@ -55,16 +55,16 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingDto updateTraining(TrainingDto trainingDto) {
+    public TrainingResponse updateTraining(TrainingResponse trainingResponse) {
         Training existing = trainingRepository.findAll().stream()
                 .findFirst().orElseThrow(
                         () -> new EntityNotFoundException("Training not found"));
 
         Training updated = Training.builder()
                 .trainingDate(existing.getTrainingDate())
-                .trainingDuration(trainingDto.getTrainingDuration())
-                .trainingName(trainingDto.getTrainingName())
-                .trainingType(trainingDto.getTrainingType())
+                .trainingDuration(trainingResponse.getTrainingDuration())
+                .trainingName(trainingResponse.getTrainingName())
+                .trainingType(trainingResponse.getTrainingType())
                 .trainee(existing.getTrainee())
                 .trainer(existing.getTrainer())
                 .build();
@@ -74,11 +74,11 @@ public class TrainingServiceImpl implements TrainingService {
         logger.info("Training for trainer {} and trainee {} on {} updated",
                 updated.getTrainer(), updated.getTrainee(), updated.getTrainingDate());
 
-        return modelMapper.map(updated, TrainingDto.class);
+        return modelMapper.map(updated, TrainingResponse.class);
     }
 
-    private TrainingDto getTrainingDtoFromEntity(Training training) {
-        return new TrainingDto(training.getTrainer().getId(),
+    private TrainingResponse getTrainingDtoFromEntity(Training training) {
+        return new TrainingResponse(training.getTrainer().getId(),
                 training.getTrainee().getId(),
                 training.getTrainingName(),
                 training.getTrainingType(),
@@ -86,7 +86,7 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingDuration());
     }
 
-    private static Training mapDtoToEntity(TrainingDto source) {
+    private static Training mapDtoToEntity(TrainingResponse source) {
         return Training.builder()
                 .trainingName(source.getTrainingName())
                 .trainingDate(source.getTrainingDate())

@@ -1,10 +1,12 @@
 package com.gym.crm.app.mapper;
 
 import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -14,4 +16,13 @@ public interface TrainerMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(@MappingTarget Trainer trainer, TrainerUpdateRequest dto);
+
+    @Mapping(source = "user.firstName", target = "firstName")
+    @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(source = "user.username", target = "username")
+    @Mapping(source = "user.password", target = "password")
+    @Mapping(source = "user.active", target = "isActive")
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "specialization", target = "specialization")
+    TrainerResponse toResponse(Trainer trainer);
 }

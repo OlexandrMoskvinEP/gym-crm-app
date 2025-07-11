@@ -1,4 +1,4 @@
-package com.gym.crm.app.domain.dto;
+package com.gym.crm.app.domain.dto.training;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
