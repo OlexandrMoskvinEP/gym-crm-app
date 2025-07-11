@@ -1,5 +1,6 @@
 package com.gym.crm.app.domain.dto.trainee;
 
+import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -16,6 +17,9 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @Data
 public class TraineeUpdateRequest {
+    @NotNull(message = "User  cannot be null!")
+    private UserCreateRequest user;
+
     @PastOrPresent(message = "Date of birth should be correct!")
     @NotNull(message = "Date of birth is required!")
     private LocalDate dateOfBirth;

@@ -1,7 +1,7 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.data.TestData;
-import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -63,11 +63,11 @@ class TrainerServiceImplTest {
 
     @Test
     void shouldReturnAllTrainers() {
-        List<TrainerDto> expected = trainers.stream().map(trainer -> modelMapper.map(trainer, TrainerDto.class)).toList();
+        List<TrainerResponse> expected = trainers.stream().map(trainer -> modelMapper.map(trainer, TrainerResponse.class)).toList();
 
         when(repository.findAll()).thenReturn(trainers);
 
-        List<TrainerDto> actual = trainerService.getAllTrainers();
+        List<TrainerResponse> actual = trainerService.getAllTrainers();
 
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
@@ -77,11 +77,11 @@ class TrainerServiceImplTest {
     @ValueSource(strings = {"Sophie.Taylor", "James.Wilson", "Olivia.Brown"})
     void shouldReturnTrainerByUsername(String username) {
         Optional<Trainer> entity = trainers.stream().filter(trainer -> trainer.getUser().getUsername().equals(username)).findFirst();
-        TrainerDto expected = modelMapper.map(entity, TrainerDto.class);
+        TrainerResponse expected = modelMapper.map(entity, TrainerResponse.class);
 
         when(repository.findByUsername(username)).thenReturn(entity);
 
-        TrainerDto actual = trainerService.getTrainerByUsername(username);
+        TrainerResponse actual = trainerService.getTrainerByUsername(username);
 
         assertEquals(expected, actual);
     }
@@ -89,7 +89,7 @@ class TrainerServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldAddTrainee(Trainer trainer) {
-        TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
+        TrainerResponse expected = modelMapper.map(trainer, TrainerResponse.class);
 
         expected.setPassword(trainer.getUser().getPassword());
         expected.setUserId(0L);
@@ -106,7 +106,7 @@ class TrainerServiceImplTest {
 
         when(repository.save(any(Trainer.class))).thenReturn(entityToReturn);
 
-        TrainerDto actual = trainerService.addTrainer(expected);
+        TrainerResponse actual = trainerService.addTrainer(expected);
 
         verify(repository, atLeastOnce()).save(trainerCaptor.capture());
         Trainer savedTrainer = trainerCaptor.getValue();
@@ -121,7 +121,7 @@ class TrainerServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldUpdateTrainerByUsername(Trainer trainer) {
-        TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
+        TrainerResponse expected = modelMapper.map(trainer, TrainerResponse.class);
 
         expected.setActive(false);
         expected.setSpecialization(new TrainingType(1L, "fakeSport"));
@@ -141,11 +141,11 @@ class TrainerServiceImplTest {
         when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
         when(repository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
-        TrainerDto actual = trainerService.updateTrainerByUsername(username, expected);
+        TrainerResponse actual = trainerService.updateTrainerByUsername(username, expected);
 
         verify(repository, atLeastOnce()).save(trainerCaptor.capture());
 
-        TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
+        TrainerResponse savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerResponse.class);
 
         assertNotNull(savedTrainer);
         assertNotNull(actual);

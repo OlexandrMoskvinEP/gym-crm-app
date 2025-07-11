@@ -1,17 +1,17 @@
 package com.gym.crm.app.service;
 
-import com.gym.crm.app.domain.dto.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
 
 import java.util.List;
 
 public interface TrainerService {
-    List<TrainerDto> getAllTrainers();
+    List<TrainerResponse> getAllTrainers();
 
-    TrainerDto getTrainerByUsername (String username);
+    TrainerResponse getTrainerByUsername (String username);
 
-    TrainerDto addTrainer(TrainerDto trainerDto);
+    TrainerResponse addTrainer(TrainerResponse trainerResponse);
 
-    TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto);
+    TrainerResponse updateTrainerByUsername(String username, TrainerResponse trainerResponse);
 
     void deleteTrainerByUsername(String username);
 }

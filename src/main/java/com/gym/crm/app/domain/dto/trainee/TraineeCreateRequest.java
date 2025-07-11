@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @Data
 public class TraineeCreateRequest {
-    @NotNull(message = "User ID cannot be null!")
+    @NotNull(message = "User  cannot be null!")
     private UserCreateRequest user;
 
     @PastOrPresent(message = "Date of birth should be correct!")
