@@ -13,22 +13,4 @@ public interface TrainingService {
     TrainingDto addTraining(TrainingDto training);
 
     TrainingDto updateTraining(TrainingDto trainingDto);
-
-    //todo remove methods
-    //thees methods are deprecated and will be removed soon
-    @Deprecated
-    List<TrainingDto> getTrainingByTrainerId(Long trainerId);
-
-    @Deprecated
-    List<TrainingDto> getTrainingByTraineeId(Long traineeId);
-
-    @Deprecated
-    List<TrainingDto> getTrainingByDate(LocalDate date);
-
-    @Deprecated
-    Optional<TrainingDto> getTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
-
-    @Deprecated
-    void deleteTrainingByTrainerAndTraineeAndDate(TrainingIdentityDto identityDto);
-
 }

@@ -6,13 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainingTypeRepository {
-    TrainingType save(TrainingType trainingType);
+    Optional<TrainingType> findByName(String trainingTypeName);
 
-    Optional<TrainingType> findById(Long id);
-
-    void update (TrainingType trainingType);
-
-    List<TrainingType> findAll();
-
-    void deleteById(Long id);
+   List<TrainingType> findAll();
 }

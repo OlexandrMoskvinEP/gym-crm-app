@@ -5,114 +5,158 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.repository.RepositoryIntegrationTest;
+import com.gym.crm.app.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataSet(value = {"datasets/training_types.xml","datasets/users.xml",
-        "datasets/trainers.xml"}, cleanBefore = true, cleanAfter = true)
-public class TrainerRepositoryImplTest extends RepositoryIntegrationTest {
-    private final List<Trainer> expected = data.getTestTrainers();
+@DataSet(value = "datasets/trainers.xml", cleanBefore = true, cleanAfter = true)
+public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRepository> {
 
     @Test
     void shouldReturnAllTrainers() {
-        List<Trainer> actual = trainerRepository.findAll();
+        List<Trainer> all = repository.findAll();
 
-        assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(expected));
-    }
+        assertEquals(3, all.size());
 
-    @Test
-    void shouldSaveAndUpdate() {
-        Trainer toUpdate = constructTrainer();
-        Trainer saved = trainerRepository.save(toUpdate);
+        Trainer t1 = all.get(0);
+        assertEquals(1L, t1.getId());
+        assertEquals("boris.krasnov", t1.getUser().getUsername());
+        assertEquals("Boris", t1.getUser().getFirstName());
+        assertEquals("Krasnov", t1.getUser().getLastName());
 
-        TrainingType newSpecialisation = trainingTypeRepository.findById(2L).orElseThrow();
+        Trainer t2 = all.get(1);
+        assertEquals(2L, t2.getId());
+        assertEquals("mykyta.solntcev", t2.getUser().getUsername());
+        assertEquals("Mykyta", t2.getUser().getFirstName());
+        assertEquals("Solntcev", t2.getUser().getLastName());
 
-        toUpdate = toUpdate.toBuilder()
-                .id(saved.getId())
-                .user(saved.getUser())
-                .specialization(newSpecialisation)
-                .build();
-
-        trainerRepository.update(toUpdate);
-
-        Optional<Trainer> founded = trainerRepository.findById(toUpdate.getId());
-
-        assertTrue(founded.isPresent());
-        assertEquals(newSpecialisation.getTrainingTypeName(), founded.get().getSpecialization().getTrainingTypeName());
-        assertEquals(toUpdate.getUser().getFirstName(), founded.get().getUser().getFirstName());
+        Trainer t3 = all.get(2);
+        assertEquals(3L, t3.getId());
+        assertEquals("arnold.schwarzenegger", t3.getUser().getUsername());
+        assertEquals("Arnold", t3.getUser().getFirstName());
+        assertEquals("Schwarzenegger", t3.getUser().getLastName());
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {1, 2, 3})
-    void shouldFindTrainerById(Long id) {
-        Optional<Trainer> expected = this.expected.stream().filter(trainer -> trainer.getId().equals(id)).findFirst();
-        Optional<Trainer> actual = trainerRepository.findById(id);
+    @MethodSource("provideTrainersForIdTest")
+    void shouldFindTrainerById(Long id, String username, String firstName, String lastName) {
+        Optional<Trainer> actual = repository.findById(id);
 
         assertTrue(actual.isPresent());
-        assertEquals(expected.get().getSpecialization().getTrainingTypeName(), actual.get().getSpecialization().getTrainingTypeName());
+        Trainer trainer = actual.get();
+
+        assertEquals(id, trainer.getId());
+        assertNotNull(trainer.getUser());
+        assertEquals(username, trainer.getUser().getUsername());
+        assertEquals(firstName, trainer.getUser().getFirstName());
+        assertEquals(lastName, trainer.getUser().getLastName());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"boris.krasnov", "mykyta.solntcev", "arnold.schwarzenegger"})
-    void shouldFindByUsername(String username) {
-        Optional<Trainer> actual = trainerRepository.findByUsername(username);
+    @MethodSource("provideUsernames")
+    void shouldFindByUsername(String username, Long expectedId) {
+        Optional<Trainer> actual = repository.findByUsername(username);
 
         assertTrue(actual.isPresent());
+        assertEquals(expectedId, actual.get().getId());
         assertEquals(username, actual.get().getUser().getUsername());
     }
 
     @Test
+    void shouldSaveTrainer() {
+        Trainer toSave = constructTrainer();
+
+        Long actual = repository.save(toSave).getId();
+
+        Trainer found = repository.findByUsername("trainer.test").orElse(null);
+
+        assertNotNull(found);
+        assertNotNull(found.getUser());
+        assertEquals(actual, found.getId());
+        assertEquals("Trainer1", found.getUser().getFirstName());
+        assertEquals("Test", found.getUser().getLastName());
+        assertEquals("trainer.test", found.getUser().getUsername());
+        assertEquals("Pwd123!@#", found.getUser().getPassword());
+        assertTrue(found.getUser().isActive());
+
+        assertNotNull(found.getSpecialization());
+        assertEquals("Yoga", found.getSpecialization().getTrainingTypeName());
+    }
+
+    @Test
+    void shouldUpdateTrainer() {
+        Trainer original = repository.findByUsername("boris.krasnov")
+                .orElseThrow(() -> new IllegalArgumentException("Test user not found"));
+
+        Trainer toUpdate = original.toBuilder()
+                .user(original.getUser().toBuilder().firstName("Updated").build())
+                .build();
+
+        repository.update(toUpdate);
+
+        Trainer updated = repository.findByUsername("boris.krasnov").orElse(null);
+
+        assertNotNull(updated);
+        assertEquals("Updated", updated.getUser().getFirstName());
+    }
+
+    @Test
     void shouldDeleteEntityById() {
-        Trainer toDelete = constructTrainer();
+        repository.deleteById(1L);
 
-        Long id = (trainerRepository.save(toDelete)).getId();
-        trainerRepository.deleteById(id);
-
-        Optional<Trainer> founded = trainerRepository.findById(id);
-
-        assertTrue(founded.isEmpty());
-        assertThrows(EntityNotFoundException.class, () -> trainerRepository.deleteById(id));
+        Optional<Trainer> found = repository.findById(1L);
+        assertFalse(found.isPresent());
+        assertThrows(EntityNotFoundException.class, () -> repository.deleteById(1L));
     }
 
     @Test
     void shouldDeleteEntityByUsername() {
-        Trainer toDelete = constructTrainer();
-        Trainer saved = trainerRepository.save(toDelete);
+        repository.deleteByUsername("arnold.schwarzenegger");
 
-        trainerRepository.deleteByUsername(toDelete.getUser().getUsername());
-
-        Optional<Trainer> founded = trainerRepository.findById(saved.getId());
-
-        assertTrue(founded.isEmpty());
-        assertThrows(EntityNotFoundException.class, () -> trainerRepository.deleteByUsername(toDelete.getUser().getUsername()));
+        Optional<Trainer> found = repository.findByUsername("arnold.schwarzenegger");
+        assertFalse(found.isPresent());
     }
 
-    private Trainer constructTrainer() {
-        int count = new Random().nextInt(300);
-        TrainingType type = trainingTypeRepository.findById(1L).orElseThrow();
+    private static Stream<Arguments> provideTrainersForIdTest() {
+        return Stream.of(
+                Arguments.of(1L, "boris.krasnov", "Boris", "Krasnov"),
+                Arguments.of(2L, "mykyta.solntcev", "Mykyta", "Solntcev"),
+                Arguments.of(3L, "arnold.schwarzenegger", "Arnold", "Schwarzenegger")
+        );
+    }
 
+    private static Stream<Arguments> provideUsernames() {
+        return Stream.of(
+                Arguments.of("boris.krasnov", 1L),
+                Arguments.of("mykyta.solntcev", 2L),
+                Arguments.of("arnold.schwarzenegger", 3L)
+        );
+    }
+
+    private static Trainer constructTrainer() {
         User user = User.builder()
-                .firstName("Trainer" + count)
+                .firstName("Trainer1")
                 .lastName("Test")
-                .username("trainer" + count)
+                .username("trainer.test")
                 .password("Pwd123!@#")
                 .isActive(true)
                 .build();
+
         return Trainer.builder()
-                .specialization(type)
                 .user(user)
+                .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
                 .build();
     }
 }

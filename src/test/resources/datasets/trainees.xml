@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
+    <users id="1" first_name="John" last_name="Smith" username="john.smith" password="$2a$10$I2hY4OUNaAjBqiSGEWOdgO0dFn3VD66TwS045G1E3dmcMcbgaJrAe" is_active="true"/>
+    <users id="2" first_name="Olga" last_name="Ivanova" username="olga.ivanova" password="$2a$10$DiCT7tTKoF3DXcnYp3SWCurgZirxne/b.WittVRFtGLeioBxhCUAe" is_active="true"/>
+    <users id="3" first_name="Irina" last_name="Petrova" username="irina.petrova" password="$2a$10$fGPZWu6oKw8UQ39rEwDVPOisLg8Cg/WBiWtKtlh/34L/dt31eKK7q" is_active="true"/>
+
     <trainees id="1" date_of_birth="1995-03-15" address="Kyiv, Ukraine" user_id="1"/>
     <trainees id="2" date_of_birth="1998-07-10" address="Lviv, Ukraine" user_id="2"/>
     <trainees id="3" date_of_birth="2000-11-01" address="Dnipro, Ukraine" user_id="3"/>

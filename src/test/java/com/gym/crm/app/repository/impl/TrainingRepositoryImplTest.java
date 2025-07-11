@@ -5,105 +5,85 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.repository.RepositoryIntegrationTest;
+import com.gym.crm.app.repository.TrainingRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataSet(value = {"datasets/training_types.xml", "datasets/users.xml",
-        "datasets/trainers.xml", "datasets/trainees.xml", "datasets/trainings.xml"}, cleanBefore = true, cleanAfter = true)
-public class TrainingRepositoryImplTest extends RepositoryIntegrationTest {
-    private final List<Training> expected = data.getTestTrainings();
+@DataSet(value = "datasets/trainings.xml", cleanBefore = true, cleanAfter = true)
+public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingRepository> {
 
     @Test
-    void findAll() {
-        List<Training> actual = trainingRepository.findAll();
+    void shouldReturnAllTrainings() {
+        List<Training> trainings = repository.findAll();
 
-        assertFalse(actual.isEmpty());
-        assertTrue(actual.containsAll(expected));
-    }
+        assertEquals(5, trainings.size());
 
-    @ParameterizedTest
-    @ValueSource(longs = {1, 2, 3})
-    void shouldFindTrainingById(Long id) {
-        Optional<Training> expected = this.expected.stream().filter(training -> training.getId().equals(id)).findFirst();
-        Optional<Training> actual = trainingRepository.findById(id);
-
-        assertTrue(actual.isPresent());
-
-        assertEquals(expected.get().getTrainingDate(), actual.get().getTrainingDate());
-        assertEquals(expected.get().getTrainingName(), actual.get().getTrainingName());
-        assertEquals(expected.get().getTrainingType(), actual.get().getTrainingType());
-        assertEquals(expected.get().getTrainingDuration(), actual.get().getTrainingDuration());
+        Training training = trainings.get(0);
+        assertEquals("Morning Cardio", training.getTrainingName());
+        assertEquals(LocalDate.of(2025, 6, 1), training.getTrainingDate());
+        assertEquals(1, training.getTrainer().getId());
+        assertEquals(1, training.getTrainee().getId());
+        assertEquals("Cardio", training.getTrainingType().getTrainingTypeName());
     }
 
     @Test
-    void shouldSaveAndUpdate() {
-        Training toUpdate = constructTraining();
-        Training saved = trainingRepository.save(toUpdate);
-
-        TrainingType newType = trainingTypeRepository.findById(2L).orElseThrow();
-        Trainer newTrainer = Trainer.builder().id(2L).build();
-        Trainee newTrainee = Trainee.builder().id(2L).build();
-
-        toUpdate = toUpdate.toBuilder()
-                .id(saved.getId())
-                .trainingType(newType)
-                .trainer(newTrainer)
-                .trainee(newTrainee)
+    void shouldSaveNewTraining() {
+        Training newTraining = Training.builder()
+                .trainingName("Evening Power")
+                .trainingDate(LocalDate.of(2025, 6, 15))
+                .trainingDuration(BigDecimal.valueOf(1.5))
+                .trainer(Trainer.builder().id(1L).build())
+                .trainee(Trainee.builder().id(2L).build())
+                .trainingType(TrainingType.builder().id(2L).trainingTypeName("Cardio").build())
                 .build();
 
-        trainingRepository.update(toUpdate);
+        Training saved = repository.save(newTraining);
 
-        Optional<Training> founded = trainingRepository.findById(toUpdate.getId());
-
-        assertTrue(founded.isPresent());
-
-        assertEquals(toUpdate.getTrainingDate(), founded.get().getTrainingDate());
-        assertEquals(toUpdate.getTrainingName(), founded.get().getTrainingName());
-        assertEquals(toUpdate.getTrainingType(), founded.get().getTrainingType());
-        assertEquals(toUpdate.getTrainingDuration(), founded.get().getTrainingDuration());
+        assertNotNull(saved.getId());
+        assertEquals("Evening Power", saved.getTrainingName());
     }
 
     @Test
-    void shouldDeleteById() {
-        Training toDelete = constructTraining();
-        Training saved = trainingRepository.save(toDelete);
+    void shouldUpdateTrainingName() {
+        Training oldTraining = constructTrainingFromDataset();
+        Training updatedTraining = constructUpdatedTraining();
 
-        trainingRepository.deleteById(toDelete.getId());
+        repository.update(updatedTraining);
 
-        Optional<Training> founded = trainingRepository.findById(saved.getId());
-
-        assertTrue(founded.isEmpty());
-        assertThrows(EntityNotFoundException.class, () -> trainingRepository.deleteById(toDelete.getId()));
+        List<Training> persistedTrainings = repository.findAll();
+        assertFalse(persistedTrainings.contains(oldTraining));
+        assertTrue(persistedTrainings.contains(updatedTraining));
     }
 
-    private Training constructTraining() {
-        int count = new Random().nextInt(1000);
-
-        TrainingType type = trainingTypeRepository.findById(1L).orElseThrow();
-        Trainer trainer = Trainer.builder().id(1L).build();
-        Trainee trainee = Trainee.builder().id(1L).build();
-
+    private Training constructTrainingFromDataset() {
         return Training.builder()
-                .trainingName("Test training" + count)
-                .trainingDate(LocalDate.of(2025, 7, 1))
+                .id(1L)
+                .trainingName("Updated Cardio")
+                .trainingDate(LocalDate.of(2025, 6, 1))
                 .trainingDuration(BigDecimal.ONE)
-                .trainer(trainer)
-                .trainee(trainee)
-                .trainingType(type)
+                .trainer(Trainer.builder().id(1L).build())
+                .trainee(Trainee.builder().id(1L).build())
+                .trainingType(TrainingType.builder().id(2L).trainingTypeName("Cardio").build())
+                .build();
+    }
+
+    private Training constructUpdatedTraining() {
+        return Training.builder()
+                .id(1L)
+                .trainingName("Updated Cardio")
+                .trainingDate(LocalDate.of(2025, 8, 14))
+                .trainingDuration(BigDecimal.valueOf(1.5))
+                .trainer(Trainer.builder().id(1L).build())
+                .trainee(Trainee.builder().id(1L).build())
+                .trainingType(TrainingType.builder().id(2L).trainingTypeName("Cardio").build())
                 .build();
     }
 }

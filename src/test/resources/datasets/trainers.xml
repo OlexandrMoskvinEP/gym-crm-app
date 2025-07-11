@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
+    <users id="4" first_name="Boris" last_name="Krasnov" username="boris.krasnov" password="$2a$10$Yu0rZBxEy8.jTwgMco4cZeXLRFOKGyniS/8cRHWFROB.30inAPb.C" is_active="true"/>
+    <users id="5" first_name="Mykyta" last_name="Solntcev" username="mykyta.solntcev" password="$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe." is_active="true"/>
+    <users id="6" first_name="Arnold" last_name="Schwarzenegger" username="arnold.schwarzenegger" password="$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6" is_active="true"/>
+
+    <training_types id="1" training_type_name="Yoga"/>
+    <training_types id="2" training_type_name="Cardio"/>
+    <training_types id="3" training_type_name="CrossFit"/>
+    <training_types id="4" training_type_name="Stretching"/>
+    <training_types id="5" training_type_name="Pilates"/>
+    <training_types id="6" training_type_name="Bodybuilding"/>
+
     <trainers id="1" user_id="4" specialization_id="1"/>
     <trainers id="2" user_id="5" specialization_id="3"/>
     <trainers id="3" user_id="6" specialization_id="6"/>

@@ -2,6 +2,7 @@ package com.gym.crm.app.config;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -9,6 +10,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 @Configuration
+@ComponentScan(basePackages = "com.gym.crm.app.repository")
 @Import({HibernateTestConfig.class})
 public class TestConfig {
     @Bean
