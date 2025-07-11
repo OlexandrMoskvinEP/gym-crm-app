@@ -1,12 +1,18 @@
 package com.gym.crm.app.facade;
 
 import com.gym.crm.app.data.TestData;
+import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
+import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
+import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
+import com.gym.crm.app.service.common.UserProfileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +38,8 @@ class GymFacadeTest {
     private TrainerService trainerService;
     @Mock
     private TrainingService trainingService;
+    @Mock
+    private UserProfileService userProfileService;
 
     @InjectMocks
     private GymFacade gymFacade;
@@ -41,7 +49,6 @@ class GymFacadeTest {
         List<TrainerDto> expected = data.getTrainers().stream()
                 .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
                 .toList();
-
         when(trainerService.getAllTrainers()).thenReturn(expected);
 
         List<TrainerDto> actual = gymFacade.getAllTrainers();
@@ -63,23 +70,25 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTrainer() {
-        TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-        when(trainerService.addTrainer(trainerDto)).thenReturn(trainerDto);
+        TrainerCreateRequest createRequest = TrainerCreateRequest.builder().build();
+        TrainerDto serviceResponse = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
+        when(trainerService.addTrainer(createRequest)).thenReturn(serviceResponse);
 
-        TrainerDto actual = gymFacade.addTrainer(trainerDto);
+        TrainerDto actual = gymFacade.addTrainer(createRequest);
 
-        verify(trainerService).addTrainer(trainerDto);
-        assertEquals(trainerDto, actual);
+        verify(trainerService).addTrainer(createRequest);
+        assertEquals(serviceResponse, actual);
     }
 
     @Test
     void shouldUpdateTrainerByUsername() {
+        TrainerUpdateRequest updateRequest = TrainerUpdateRequest.builder().build();
         TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
-        when(trainerService.updateTrainerByUsername("username", trainerDto)).thenReturn(trainerDto);
+        when(trainerService.updateTrainerByUsername("username", updateRequest)).thenReturn(trainerDto);
 
-        TrainerDto actual = gymFacade.updateTrainerByUsername("username", trainerDto);
+        TrainerDto actual = gymFacade.updateTrainerByUsername("username", updateRequest);
 
-        verify(trainerService).updateTrainerByUsername("username", trainerDto);
+        verify(trainerService).updateTrainerByUsername("username", updateRequest);
         assertEquals(trainerDto, actual);
     }
 
@@ -119,23 +128,25 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTrainee() {
+        TraineeCreateRequest createRequest = TraineeCreateRequest.builder().build();
         TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-        when(traineeService.addTrainee(traineeDto)).thenReturn(traineeDto);
+        when(traineeService.addTrainee(createRequest)).thenReturn(traineeDto);
 
-        TraineeDto actual = gymFacade.addTrainee(traineeDto);
+        TraineeDto actual = gymFacade.addTrainee(createRequest);
 
-        verify(traineeService).addTrainee(traineeDto);
+        verify(traineeService).addTrainee(createRequest);
         assertEquals(traineeDto, actual);
     }
 
     @Test
     void shouldUpdateTraineeByUsername() {
+        TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
         TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
-        when(traineeService.updateTraineeByUsername("username", traineeDto)).thenReturn(traineeDto);
+        when(traineeService.updateTraineeByUsername("username", updateRequest)).thenReturn(traineeDto);
 
-        TraineeDto actual = gymFacade.updateTraineeByUsername("username", traineeDto);
+        TraineeDto actual = gymFacade.updateTraineeByUsername("username", updateRequest);
 
-        verify(traineeService).updateTraineeByUsername("username", traineeDto);
+        verify(traineeService).updateTraineeByUsername("username", updateRequest);
         assertEquals(traineeDto, actual);
     }
 
@@ -164,23 +175,25 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTraining() {
+        TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.addTraining(trainingDto)).thenReturn(trainingDto);
+        when(trainingService.addTraining(saveRequest)).thenReturn(trainingDto);
 
-        TrainingDto actual = gymFacade.addTraining(trainingDto);
+        TrainingDto actual = gymFacade.addTraining(saveRequest);
 
-        verify(trainingService).addTraining(trainingDto);
+        verify(trainingService).addTraining(saveRequest);
         assertEquals(trainingDto, actual);
     }
 
     @Test
     void shouldUpdateTraining() {
+        TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
         TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
-        when(trainingService.updateTraining(trainingDto)).thenReturn(trainingDto);
+        when(trainingService.updateTraining(saveRequest)).thenReturn(trainingDto);
 
-        TrainingDto actual = gymFacade.updateTraining(trainingDto);
+        TrainingDto actual = gymFacade.updateTraining(saveRequest);
 
-        verify(trainingService).updateTraining(trainingDto);
+        verify(trainingService).updateTraining(saveRequest);
         assertEquals(trainingDto, actual);
     }
 

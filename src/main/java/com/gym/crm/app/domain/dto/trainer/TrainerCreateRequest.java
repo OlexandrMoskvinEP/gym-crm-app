@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @Data
 public class TrainerCreateRequest {
-    @NotNull(message = "User  cannot be null!")
+    @NotNull(message = "User cannot be null")
     private UserCreateRequest user;
 
-    @NotNull(message = "Specialization cannot be null!")
+    @NotNull(message = "Specialization cannot be null")
     private TrainingType specialization;
 }

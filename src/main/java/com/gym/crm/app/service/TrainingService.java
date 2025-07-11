@@ -1,5 +1,6 @@
 package com.gym.crm.app.service;
 
+import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public interface TrainingService {
     List<TrainingDto> getAllTrainings();
 
-    TrainingDto addTraining(TrainingDto training);
+    TrainingDto addTraining(TrainingSaveRequest saveRequest);
 
-    TrainingDto updateTraining(TrainingDto trainingDto);
+    TrainingDto updateTraining(TrainingSaveRequest saveRequest);
 }

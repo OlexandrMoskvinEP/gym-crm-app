@@ -17,14 +17,14 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @Data
 public class TraineeCreateRequest {
-    @NotNull(message = "User  cannot be null!")
+    @NotNull(message = "User cannot be null")
     private UserCreateRequest user;
 
-    @PastOrPresent(message = "Date of birth should be correct!")
-    @NotNull(message = "Date of birth is required!")
+    @PastOrPresent(message = "Date of birth should be correct")
+    @NotNull(message = "Date of birth is required")
     private LocalDate dateOfBirth;
 
-    @Size(max = 255)
-    @NotBlank(message = "Address cannot exceed 255 characters")
+    @Size(max = 128)
+    @NotBlank(message = "Address cannot exceed 128 characters")
     private String address;
 }

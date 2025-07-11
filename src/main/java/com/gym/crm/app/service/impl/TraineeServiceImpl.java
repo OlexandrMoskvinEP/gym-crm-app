@@ -1,6 +1,8 @@
 package com.gym.crm.app.service.impl;
 
+import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
+import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -14,14 +16,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
-    private TraineeRepository traineeRepository;
+    private TraineeRepository repository;
     private ModelMapper modelMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
@@ -37,8 +41,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Autowired
-    public void setTraineeRepository(TraineeRepository traineeRepository) {
-        this.traineeRepository = traineeRepository;
+    public void setRepository(TraineeRepository repository) {
+        this.repository = repository;
     }
 
     @Autowired
@@ -48,7 +52,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public List<TraineeDto> getAllTrainees() {
-        return traineeRepository.findAll()
+        return repository.findAll()
                 .stream()
                 .map(trainee -> modelMapper.map(trainee, TraineeDto.class))
                 .collect(Collectors.toList());
@@ -56,72 +60,86 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto getTraineeByUsername(String username) {
-        Trainee trainee = traineeRepository.findByUsername(username)
+        Trainee trainee = repository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
         return modelMapper.map(trainee, TraineeDto.class);
     }
 
     @Override
-    public TraineeDto addTrainee(TraineeDto traineeDto) {
-        String username = userProfileService.createUsername(traineeDto.getFirstName(), traineeDto.getLastName());
+    public TraineeDto addTrainee(TraineeCreateRequest createRequest) {
+        String username = userProfileService.createUsername(createRequest.getUser().getFirstName(),
+                createRequest.getUser().getLastName());
         String password = passwordService.generatePassword();
 
-        traineeDto.setPassword(password);
-        traineeDto.setUsername(username);
-
         logger.info("Adding trainee with username {}", username);
+        Trainee entityToAdd = mapTraineeWithUser(createRequest, username, password);
 
-        Trainee entityToAdd = getTraineeWithUser(traineeDto);
-
-        traineeRepository.save(entityToAdd);
+        Trainee persistedTrainee = repository.save(entityToAdd);
 
         logger.info("Trainee {} successfully added", username);
-
-        return getTraineeDtoFromEntity(traineeRepository.findByUsername(username).get());
+        return getTraineeDtoFromEntity(persistedTrainee);
     }
 
     @Override
-    public TraineeDto updateTraineeByUsername(String username, TraineeDto traineeDto) {
-        Trainee existing = traineeRepository.findByUsername(username)
+    public TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest updateRequest) {
+        Trainee existTrainee = repository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 
-        Trainee entityToUpdate = getTraineeWithUser(traineeDto);
+        Trainee entityToUpdate = mapUpdatedTraineeWithUser(updateRequest, existTrainee);
 
-        traineeRepository.save(entityToUpdate);
+        Trainee persistedTrainee = repository.save(entityToUpdate);
 
         logger.info("Trainee {} updated", username);
-
-        return modelMapper.map(traineeRepository.findByUsername(username), TraineeDto.class);
+        return modelMapper.map(persistedTrainee, TraineeDto.class);
     }
 
     @Override
     public void deleteTraineeByUsername(String username) {
-        if (traineeRepository.findByUsername(username).isEmpty()) {
+        if (repository.findByUsername(username).isEmpty()) {
             throw new EntityNotFoundException("Trainee not found!");
         }
 
-        traineeRepository.deleteByUsername(username);
+        repository.deleteByUsername(username);
 
         logger.info("Trainee {} deleted", username);
     }
 
-    private Trainee getTraineeWithUser(TraineeDto traineeDto) {
+    private Trainee mapTraineeWithUser(TraineeCreateRequest createRequest, String username, String password) {
         User user = User.builder()
-                .username(traineeDto.getUsername())
-                .password(traineeDto.getPassword())
-                .isActive(traineeDto.isActive())
-                .firstName(traineeDto.getFirstName())
-                .lastName(traineeDto.getLastName())
+                .username(username)
+                .password(password)
+                .firstName(createRequest.getUser().getFirstName())
+                .lastName(createRequest.getUser().getLastName())
+                .isActive(createRequest.getUser().getIsActive())
                 .build();
 
+
         return Trainee.builder()
-                .dateOfBirth(traineeDto.getDateOfBirth())
-                .address(traineeDto.getAddress())
+                .address(createRequest.getAddress())
                 .user(user)
                 .build();
     }
-    private TraineeDto getTraineeDtoFromEntity(Trainee trainee){
+
+    private Trainee mapUpdatedTraineeWithUser(TraineeUpdateRequest createRequest, Trainee existTrainee) {
+        User user = User.builder()
+                .firstName(createRequest.getUser().getFirstName())
+                .lastName(createRequest.getUser().getLastName())
+                .isActive(createRequest.getUser().getIsActive())
+                .build();
+        String updatedAddress = Optional.ofNullable(createRequest.getAddress())
+                .orElse(existTrainee.getAddress());
+        LocalDate updatedDateOfBirth = Optional.ofNullable(createRequest.getDateOfBirth())
+                .orElse(existTrainee.getDateOfBirth());
+
+        return Trainee.builder()
+                .address(updatedAddress)
+                .dateOfBirth(updatedDateOfBirth)
+                .user(user)
+                .build();
+    }
+
+    private TraineeDto getTraineeDtoFromEntity(Trainee trainee) {
         return new TraineeDto(trainee.getUser().getFirstName(),
                 trainee.getUser().getLastName(),
                 trainee.getUser().getUsername(),
@@ -130,6 +148,6 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getDateOfBirth(),
                 trainee.getAddress(),
                 trainee.getId()
-                );
+        );
     }
 }

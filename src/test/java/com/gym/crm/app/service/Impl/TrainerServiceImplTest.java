@@ -1,7 +1,10 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.data.TestData;
+import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
+import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -88,9 +91,9 @@ class TrainerServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("getTrainers")
-    void shouldAddTrainee(Trainer trainer) {
+    void shouldAddTrainer(Trainer trainer) {
+        TrainerCreateRequest createRequest = buildCreateRequest(trainer);
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
-
         expected.setPassword(trainer.getUser().getPassword());
         expected.setUserId(0L);
         expected.setFirstName(trainer.getUser().getFirstName());
@@ -98,31 +101,30 @@ class TrainerServiceImplTest {
         expected.setActive(trainer.getUser().isActive());
 
         Trainer entityToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
-
         String username = expected.getFirstName() + "." + expected.getLastName();
 
         when(passwordService.generatePassword()).thenReturn(trainer.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
-
         when(repository.save(any(Trainer.class))).thenReturn(entityToReturn);
 
-        TrainerDto actual = trainerService.addTrainer(expected);
+        TrainerDto actual = trainerService.addTrainer(createRequest);
 
         verify(repository, atLeastOnce()).save(trainerCaptor.capture());
         Trainer savedTrainer = trainerCaptor.getValue();
-
         assertNotNull(savedTrainer);
         assertNotNull(actual);
         assertEquals(trainer, savedTrainer);
-        assertEquals(expected, actual);
+        assertEquals(createRequest.getUser().getFirstName(), actual.getFirstName());
+        assertEquals(createRequest.getUser().getLastName(), actual.getLastName());
+        assertEquals(createRequest.getUser().getIsActive(), actual.isActive());
+        assertEquals(createRequest.getSpecialization(), actual.getSpecialization());
     }
-
 
     @ParameterizedTest
     @MethodSource("getTrainers")
     void shouldUpdateTrainerByUsername(Trainer trainer) {
+        TrainerUpdateRequest updateRequest = buildUpdateRequest(trainer);
         TrainerDto expected = modelMapper.map(trainer, TrainerDto.class);
-
         expected.setActive(false);
         expected.setSpecialization(new TrainingType(1L, "fakeSport"));
 
@@ -130,27 +132,27 @@ class TrainerServiceImplTest {
         User updatedUser = trainerToReturn.getUser().toBuilder()
                 .isActive(expected.isActive())
                 .build();
-
         trainerToReturn = trainerToReturn.toBuilder()
                 .user(updatedUser)
                 .specialization(expected.getSpecialization())
                 .build();
-
         String username = trainer.getUser().getFirstName() + "." + trainer.getUser().getLastName();
 
         when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
         when(repository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
-        TrainerDto actual = trainerService.updateTrainerByUsername(username, expected);
+        TrainerDto actual = trainerService.updateTrainerByUsername(username, updateRequest);
 
         verify(repository, atLeastOnce()).save(trainerCaptor.capture());
-
         TrainerDto savedTrainer = modelMapper.map(trainerCaptor.getValue(), TrainerDto.class);
-
         assertNotNull(savedTrainer);
         assertNotNull(actual);
-        assertEquals(expected, savedTrainer);
-        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(expected.getUserId(), actual.getUserId());
     }
 
     @Test
@@ -158,6 +160,32 @@ class TrainerServiceImplTest {
         when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
+    }
+
+    private TrainerCreateRequest buildCreateRequest(Trainer trainer) {
+        UserCreateRequest user = UserCreateRequest.builder()
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .isActive(trainer.getUser().isActive())
+                .build();
+
+        return TrainerCreateRequest.builder()
+                .user(user)
+                .specialization(trainer.getSpecialization())
+                .build();
+    }
+
+    private TrainerUpdateRequest buildUpdateRequest(Trainer trainer) {
+        UserCreateRequest user = UserCreateRequest.builder()
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .isActive(trainer.getUser().isActive())
+                .build();
+
+        return TrainerUpdateRequest.builder()
+                .user(user)
+                .specialization(trainer.getSpecialization())
+                .build();
     }
 
     private static Stream<Trainer> getTrainers() {

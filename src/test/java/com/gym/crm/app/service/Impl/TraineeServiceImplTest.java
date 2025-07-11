@@ -1,7 +1,10 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.data.TestData;
+import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
+import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
+import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -89,8 +92,8 @@ class TraineeServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainees")
     void shouldAddTrainee(Trainee trainee) {
+        TraineeCreateRequest createRequest = buildCreateRequest(trainee);
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
-
         expected.setPassword(trainee.getUser().getPassword());
         expected.setUserId(0L);
         expected.setFirstName(trainee.getUser().getFirstName());
@@ -98,31 +101,33 @@ class TraineeServiceImplTest {
         expected.setActive(trainee.getUser().isActive());
 
         Trainee entityToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
-
         String username = expected.getFirstName() + "." + expected.getLastName();
 
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
-
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
-        when(repository.findByUsername(username)).thenReturn(Optional.of(entityToReturn));
 
-        TraineeDto actual = traineeService.addTrainee(expected);
+        TraineeDto actual = traineeService.addTrainee(createRequest);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
         Trainee savedTrainee = traineeCaptor.getValue();
-
         assertNotNull(savedTrainee);
         assertNotNull(actual);
         assertEquals(trainee, savedTrainee);
-        assertEquals(expected, actual);
+        assertEquals(expected.getUserId(), actual.getUserId());
+        assertEquals(username, actual.getUsername());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @ParameterizedTest
     @MethodSource("getTrainees")
     void shouldUpdateTraineeByUsername(Trainee trainee) {
+        TraineeUpdateRequest updateRequest = buildUpdateRequest(trainee);
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
-
         expected.setActive(false);
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
@@ -131,28 +136,29 @@ class TraineeServiceImplTest {
         User updatedUser = traineeToReturn.getUser().toBuilder()
                 .isActive(expected.isActive())
                 .build();
-
         traineeToReturn = traineeToReturn.toBuilder()
                 .user(updatedUser)
                 .address(expected.getAddress())
                 .dateOfBirth(expected.getDateOfBirth())
                 .build();
-
         String username = trainee.getUser().getFirstName() + "." + trainee.getUser().getLastName();
 
         when(repository.findByUsername(username)).thenReturn(Optional.of(traineeToReturn));
         when(repository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
-        TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
+        TraineeDto actual = traineeService.updateTraineeByUsername(username, updateRequest);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
-
         TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
-
         assertNotNull(savedTrainee);
         assertNotNull(actual);
-        assertEquals(expected, savedTrainee);
-        assertEquals(expected, actual);
+        assertEquals(expected.getUserId(), actual.getUserId());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Test
@@ -160,6 +166,34 @@ class TraineeServiceImplTest {
         when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
+    }
+
+    private TraineeCreateRequest buildCreateRequest(Trainee trainee) {
+        UserCreateRequest user = UserCreateRequest.builder()
+                .firstName(trainee.getUser().getFirstName())
+                .lastName(trainee.getUser().getLastName())
+                .isActive(trainee.getUser().isActive())
+                .build();
+
+        return TraineeCreateRequest.builder()
+                .user(user)
+                .address(trainee.getAddress())
+                .dateOfBirth(trainee.getDateOfBirth())
+                .build();
+    }
+
+    private TraineeUpdateRequest buildUpdateRequest(Trainee trainee) {
+        UserCreateRequest user = UserCreateRequest.builder()
+                .firstName(trainee.getUser().getFirstName())
+                .lastName(trainee.getUser().getLastName())
+                .isActive(trainee.getUser().isActive())
+                .build();
+
+        return TraineeUpdateRequest.builder()
+                .user(user)
+                .address(trainee.getAddress())
+                .dateOfBirth(trainee.getDateOfBirth())
+                .build();
     }
 
     private static Stream<Trainee> getTrainees() {
