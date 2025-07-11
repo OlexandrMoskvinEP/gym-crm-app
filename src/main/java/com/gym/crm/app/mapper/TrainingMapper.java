@@ -1,7 +1,7 @@
 package com.gym.crm.app.mapper;
 
 import com.gym.crm.app.domain.dto.training.TrainingCreateRequest;
-import com.gym.crm.app.domain.dto.training.TrainingResponse;
+import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.model.Training;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,5 +15,5 @@ public interface TrainingMapper {
 
     @Mapping(source = "trainee.id", target = "traineeId")
     @Mapping(source = "trainer.id", target = "trainerId")
-    TrainingResponse toResponse(Training training);
+    TrainingDto toResponse(Training training);
 }

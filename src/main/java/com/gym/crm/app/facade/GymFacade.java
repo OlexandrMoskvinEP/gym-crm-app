@@ -1,8 +1,8 @@
 package com.gym.crm.app.facade;
 
-import com.gym.crm.app.domain.dto.trainee.TraineeResponse;
-import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
-import com.gym.crm.app.domain.dto.training.TrainingResponse;
+import com.gym.crm.app.domain.dto.trainee.TraineeDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -26,56 +26,56 @@ public class GymFacade {
         this.trainingService = trainingService;
     }
 
-    public List<TrainerResponse> getAllTrainers() {
+    public List<TrainerDto> getAllTrainers() {
         return trainerService.getAllTrainers();
     }
 
-    public TrainerResponse getTrainerByUsername(String username) {
+    public TrainerDto getTrainerByUsername(String username) {
         return trainerService.getTrainerByUsername(username);
     }
 
-    public TrainerResponse addTrainer(TrainerResponse trainerResponse) {
-        return trainerService.addTrainer(trainerResponse);
+    public TrainerDto addTrainer(TrainerDto trainerDto) {
+        return trainerService.addTrainer(trainerDto);
     }
 
-    public TrainerResponse updateTrainerByUsername(String username, TrainerResponse trainerResponse) {
-        return trainerService.updateTrainerByUsername(username, trainerResponse);
+    public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
+        return trainerService.updateTrainerByUsername(username, trainerDto);
     }
 
     public void deleteTrainerByUsername(String username) {
         trainerService.deleteTrainerByUsername(username);
     }
 
-    public List<TraineeResponse> getAllTrainees() {
+    public List<TraineeDto> getAllTrainees() {
         return traineeService.getAllTrainees();
     }
 
-    public TraineeResponse getTraineeByUsername(String username) {
+    public TraineeDto getTraineeByUsername(String username) {
         return traineeService.getTraineeByUsername(username);
     }
 
-    public TraineeResponse addTrainee(TraineeResponse trainerDto) {
+    public TraineeDto addTrainee(TraineeDto trainerDto) {
         return traineeService.addTrainee(trainerDto);
     }
 
-    public TraineeResponse updateTraineeByUsername(String username, TraineeResponse traineeResponse) {
-        return traineeService.updateTraineeByUsername(username, traineeResponse);
+    public TraineeDto updateTraineeByUsername(String username, TraineeDto traineeDto) {
+        return traineeService.updateTraineeByUsername(username, traineeDto);
     }
 
     public void deleteTraineeByUsername(String username) {
         traineeService.deleteTraineeByUsername(username);
     }
 
-    public List<TrainingResponse> getAllTrainings() {
+    public List<TrainingDto> getAllTrainings() {
         return trainingService.getAllTrainings();
     }
 
-    public TrainingResponse addTraining(TrainingResponse training) {
+    public TrainingDto addTraining(TrainingDto training) {
         return trainingService.addTraining(training);
     }
 
-    public TrainingResponse updateTraining(TrainingResponse trainingResponse) {
-        return trainingService.updateTraining(trainingResponse);
+    public TrainingDto updateTraining(TrainingDto trainingDto) {
+        return trainingService.updateTraining(trainingDto);
     }
 
 }

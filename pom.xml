@@ -134,7 +134,12 @@
             <version>0.2.0</version>
         </dependency>
 
-
+        <!--=== Security=== -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>6.2.1</version>
+        </dependency>
 
         <!-- === Logging === -->
         <dependency>

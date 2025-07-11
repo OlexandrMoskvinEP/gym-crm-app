@@ -2,6 +2,7 @@ package com.gym.crm.app.service.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -12,10 +13,12 @@ public class PasswordService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
     private static final int PASSWORD_LENGTH = 10;
 
+    private BCryptPasswordEncoder encoder;
     private SecureRandom random;
 
     @Autowired
     public void setRandom(SecureRandom random) {
+        this.encoder = new BCryptPasswordEncoder();
         this.random = random;
     }
 
@@ -28,5 +31,9 @@ public class PasswordService {
         }
 
         return password.toString();
+    }
+
+    public String encodePassword(String source) {
+        return encoder.encode(source);
     }
 }

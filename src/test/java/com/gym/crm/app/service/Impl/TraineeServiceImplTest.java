@@ -1,7 +1,7 @@
 package com.gym.crm.app.service.Impl;
 
 import com.gym.crm.app.data.TestData;
-import com.gym.crm.app.domain.dto.trainee.TraineeResponse;
+import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -63,11 +63,11 @@ class TraineeServiceImplTest {
 
     @Test
     void shouldReturnAllTrainees() {
-        List<TraineeResponse> expected = trainees.stream().map(trainee -> modelMapper.map(trainee, TraineeResponse.class)).toList();
+        List<TraineeDto> expected = trainees.stream().map(trainee -> modelMapper.map(trainee, TraineeDto.class)).toList();
 
         when(repository.findAll()).thenReturn(trainees);
 
-        List<TraineeResponse> actual = traineeService.getAllTrainees();
+        List<TraineeDto> actual = traineeService.getAllTrainees();
 
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
@@ -77,11 +77,11 @@ class TraineeServiceImplTest {
     @ValueSource(strings = {"Bob.Williams", "Eva.Davis", "Alice.Smith"})
     void shouldGetTraineeByUsername(String username) {
         Optional<Trainee> entity = trainees.stream().filter(trainee -> trainee.getUser().getUsername().equals(username)).findFirst();
-        TraineeResponse expected = modelMapper.map(entity, TraineeResponse.class);
+        TraineeDto expected = modelMapper.map(entity, TraineeDto.class);
 
         when(repository.findByUsername(username)).thenReturn(entity);
 
-        TraineeResponse actual = traineeService.getTraineeByUsername(username);
+        TraineeDto actual = traineeService.getTraineeByUsername(username);
 
         assertEquals(expected, actual);
     }
@@ -89,7 +89,7 @@ class TraineeServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainees")
     void shouldAddTrainee(Trainee trainee) {
-        TraineeResponse expected = modelMapper.map(trainee, TraineeResponse.class);
+        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
 
         expected.setPassword(trainee.getUser().getPassword());
         expected.setUserId(0L);
@@ -107,7 +107,7 @@ class TraineeServiceImplTest {
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
         when(repository.findByUsername(username)).thenReturn(Optional.of(entityToReturn));
 
-        TraineeResponse actual = traineeService.addTrainee(expected);
+        TraineeDto actual = traineeService.addTrainee(expected);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
         Trainee savedTrainee = traineeCaptor.getValue();
@@ -121,7 +121,7 @@ class TraineeServiceImplTest {
     @ParameterizedTest
     @MethodSource("getTrainees")
     void shouldUpdateTraineeByUsername(Trainee trainee) {
-        TraineeResponse expected = modelMapper.map(trainee, TraineeResponse.class);
+        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
 
         expected.setActive(false);
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
@@ -143,11 +143,11 @@ class TraineeServiceImplTest {
         when(repository.findByUsername(username)).thenReturn(Optional.of(traineeToReturn));
         when(repository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
-        TraineeResponse actual = traineeService.updateTraineeByUsername(username, expected);
+        TraineeDto actual = traineeService.updateTraineeByUsername(username, expected);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
 
-        TraineeResponse savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeResponse.class);
+        TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
 
         assertNotNull(savedTrainee);
         assertNotNull(actual);

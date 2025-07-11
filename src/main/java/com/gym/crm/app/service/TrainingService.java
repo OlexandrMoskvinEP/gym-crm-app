@@ -1,13 +1,13 @@
 package com.gym.crm.app.service;
 
-import com.gym.crm.app.domain.dto.training.TrainingResponse;
+import com.gym.crm.app.domain.dto.training.TrainingDto;
 
 import java.util.List;
 
 public interface TrainingService {
-    List<TrainingResponse> getAllTrainings();
+    List<TrainingDto> getAllTrainings();
 
-    TrainingResponse addTraining(TrainingResponse training);
+    TrainingDto addTraining(TrainingDto training);
 
-    TrainingResponse updateTraining(TrainingResponse trainingResponse);
+    TrainingDto updateTraining(TrainingDto trainingDto);
 }

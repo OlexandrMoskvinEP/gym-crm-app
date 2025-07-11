@@ -1,6 +1,6 @@
 package com.gym.crm.app.service.impl;
 
-import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
@@ -47,32 +47,32 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public List<TrainerResponse> getAllTrainers() {
+    public List<TrainerDto> getAllTrainers() {
         return trainerRepository.findAll()
                 .stream()
-                .map(trainer -> modelMapper.map(trainer, TrainerResponse.class))
+                .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public TrainerResponse getTrainerByUsername(String username) {
+    public TrainerDto getTrainerByUsername(String username) {
         Trainer trainer = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        return modelMapper.map(trainer, TrainerResponse.class);
+        return modelMapper.map(trainer, TrainerDto.class);
     }
 
     @Override
-    public TrainerResponse addTrainer(TrainerResponse trainerResponse) {
-        String username = userProfileService.createUsername(trainerResponse.getFirstName(), trainerResponse.getLastName());
+    public TrainerDto addTrainer(TrainerDto trainerDto) {
+        String username = userProfileService.createUsername(trainerDto.getFirstName(), trainerDto.getLastName());
         String password = passwordService.generatePassword();
 
-        trainerResponse.setPassword(password);
-        trainerResponse.setUsername(username);
+        trainerDto.setPassword(password);
+        trainerDto.setUsername(username);
 
         logger.info("Adding trainer with username {}", username);
 
-        Trainer entityToAdd = mapTrainerWithUser(trainerResponse);
+        Trainer entityToAdd = mapTrainerWithUser(trainerDto);
 
         Trainer returned =  trainerRepository.save(entityToAdd);
 
@@ -82,17 +82,17 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse updateTrainerByUsername(String username, TrainerResponse trainerResponse) {
+    public TrainerDto updateTrainerByUsername(String username, TrainerDto trainerDto) {
         Trainer existing = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
 
-        Trainer entityToUpdate = mapTrainerWithUser(trainerResponse);
+        Trainer entityToUpdate = mapTrainerWithUser(trainerDto);
 
         trainerRepository.save(entityToUpdate);
 
         logger.info("Trainer {} updated", username);
 
-        return modelMapper.map(trainerRepository.findByUsername(username), TrainerResponse.class);
+        return modelMapper.map(trainerRepository.findByUsername(username), TrainerDto.class);
     }
 
     @Override
@@ -106,23 +106,23 @@ public class TrainerServiceImpl implements TrainerService {
         logger.info("Trainer {} deleted", username);
     }
 
-    private Trainer mapTrainerWithUser(TrainerResponse trainerResponse) {
+    private Trainer mapTrainerWithUser(TrainerDto trainerDto) {
         User user = User.builder()
-                .username(trainerResponse.getUsername())
-                .password(trainerResponse.getPassword())
-                .isActive(trainerResponse.isActive())
-                .firstName(trainerResponse.getFirstName())
-                .lastName(trainerResponse.getLastName())
+                .username(trainerDto.getUsername())
+                .password(trainerDto.getPassword())
+                .isActive(trainerDto.isActive())
+                .firstName(trainerDto.getFirstName())
+                .lastName(trainerDto.getLastName())
                 .build();
 
         return Trainer.builder()
-                .specialization(trainerResponse.getSpecialization())
+                .specialization(trainerDto.getSpecialization())
                 .user(user)
                 .build();
     }
 
-    private TrainerResponse getTrainerDtoFromEntity(Trainer trainer) {
-        return new TrainerResponse(trainer.getUser().getFirstName(),
+    private TrainerDto getTrainerDtoFromEntity(Trainer trainer) {
+        return new TrainerDto(trainer.getUser().getFirstName(),
                 trainer.getUser().getLastName(),
                 trainer.getUser().getUsername(),
                 trainer.getUser().getPassword(),

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Data
-public class TrainerResponse {
+public class TrainerDto {
     private String firstName;
     private String lastName;
     private String username;

@@ -1,9 +1,9 @@
 package com.gym.crm.app.facade;
 
 import com.gym.crm.app.data.TestData;
-import com.gym.crm.app.domain.dto.trainee.TraineeResponse;
-import com.gym.crm.app.domain.dto.trainer.TrainerResponse;
-import com.gym.crm.app.domain.dto.training.TrainingResponse;
+import com.gym.crm.app.domain.dto.trainee.TraineeDto;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -38,13 +38,13 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnAllTrainers() {
-        List<TrainerResponse> expected = data.getTrainers().stream()
-                .map(trainer -> modelMapper.map(trainer, TrainerResponse.class))
+        List<TrainerDto> expected = data.getTrainers().stream()
+                .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
                 .toList();
 
         when(trainerService.getAllTrainers()).thenReturn(expected);
 
-        List<TrainerResponse> actual = gymFacade.getAllTrainers();
+        List<TrainerDto> actual = gymFacade.getAllTrainers();
 
         verify(trainerService).getAllTrainers();
         assertEquals(expected, actual);
@@ -52,10 +52,10 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnTrainerByUsername() {
-        TrainerResponse expected = modelMapper.map(data.getTrainers().get(0), TrainerResponse.class);
+        TrainerDto expected = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
         when(trainerService.getTrainerByUsername("username")).thenReturn(expected);
 
-        TrainerResponse actual = gymFacade.getTrainerByUsername("username");
+        TrainerDto actual = gymFacade.getTrainerByUsername("username");
 
         verify(trainerService).getTrainerByUsername("username");
         assertEquals(expected, actual);
@@ -63,24 +63,24 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTrainer() {
-        TrainerResponse trainerResponse = modelMapper.map(data.getTrainers().get(0), TrainerResponse.class);
-        when(trainerService.addTrainer(trainerResponse)).thenReturn(trainerResponse);
+        TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
+        when(trainerService.addTrainer(trainerDto)).thenReturn(trainerDto);
 
-        TrainerResponse actual = gymFacade.addTrainer(trainerResponse);
+        TrainerDto actual = gymFacade.addTrainer(trainerDto);
 
-        verify(trainerService).addTrainer(trainerResponse);
-        assertEquals(trainerResponse, actual);
+        verify(trainerService).addTrainer(trainerDto);
+        assertEquals(trainerDto, actual);
     }
 
     @Test
     void shouldUpdateTrainerByUsername() {
-        TrainerResponse trainerResponse = modelMapper.map(data.getTrainers().get(0), TrainerResponse.class);
-        when(trainerService.updateTrainerByUsername("username", trainerResponse)).thenReturn(trainerResponse);
+        TrainerDto trainerDto = modelMapper.map(data.getTrainers().get(0), TrainerDto.class);
+        when(trainerService.updateTrainerByUsername("username", trainerDto)).thenReturn(trainerDto);
 
-        TrainerResponse actual = gymFacade.updateTrainerByUsername("username", trainerResponse);
+        TrainerDto actual = gymFacade.updateTrainerByUsername("username", trainerDto);
 
-        verify(trainerService).updateTrainerByUsername("username", trainerResponse);
-        assertEquals(trainerResponse, actual);
+        verify(trainerService).updateTrainerByUsername("username", trainerDto);
+        assertEquals(trainerDto, actual);
     }
 
     @Test
@@ -94,13 +94,13 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnAllTrainees() {
-        List<TraineeResponse> expected = data.getTrainees().stream()
-                .map(trainee -> modelMapper.map(trainee, TraineeResponse.class))
+        List<TraineeDto> expected = data.getTrainees().stream()
+                .map(trainee -> modelMapper.map(trainee, TraineeDto.class))
                 .toList();
 
         when(traineeService.getAllTrainees()).thenReturn(expected);
 
-        List<TraineeResponse> actual = gymFacade.getAllTrainees();
+        List<TraineeDto> actual = gymFacade.getAllTrainees();
 
         verify(traineeService).getAllTrainees();
         assertEquals(expected, actual);
@@ -108,10 +108,10 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnTraineeByUsername() {
-        TraineeResponse expected = modelMapper.map(data.getTrainees().get(0), TraineeResponse.class);
+        TraineeDto expected = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
         when(traineeService.getTraineeByUsername("username")).thenReturn(expected);
 
-        TraineeResponse actual = gymFacade.getTraineeByUsername("username");
+        TraineeDto actual = gymFacade.getTraineeByUsername("username");
 
         verify(traineeService).getTraineeByUsername("username");
         assertEquals(expected, actual);
@@ -119,24 +119,24 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTrainee() {
-        TraineeResponse traineeResponse = modelMapper.map(data.getTrainees().get(0), TraineeResponse.class);
-        when(traineeService.addTrainee(traineeResponse)).thenReturn(traineeResponse);
+        TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
+        when(traineeService.addTrainee(traineeDto)).thenReturn(traineeDto);
 
-        TraineeResponse actual = gymFacade.addTrainee(traineeResponse);
+        TraineeDto actual = gymFacade.addTrainee(traineeDto);
 
-        verify(traineeService).addTrainee(traineeResponse);
-        assertEquals(traineeResponse, actual);
+        verify(traineeService).addTrainee(traineeDto);
+        assertEquals(traineeDto, actual);
     }
 
     @Test
     void shouldUpdateTraineeByUsername() {
-        TraineeResponse traineeResponse = modelMapper.map(data.getTrainees().get(0), TraineeResponse.class);
-        when(traineeService.updateTraineeByUsername("username", traineeResponse)).thenReturn(traineeResponse);
+        TraineeDto traineeDto = modelMapper.map(data.getTrainees().get(0), TraineeDto.class);
+        when(traineeService.updateTraineeByUsername("username", traineeDto)).thenReturn(traineeDto);
 
-        TraineeResponse actual = gymFacade.updateTraineeByUsername("username", traineeResponse);
+        TraineeDto actual = gymFacade.updateTraineeByUsername("username", traineeDto);
 
-        verify(traineeService).updateTraineeByUsername("username", traineeResponse);
-        assertEquals(traineeResponse, actual);
+        verify(traineeService).updateTraineeByUsername("username", traineeDto);
+        assertEquals(traineeDto, actual);
     }
 
     @Test
@@ -150,13 +150,13 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnAllTrainings() {
-        List<TrainingResponse> expected = data.getTrainings().stream()
-                .map(training -> modelMapper.map(training, TrainingResponse.class))
+        List<TrainingDto> expected = data.getTrainings().stream()
+                .map(training -> modelMapper.map(training, TrainingDto.class))
                 .toList();
 
         when(trainingService.getAllTrainings()).thenReturn(expected);
 
-        List<TrainingResponse> actual = gymFacade.getAllTrainings();
+        List<TrainingDto> actual = gymFacade.getAllTrainings();
 
         verify(trainingService).getAllTrainings();
         assertEquals(expected, actual);
@@ -164,24 +164,24 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTraining() {
-        TrainingResponse trainingResponse = modelMapper.map(data.getTrainings().get(0), TrainingResponse.class);
-        when(trainingService.addTraining(trainingResponse)).thenReturn(trainingResponse);
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.addTraining(trainingDto)).thenReturn(trainingDto);
 
-        TrainingResponse actual = gymFacade.addTraining(trainingResponse);
+        TrainingDto actual = gymFacade.addTraining(trainingDto);
 
-        verify(trainingService).addTraining(trainingResponse);
-        assertEquals(trainingResponse, actual);
+        verify(trainingService).addTraining(trainingDto);
+        assertEquals(trainingDto, actual);
     }
 
     @Test
     void shouldUpdateTraining() {
-        TrainingResponse trainingResponse = modelMapper.map(data.getTrainings().get(0), TrainingResponse.class);
-        when(trainingService.updateTraining(trainingResponse)).thenReturn(trainingResponse);
+        TrainingDto trainingDto = modelMapper.map(data.getTrainings().get(0), TrainingDto.class);
+        when(trainingService.updateTraining(trainingDto)).thenReturn(trainingDto);
 
-        TrainingResponse actual = gymFacade.updateTraining(trainingResponse);
+        TrainingDto actual = gymFacade.updateTraining(trainingDto);
 
-        verify(trainingService).updateTraining(trainingResponse);
-        assertEquals(trainingResponse, actual);
+        verify(trainingService).updateTraining(trainingDto);
+        assertEquals(trainingDto, actual);
     }
 
 }

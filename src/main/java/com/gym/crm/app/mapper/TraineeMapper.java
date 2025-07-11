@@ -1,7 +1,7 @@
 package com.gym.crm.app.mapper;
 
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
-import com.gym.crm.app.domain.dto.trainee.TraineeResponse;
+import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.model.Trainee;
 import org.mapstruct.BeanMapping;
@@ -23,5 +23,5 @@ public interface TraineeMapper {
     @Mapping(source = "user.password", target = "password")
     @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
-    TraineeResponse toResponse(Trainee trainee);
+    TraineeDto toResponse(Trainee trainee);
 }

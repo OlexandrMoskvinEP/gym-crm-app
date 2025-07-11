@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Data
-public class TrainingResponse {
+public class TrainingDto {
     private Long trainerId;
     private Long traineeId;
     private String trainingName;
