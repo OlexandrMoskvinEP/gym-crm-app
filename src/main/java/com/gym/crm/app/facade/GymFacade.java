@@ -55,6 +55,11 @@ public class GymFacade {
         return trainerService.getTrainerByUsername(username);
     }
 
+    public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+        return trainerService.getUnassignedTrainersByTraineeUsername(username);
+    }
+
     public TrainerDto addTrainer(@Valid TrainerCreateRequest createRequest) {
         return trainerService.addTrainer(createRequest);
     }

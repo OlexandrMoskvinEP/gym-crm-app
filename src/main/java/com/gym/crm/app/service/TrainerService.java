@@ -16,4 +16,6 @@ public interface TrainerService {
     TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest);
 
     void deleteTrainerByUsername(String username);
+
+    List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username);
 }

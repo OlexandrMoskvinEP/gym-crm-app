@@ -112,4 +112,25 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             logger.debug("Trainer deleted: {}", username);
         });
     }
+
+    @Override
+    public List<Trainer> findUnassignedTrainersByTraineeUsername(String username) {
+        logger.debug("Looking for unassigned trainers by trainee username: {}", username);
+
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery(
+                                "SELECT t FROM Trainer t " +
+                                        "WHERE NOT EXISTS (" +
+                                        "   SELECT 1 FROM Trainee trn " +
+                                        "   JOIN trn.trainers tr " +
+                                        "   WHERE trn.user.username = :username " +
+                                        "   AND tr.id = t.id" +
+                                        ")",
+                                Trainer.class
+                        )
+                        .setParameter("username", username)
+                        .getResultStream()
+                        .toList()
+        );
+    }
 }

@@ -1,5 +1,6 @@
 package com.gym.crm.app.repository;
 
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainer;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface TrainerRepository {
     Optional<Trainer> findByUsername(String username);
 
     void deleteByUsername(String username);
+
+    List<Trainer> findUnassignedTrainersByTraineeUsername(String username);
 }
