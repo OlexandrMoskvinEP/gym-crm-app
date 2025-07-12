@@ -6,13 +6,13 @@ import com.gym.crm.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class UserProfileService {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileService.class);
 
@@ -45,6 +45,10 @@ public class UserProfileService {
         String encodedPassword = passwordService.encodePassword(password);
 
         userRepository.updatePassword(username, encodedPassword);
+    }
+
+    public void switchActivationStatus(String username) {
+        userRepository.changeStatus(username);
     }
 
     private List<String> retrieveAllUsernames() {

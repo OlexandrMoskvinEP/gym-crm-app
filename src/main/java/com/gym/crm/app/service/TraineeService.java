@@ -3,6 +3,7 @@ package com.gym.crm.app.service;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 
 import java.util.List;
 
@@ -16,4 +17,8 @@ public interface TraineeService {
    TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest traineeUpdateRequest);
 
     void deleteTraineeByUsername(String username);
+
+    List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username);
+
+   void updateTraineeTrainers(String username, List<Long> trainerIds);
 }

@@ -79,12 +79,46 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
 
     @Test
     void shouldDeleteEntityByUsername() {
-        User toDelete = constructUser();
+        String username = "irina.petrova";
 
-        repository.save(toDelete);
-        repository.deleteByUsername(toDelete.getUsername());
+        repository.deleteByUsername(username);
 
-        assertFalse(repository.findByUsername(toDelete.getUsername()).isPresent());
+        assertTrue(repository.findByUsername(username).isEmpty());
+    }
+
+    @Test
+    void shouldUpdatePassword() {
+        String username = "irina.petrova";
+        String password = "qwerty12345";
+
+        repository.updatePassword(username, password);
+
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertEquals(password, updatedUser.get().getPassword());
+    }
+
+    @Test
+    void shouldDeactivateUserIfUserWasActive() {
+        String username = "mykyta.solntcev";
+
+        repository.changeStatus(username);
+
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertFalse(updatedUser.get().isActive());
+    }
+
+    @Test
+    @DataSet(value = "datasets/inactive-users.xml", cleanBefore = true, cleanAfter = true)
+    void shouldActivateUserIfUserWasNotActive() {
+        String username = "ben.hur";
+
+        repository.changeStatus(username);
+
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertTrue(updatedUser.get().isActive());
     }
 
     private static List<User> constructExpectedUsers() {
