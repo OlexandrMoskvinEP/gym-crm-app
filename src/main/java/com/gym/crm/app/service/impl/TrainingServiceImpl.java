@@ -96,16 +96,15 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter criteria) {
-        return repository.findByTraineeCriteria(criteria)
+    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter) {
+        return repository.findByTraineeCriteria(filter)
                 .stream()
-                .map(training -> modelMapper.map(training, TrainingDto.class))
+                .map(trainingMapper::toResponse)
                 .toList();
     }
 
     @Override
     public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter) {
-        logger.debug("Filtering trainings for trainer: {}", filter.getUsername());
         return repository.findByTrainerCriteria(filter)
                 .stream()
                 .map(trainingMapper::toResponse)

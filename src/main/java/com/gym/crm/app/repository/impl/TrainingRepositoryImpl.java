@@ -8,8 +8,6 @@ import com.gym.crm.app.repository.criteria.search.TraineeTrainingQueryBuilder;
 import com.gym.crm.app.repository.criteria.search.TrainerTrainingQueryBuilder;
 import com.gym.crm.app.repository.criteria.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.criteria.search.filters.TrainerTrainingSearchFilter;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,19 +71,21 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public List<Training> findByTrainerCriteria(TrainerTrainingSearchFilter filter) {
-        return txExecutor.performReturningWithinTx(session -> {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Training> query = trainerQueryBuilder.build(cb, filter);
+        return txExecutor.performReturningWithinTx(entityManager -> {
+            var session = entityManager.unwrap(org.hibernate.Session.class);
+            var cb = session.getCriteriaBuilder();
+            var query = traineeQueryBuilder.build(cb, filter);
+
             return session.createQuery(query).getResultList();
         });
     }
 
     @Override
-    public List<Training> findByTraineeCriteria(TraineeTrainingSearchFilter criteria) {
+    public List<Training> findByTraineeCriteria(TraineeTrainingSearchFilter filter) {
         return txExecutor.performReturningWithinTx(entityManager -> {
             var session = entityManager.unwrap(org.hibernate.Session.class);
             var cb = session.getCriteriaBuilder();
-            var query = traineeQueryBuilder.build(cb, criteria);
+            var query = traineeQueryBuilder.build(cb, filter);
 
             return session.createQuery(query).getResultList();
         });

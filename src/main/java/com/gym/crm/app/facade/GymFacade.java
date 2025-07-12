@@ -151,9 +151,9 @@ public class GymFacade {
         return trainingService.getTrainerTrainingsByFilter(criteria);
     }
 
-    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter criteria, UserCredentialsDto userCredentials ) {
+    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
 
-        return trainingService.getTraineeTrainingsByFilter(criteria);
+        return trainingService.getTraineeTrainingsByFilter(filter);
     }
 }

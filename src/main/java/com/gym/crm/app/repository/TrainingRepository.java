@@ -15,5 +15,5 @@ public interface TrainingRepository {
 
     List<Training> findByTrainerCriteria(TrainerTrainingSearchFilter filter);
 
-    List<Training> findByTraineeCriteria(TraineeTrainingSearchFilter criteria);
+    List<Training> findByTraineeCriteria(TraineeTrainingSearchFilter filter);
 }
