@@ -131,6 +131,12 @@ public class GymFacade {
         return trainingService.updateTraining(updateRequest);
     }
 
+    public void changeStatus(String username, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
+        userProfileService.changeStatus(username);
+    }
+
     public void changePassword(String username, String password, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
 

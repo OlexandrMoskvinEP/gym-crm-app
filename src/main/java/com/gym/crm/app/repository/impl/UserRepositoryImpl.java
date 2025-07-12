@@ -95,4 +95,34 @@ public class UserRepositoryImpl implements UserRepository {
         });
     }
 
+    @Override
+    public void changeStatus(String username) {
+        log.debug("Changing user`s with username {} status", username);
+
+        txExecutor.performWithinTx(session -> {
+            Boolean currentStatus = session.createQuery("""
+                                SELECT u.isActive FROM User u WHERE u.username = :username
+                            """, Boolean.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
+
+            if (currentStatus == null) {
+                throw new EntityNotFoundException("User not found: " + username);
+            }
+
+            boolean inverted = !currentStatus;
+
+            Query<?> query = (Query<?>) session.createQuery("""
+                        UPDATE User u SET u.isActive = :status WHERE u.username = :username
+                    """);
+            query.setParameter("status", inverted);
+            query.setParameter("username", username);
+
+            int updatedRows = query.executeUpdate();
+
+            if (updatedRows == 0) {
+                throw new EntityNotFoundException("User not found: " + username);
+            }
+        });
+    }
 }
