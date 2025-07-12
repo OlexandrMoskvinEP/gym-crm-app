@@ -120,7 +120,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void updateListOfTrainers(String username, List<Long> trainerIds) {
+    public void updateTraineeTrainers(String username, List<Long> trainerIds) {
         repository.updateTraineeTrainers(username, trainerIds);
     }
 

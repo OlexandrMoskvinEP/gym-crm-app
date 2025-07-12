@@ -60,9 +60,9 @@ public class GymFacade {
         return traineeService.getUnassignedTrainersByTraineeUsername(username);
     }
 
-    public void updateListOfTrainers(String username, List<Long> trainerIds, UserCredentialsDto userCredentials) {
+    public void updateTraineeTrainersList(String username, List<Long> trainerIds, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
-        traineeService.updateListOfTrainers(username, trainerIds);
+        traineeService.updateTraineeTrainers(username, trainerIds);
     }
 
     public TrainerDto addTrainer(@Valid TrainerCreateRequest createRequest) {
@@ -131,7 +131,7 @@ public class GymFacade {
         return trainingService.updateTraining(updateRequest);
     }
 
-    public void changeStatus(String username, UserCredentialsDto userCredentials) {
+    public void switchStatus(String username, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
 
         userProfileService.changeStatus(username);

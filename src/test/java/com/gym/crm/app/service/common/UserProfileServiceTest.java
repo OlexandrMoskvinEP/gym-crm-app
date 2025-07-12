@@ -41,4 +41,13 @@ class UserProfileServiceTest {
         assertNotNull(trainerUsernameGenerated);
         assertNotEquals(trainerUsernameExisting, trainerUsernameGenerated);
     }
+
+    //todo 2 tests
+    @Test
+    void changePassword() {
+    }
+
+    @Test
+    void changeStatus() {
+    }
 }

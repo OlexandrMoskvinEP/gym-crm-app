@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,6 +86,32 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
         repository.deleteByUsername(toDelete.getUsername());
 
         assertFalse(repository.findByUsername(toDelete.getUsername()).isPresent());
+    }
+
+    @Test
+    void updatePassword() {
+        User toUpdate = constructUser();
+        String password = "qwerty12345";
+
+        repository.save(toUpdate);
+        repository.updatePassword(toUpdate.getUsername(), password);
+
+        User actual = repository.findByUsername(toUpdate.getUsername()).get();
+
+        assertNotEquals(toUpdate.getPassword(), actual.getPassword());
+        assertEquals(password, actual.getPassword());
+    }
+
+    @Test
+    void changeStatus() {
+        User toUpdate = constructUser();
+
+        repository.save(toUpdate);
+        repository.changeStatus(toUpdate.getUsername());
+
+        User actual = repository.findByUsername(toUpdate.getUsername()).get();
+
+        assertNotEquals(toUpdate.isActive(), actual.isActive());
     }
 
     private static List<User> constructExpectedUsers() {

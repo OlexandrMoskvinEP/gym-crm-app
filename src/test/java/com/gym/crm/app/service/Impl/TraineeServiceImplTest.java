@@ -205,4 +205,13 @@ class TraineeServiceImplTest {
                 .id(userId)
                 .build();
     }
+
+    //todo 2 tests
+    @Test
+    void getUnassignedTrainersByTraineeUsername() {
+    }
+
+    @Test
+    void updateTraineeTrainers() {
+    }
 }

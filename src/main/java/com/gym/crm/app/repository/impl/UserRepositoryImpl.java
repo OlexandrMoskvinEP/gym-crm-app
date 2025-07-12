@@ -110,12 +110,10 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new EntityNotFoundException("User not found: " + username);
             }
 
-            boolean inverted = !currentStatus;
-
             Query<?> query = (Query<?>) session.createQuery("""
                         UPDATE User u SET u.isActive = :status WHERE u.username = :username
                     """);
-            query.setParameter("status", inverted);
+            query.setParameter("status", !currentStatus);
             query.setParameter("username", username);
 
             int updatedRows = query.executeUpdate();

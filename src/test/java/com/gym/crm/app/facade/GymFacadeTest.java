@@ -258,4 +258,17 @@ class GymFacadeTest {
                 .trainingType(TRAINING_TYPE)
                 .build();
     }
+
+    //todo 3 tests
+    @Test
+    void getUnassignedTrainersByTraineeUsername() {
+    }
+
+    @Test
+    void updateTraineeTrainersList() {
+    }
+
+    @Test
+    void switchStatus() {
+    }
 }
