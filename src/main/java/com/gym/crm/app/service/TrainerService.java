@@ -9,7 +9,7 @@ import java.util.List;
 public interface TrainerService {
     List<TrainerDto> getAllTrainers();
 
-    TrainerDto getTrainerByUsername (String username);
+    TrainerDto getTrainerByUsername(String username);
 
     TrainerDto addTrainer(TrainerCreateRequest createRequest);
 

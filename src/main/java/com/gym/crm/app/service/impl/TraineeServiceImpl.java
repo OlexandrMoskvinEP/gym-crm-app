@@ -3,9 +3,11 @@ package com.gym.crm.app.service.impl;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -27,6 +29,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     private TraineeRepository repository;
     private ModelMapper modelMapper;
+    private TrainerMapper trainerMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
 
@@ -48,6 +51,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    @Autowired
+    public void setTrainerMapper(TrainerMapper trainerMapper) {
+        this.trainerMapper = trainerMapper;
     }
 
     @Override
@@ -103,6 +111,17 @@ public class TraineeServiceImpl implements TraineeService {
         repository.deleteByUsername(username);
 
         logger.info("Trainee {} deleted", username);
+    }
+
+    @Override
+    public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username) {
+        return repository.findUnassignedTrainersByTraineeUsername(username)
+                .stream().map(trainer -> trainerMapper.toResponse(trainer)).toList();
+    }
+
+    @Override
+    public void updateTraineeTrainers(String username, List<Long> trainerIds) {
+        repository.updateTraineeTrainers(username, trainerIds);
     }
 
     private Trainee mapTraineeWithUser(TraineeCreateRequest createRequest, String username, String password) {

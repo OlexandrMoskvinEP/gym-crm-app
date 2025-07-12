@@ -2,13 +2,16 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,6 +113,52 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             entityManager.remove(managed);
 
             logger.debug("Trainee deleted: {}", username);
+        });
+    }
+
+    @Override
+    public List<Trainer> findUnassignedTrainersByTraineeUsername(String username) {
+        logger.debug("Looking for unassigned trainers by trainee username: {}", username);
+
+        return txExecutor.performReturningWithinTx(entityManager ->
+                entityManager.createQuery(
+                                "SELECT t FROM Trainer t " +
+                                        "WHERE NOT EXISTS (" +
+                                        "   SELECT 1 FROM Trainee trn " +
+                                        "   JOIN trn.trainers tr " +
+                                        "   WHERE trn.user.username = :username " +
+                                        "   AND tr.id = t.id" +
+                                        ")",
+                                Trainer.class
+                        )
+                        .setParameter("username", username)
+                        .getResultStream()
+                        .toList()
+        );
+    }
+
+    @Override
+    public void updateTraineeTrainers(String username, List<Long> trainerIds) {
+        logger.debug("Updating trainers for trainee '{}'. New trainer IDs: {}", username, trainerIds);
+
+        txExecutor.performWithinTx(entityManager -> {
+            TypedQuery<Trainee> query = entityManager.createQuery(
+                    "SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class);
+            query.setParameter("username", username);
+
+            Trainee trainee = query.getSingleResult();
+
+            List<Trainer> trainers = entityManager.createQuery(
+                            "SELECT tr FROM Trainer tr WHERE tr.id IN :ids", Trainer.class)
+                    .setParameter("ids", trainerIds)
+                    .getResultList();
+
+            if (trainers.size() != trainerIds.size()) {
+                throw new IllegalArgumentException("Some trainer IDs not found");
+            }
+
+            trainee.toBuilder().trainers(new HashSet<>(trainers));
+            entityManager.merge(trainee);
         });
     }
 }

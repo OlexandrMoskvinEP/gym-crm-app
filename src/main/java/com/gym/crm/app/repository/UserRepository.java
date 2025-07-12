@@ -17,4 +17,6 @@ public interface UserRepository {
      List<User> findAll();
 
     void updatePassword(String username, String newPassword);
+
+    void changeStatus(String username);
 }

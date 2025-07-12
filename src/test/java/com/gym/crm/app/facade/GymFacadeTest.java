@@ -26,6 +26,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -218,6 +220,37 @@ class GymFacadeTest {
         facade.changePassword(username, password, USER_CREDENTIALS);
 
         verify(userProfileService).changePassword(username, password);
+    }
+
+    @Test
+    void shouldReturnUnassignedTrainersByTraineeUsername() {
+        List<TrainerDto> expected = List.of(TRAINER_DTO);
+
+        when(traineeService.getUnassignedTrainersByTraineeUsername(anyString())).thenReturn(expected);
+
+        List<TrainerDto> actual = facade.getUnassignedTrainersByTraineeUsername("username", USER_CREDENTIALS);
+
+        assertEquals(expected, actual);
+        verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
+        verify(authService).authenticate(USER_CREDENTIALS);
+    }
+
+    @Test
+    void shouldUpdateTraineeTrainersList() {
+        doNothing().when(traineeService).updateTraineeTrainers(anyString(), anyList());
+
+        facade.updateTraineeTrainersList("username", List.of(1L), USER_CREDENTIALS);
+
+        verify(traineeService).updateTraineeTrainers("username", List.of(1L));
+    }
+
+    @Test
+    void shouldSwitchActivationStatus() {
+        doNothing().when(userProfileService).switchActivationStatus(anyString());
+
+        facade.switchActivationStatus("username", USER_CREDENTIALS);
+
+        verify(userProfileService).switchActivationStatus("username");
     }
 
     private static UserCredentialsDto buildCredentials() {
