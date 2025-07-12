@@ -89,7 +89,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
     }
 
     @Test
-    void updatePassword() {
+    void shouldUpdatePassword() {
         User toUpdate = constructUser();
         String password = "qwerty12345";
 
@@ -103,7 +103,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
     }
 
     @Test
-    void changeStatus() {
+    void shouldChangeStatus() {
         User toUpdate = constructUser();
 
         repository.save(toUpdate);
