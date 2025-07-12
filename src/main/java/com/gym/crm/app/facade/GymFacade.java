@@ -9,6 +9,8 @@ import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.repository.criteria.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.criteria.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
@@ -141,5 +143,17 @@ public class GymFacade {
         authService.authenticate(userCredentials);
 
         userProfileService.changePassword(username, password);
+    }
+
+    public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter criteria, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+
+        return trainingService.getTrainerTrainingsByFilter(criteria);
+    }
+
+    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter criteria, UserCredentialsDto userCredentials ) {
+        authService.authenticate(userCredentials);
+
+        return trainingService.getTraineeTrainingsByFilter(criteria);
     }
 }

@@ -7,8 +7,11 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.mapper.TrainingMapper;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
+import com.gym.crm.app.repository.criteria.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.criteria.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.TrainingService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,6 +30,7 @@ public class TrainingServiceImpl implements TrainingService {
     private TrainingTypeRepository trainingTypeRepository;
     private TrainingRepository repository;
     private ModelMapper modelMapper;
+    private TrainingMapper trainingMapper;
 
     @Autowired
     public void setRepository(TrainingRepository repository) {
@@ -36,6 +40,11 @@ public class TrainingServiceImpl implements TrainingService {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    @Autowired
+    public void setTrainingMapper(TrainingMapper trainingMapper) {
+        this.trainingMapper = trainingMapper;
     }
 
     @Override
@@ -84,6 +93,23 @@ public class TrainingServiceImpl implements TrainingService {
                 updated.getTrainer(), updated.getTrainee(), updated.getTrainingDate());
 
         return modelMapper.map(updated, TrainingDto.class);
+    }
+
+    @Override
+    public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter criteria) {
+        return repository.findByTraineeCriteria(criteria)
+                .stream()
+                .map(training -> modelMapper.map(training, TrainingDto.class))
+                .toList();
+    }
+
+    @Override
+    public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter) {
+        logger.debug("Filtering trainings for trainer: {}", filter.getUsername());
+        return repository.findByTrainerCriteria(filter)
+                .stream()
+                .map(trainingMapper::toResponse)
+                .toList();
     }
 
     private TrainingDto getTrainingDtoFromEntity(Training training) {
