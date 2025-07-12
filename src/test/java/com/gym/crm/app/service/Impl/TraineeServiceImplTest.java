@@ -4,10 +4,13 @@ import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -36,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -128,6 +134,7 @@ class TraineeServiceImplTest {
     void shouldUpdateTraineeByUsername(Trainee trainee) {
         TraineeUpdateRequest updateRequest = buildUpdateRequest(trainee);
         TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
+
         expected.setActive(false);
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
@@ -150,6 +157,7 @@ class TraineeServiceImplTest {
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
         TraineeDto savedTrainee = modelMapper.map(traineeCaptor.getValue(), TraineeDto.class);
+
         assertNotNull(savedTrainee);
         assertNotNull(actual);
         assertEquals(expected.getUserId(), actual.getUserId());
@@ -166,6 +174,76 @@ class TraineeServiceImplTest {
         when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
+    }
+
+    //todo 2 tests
+    @Test
+    void getUnassignedTrainersByTraineeUsername() {
+        String username = "Bob.Williams";
+
+        List<Trainer> unassignedTrainers = List.of(
+                Trainer.builder().id(1L)
+                        .user(User.builder().firstName("Rick").lastName("Strong").username("Rick.Strong").build())
+                        .build(),
+                Trainer.builder().id(2L)
+                        .user(User.builder().firstName("Anna").lastName("Stone").username("Anna.Stone").build())
+                        .build()
+        );
+
+        TrainerDto dto1 = TrainerDto.builder()
+                .userId(1L)
+                .username("Rick.Strong")
+                .firstName("Rick")
+                .lastName("Strong")
+                .build();
+
+        TrainerDto dto2 = TrainerDto.builder()
+                .userId(2L)
+                .username("Anna.Stone")
+                .firstName("Anna")
+                .lastName("Stone")
+                .build();
+
+        TrainerMapper trainerMapper = mock(TrainerMapper.class);
+        TraineeServiceImpl traineeServiceWithMapper = new TraineeServiceImpl();
+
+        traineeServiceWithMapper.setModelMapper(modelMapper);
+        traineeServiceWithMapper.setTrainerMapper(trainerMapper);
+        traineeServiceWithMapper.setRepository(repository);
+
+        when(repository.findUnassignedTrainersByTraineeUsername(username)).thenReturn(unassignedTrainers);
+
+        when(trainerMapper.toResponse(any(Trainer.class))).thenAnswer(invocation -> {
+            Trainer t = invocation.getArgument(0);
+            if (t == null) return null;
+            if (t.getId() == 1L) return dto1;
+            if (t.getId() == 2L) return dto2;
+            return null;
+        });
+
+        List<TrainerDto> expected = List.of(dto1, dto2);
+        List<TrainerDto> actual = traineeServiceWithMapper.getUnassignedTrainersByTraineeUsername(username);
+
+        assertEquals(expected.size(), actual.size());
+
+        assertEquals(expected.get(0).getUsername(), actual.get(0).getUsername());
+        assertEquals(expected.get(1).getFirstName(), actual.get(1).getFirstName());
+
+        verify(repository).findUnassignedTrainersByTraineeUsername(username);
+        verify(trainerMapper, times(2)).toResponse(unassignedTrainers.get(0));
+        verify(trainerMapper, times(2)).toResponse(unassignedTrainers.get(1));
+    }
+
+    @Test
+    void updateTraineeTrainers() {
+        String username = "Eva.Davis";
+        List<Long> trainerIds = List.of(1L, 3L, 5L);
+
+        doNothing().when(repository).updateTraineeTrainers(username, trainerIds);
+
+        traineeService.updateTraineeTrainers(username, trainerIds);
+
+        verify(repository).updateTraineeTrainers(username, trainerIds);
     }
 
     private TraineeCreateRequest buildCreateRequest(Trainee trainee) {
@@ -204,14 +282,5 @@ class TraineeServiceImplTest {
         return source.toBuilder()
                 .id(userId)
                 .build();
-    }
-
-    //todo 2 tests
-    @Test
-    void getUnassignedTrainersByTraineeUsername() {
-    }
-
-    @Test
-    void updateTraineeTrainers() {
     }
 }
