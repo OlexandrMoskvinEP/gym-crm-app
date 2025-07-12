@@ -23,9 +23,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileServiceTest {
-    private static final Trainee TRAINEE = Trainee.builder().user(User.builder().firstName("Alice").lastName("Smith").username("Alice.Smith").build()).build();
-    private static final Trainer TRAINER = Trainer.builder().user(User.builder().firstName("Sophie").lastName("Taylor").username("Sophie.Taylor").build()).build();
-
     @Mock
     TraineeRepository traineeRepository;
     @Mock
@@ -37,16 +34,17 @@ class UserProfileServiceTest {
 
     @Test
     void shouldCreateCorrectUsername() {
-        when(traineeRepository.findAll()).thenReturn(List.of(TRAINEE));
-        when(trainerRepository.findAll()).thenReturn(List.of(TRAINER));
-
         String traineeUsernameExisting = "Alice.Smith";
+        String trainerUsernameExisting = "Sophie.Taylor";
+
+        when(traineeRepository.findAll()).thenReturn(List.of(constructTrainee()));
+        when(trainerRepository.findAll()).thenReturn(List.of(constructTrainer()));
+
         String traineeUsernameGenerated = service.createUsername("Alice", "Smith");
 
         assertNotNull(traineeUsernameGenerated);
         assertNotEquals(traineeUsernameExisting, traineeUsernameGenerated);
 
-        String trainerUsernameExisting = "Sophie.Taylor";
         String trainerUsernameGenerated = service.createUsername("Sophie", "Taylor");
 
         assertNotNull(trainerUsernameGenerated);
@@ -63,11 +61,19 @@ class UserProfileServiceTest {
     }
 
     @Test
-    void changeStatus() {
+    void switchActivationStatus() {
         doNothing().when(userRepository).changeStatus(anyString());
 
         userRepository.changeStatus("username");
 
         verify(userRepository).changeStatus("username");
+    }
+
+    private Trainer constructTrainer() {
+        return Trainer.builder().user(User.builder().firstName("Sophie").lastName("Taylor").username("Sophie.Taylor").build()).build();
+    }
+
+    private Trainee constructTrainee() {
+        return Trainee.builder().user(User.builder().firstName("Alice").lastName("Smith").username("Alice.Smith").build()).build();
     }
 }

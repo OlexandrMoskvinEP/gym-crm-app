@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,38 +79,46 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
 
     @Test
     void shouldDeleteEntityByUsername() {
-        User toDelete = constructUser();
+        String username = "irina.petrova";
 
-        repository.save(toDelete);
-        repository.deleteByUsername(toDelete.getUsername());
+        repository.deleteByUsername(username);
 
-        assertFalse(repository.findByUsername(toDelete.getUsername()).isPresent());
+        assertTrue(repository.findByUsername(username).isEmpty());
     }
 
     @Test
     void shouldUpdatePassword() {
-        User toUpdate = constructUser();
+        String username = "irina.petrova";
         String password = "qwerty12345";
 
-        repository.save(toUpdate);
-        repository.updatePassword(toUpdate.getUsername(), password);
+        repository.updatePassword(username, password);
 
-        User actual = repository.findByUsername(toUpdate.getUsername()).get();
-
-        assertNotEquals(toUpdate.getPassword(), actual.getPassword());
-        assertEquals(password, actual.getPassword());
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertEquals(password, updatedUser.get().getPassword());
     }
 
     @Test
-    void shouldChangeStatus() {
-        User toUpdate = constructUser();
+    void shouldDeactivateUserIfUserWasActive() {
+        String username = "mykyta.solntcev";
 
-        repository.save(toUpdate);
-        repository.changeStatus(toUpdate.getUsername());
+        repository.changeStatus(username);
 
-        User actual = repository.findByUsername(toUpdate.getUsername()).get();
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertFalse(updatedUser.get().isActive());
+    }
 
-        assertNotEquals(toUpdate.isActive(), actual.isActive());
+    @Test
+    @DataSet(value = "datasets/inactive-users.xml", cleanBefore = true, cleanAfter = true)
+    void shouldActivateUserIfUserWasNotActive() {
+        String username = "ben.hur";
+
+        repository.changeStatus(username);
+
+        Optional<User> updatedUser = repository.findByUsername(username);
+        assertTrue(updatedUser.isPresent());
+        assertTrue(updatedUser.get().isActive());
     }
 
     private static List<User> constructExpectedUsers() {

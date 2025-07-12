@@ -47,7 +47,7 @@ public class UserProfileService {
         userRepository.updatePassword(username, encodedPassword);
     }
 
-    public void changeStatus(String username) {
+    public void switchActivationStatus(String username) {
         userRepository.changeStatus(username);
     }
 

@@ -245,12 +245,12 @@ class GymFacadeTest {
     }
 
     @Test
-    void shouldSwitchStatus() {
-        doNothing().when(userProfileService).changeStatus(anyString());
+    void shouldSwitchActivationStatus() {
+        doNothing().when(userProfileService).switchActivationStatus(anyString());
 
-        facade.switchStatus("username", USER_CREDENTIALS);
+        facade.switchActivationStatus("username", USER_CREDENTIALS);
 
-        verify(userProfileService).changeStatus("username");
+        verify(userProfileService).switchActivationStatus("username");
     }
 
     private static UserCredentialsDto buildCredentials() {

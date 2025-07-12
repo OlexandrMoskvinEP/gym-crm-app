@@ -131,10 +131,10 @@ public class GymFacade {
         return trainingService.updateTraining(updateRequest);
     }
 
-    public void switchStatus(String username, UserCredentialsDto userCredentials) {
+    public void switchActivationStatus(String username, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
 
-        userProfileService.changeStatus(username);
+        userProfileService.switchActivationStatus(username);
     }
 
     public void changePassword(String username, String password, UserCredentialsDto userCredentials) {

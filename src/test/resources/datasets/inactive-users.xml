@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <users id="7" first_name="Milena" last_name="Sonyachna" username="milena.sonyachna" password="$2a$10$DAp7dSCT2aJ5fX79wgBOEeHG7PC4lsMwDzm3h5vn3qPOkkvG5bDe." is_active="false"/>
+    <users id="8" first_name="Ben" last_name="Hur" username="ben.hur" password="$2a$10$QWKDqoCWbRs2bsDFL.NDE.orqzj06S0fZMuChNvnWOmPPFliKtOp6" is_active="false"/>
+</dataset>

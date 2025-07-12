@@ -133,13 +133,14 @@ class TraineeServiceImplTest {
     @MethodSource("getTrainees")
     void shouldUpdateTraineeByUsername(Trainee trainee) {
         TraineeUpdateRequest updateRequest = buildUpdateRequest(trainee);
-        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
 
+        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
         expected.setActive(false);
         expected.setDateOfBirth(LocalDate.of(1989, 3, 8));
         expected.setAddress("checkedAddress");
 
         Trainee traineeToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
+
         User updatedUser = traineeToReturn.getUser().toBuilder()
                 .isActive(expected.isActive())
                 .build();
@@ -176,43 +177,22 @@ class TraineeServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
     }
 
-    //todo 2 tests
     @Test
     void getUnassignedTrainersByTraineeUsername() {
         String username = "Bob.Williams";
+        List<Trainer> unassignedTrainers = getUnassignedTrainers();
 
-        List<Trainer> unassignedTrainers = List.of(
-                Trainer.builder().id(1L)
-                        .user(User.builder().firstName("Rick").lastName("Strong").username("Rick.Strong").build())
-                        .build(),
-                Trainer.builder().id(2L)
-                        .user(User.builder().firstName("Anna").lastName("Stone").username("Anna.Stone").build())
-                        .build()
-        );
+        TrainerDto dto1 = getDto1();
+        TrainerDto dto2 = getDto2();
+        List<TrainerDto> expected = List.of(dto1, dto2);
 
-        TrainerDto dto1 = TrainerDto.builder()
-                .userId(1L)
-                .username("Rick.Strong")
-                .firstName("Rick")
-                .lastName("Strong")
-                .build();
-
-        TrainerDto dto2 = TrainerDto.builder()
-                .userId(2L)
-                .username("Anna.Stone")
-                .firstName("Anna")
-                .lastName("Stone")
-                .build();
-
-        TrainerMapper trainerMapper = mock(TrainerMapper.class);
         TraineeServiceImpl traineeServiceWithMapper = new TraineeServiceImpl();
-
+        TrainerMapper trainerMapper = mock(TrainerMapper.class);
         traineeServiceWithMapper.setModelMapper(modelMapper);
         traineeServiceWithMapper.setTrainerMapper(trainerMapper);
         traineeServiceWithMapper.setRepository(repository);
 
         when(repository.findUnassignedTrainersByTraineeUsername(username)).thenReturn(unassignedTrainers);
-
         when(trainerMapper.toResponse(any(Trainer.class))).thenAnswer(invocation -> {
             Trainer t = invocation.getArgument(0);
             if (t == null) return null;
@@ -221,11 +201,9 @@ class TraineeServiceImplTest {
             return null;
         });
 
-        List<TrainerDto> expected = List.of(dto1, dto2);
         List<TrainerDto> actual = traineeServiceWithMapper.getUnassignedTrainersByTraineeUsername(username);
 
         assertEquals(expected.size(), actual.size());
-
         assertEquals(expected.get(0).getUsername(), actual.get(0).getUsername());
         assertEquals(expected.get(1).getFirstName(), actual.get(1).getFirstName());
 
@@ -282,5 +260,34 @@ class TraineeServiceImplTest {
         return source.toBuilder()
                 .id(userId)
                 .build();
+    }
+
+    private static TrainerDto getDto2() {
+        return TrainerDto.builder()
+                .userId(2L)
+                .username("Anna.Stone")
+                .firstName("Anna")
+                .lastName("Stone")
+                .build();
+    }
+
+    private static TrainerDto getDto1() {
+        return TrainerDto.builder()
+                .userId(1L)
+                .username("Rick.Strong")
+                .firstName("Rick")
+                .lastName("Strong")
+                .build();
+    }
+
+    private static List<Trainer> getUnassignedTrainers() {
+        return List.of(
+                Trainer.builder().id(1L)
+                        .user(User.builder().firstName("Rick").lastName("Strong").username("Rick.Strong").build())
+                        .build(),
+                Trainer.builder().id(2L)
+                        .user(User.builder().firstName("Anna").lastName("Stone").username("Anna.Stone").build())
+                        .build()
+        );
     }
 }

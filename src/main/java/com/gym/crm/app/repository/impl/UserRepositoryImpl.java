@@ -100,20 +100,20 @@ public class UserRepositoryImpl implements UserRepository {
         log.debug("Changing user`s with username {} status", username);
 
         txExecutor.performWithinTx(session -> {
-            Boolean currentStatus = session.createQuery("""
+            Boolean isActive = session.createQuery("""
                                 SELECT u.isActive FROM User u WHERE u.username = :username
                             """, Boolean.class)
                     .setParameter("username", username)
                     .getSingleResult();
 
-            if (currentStatus == null) {
+            if (isActive == null) {
                 throw new EntityNotFoundException("User not found: " + username);
             }
 
             Query<?> query = (Query<?>) session.createQuery("""
                         UPDATE User u SET u.isActive = :status WHERE u.username = :username
                     """);
-            query.setParameter("status", !currentStatus);
+            query.setParameter("status", !isActive);
             query.setParameter("username", username);
 
             int updatedRows = query.executeUpdate();
