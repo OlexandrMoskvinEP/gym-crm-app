@@ -9,13 +9,11 @@ import java.util.List;
 public interface TrainerService {
     List<TrainerDto> getAllTrainers();
 
-    TrainerDto getTrainerByUsername (String username);
+    TrainerDto getTrainerByUsername(String username);
 
     TrainerDto addTrainer(TrainerCreateRequest createRequest);
 
     TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest);
 
     void deleteTrainerByUsername(String username);
-
-    List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username);
 }

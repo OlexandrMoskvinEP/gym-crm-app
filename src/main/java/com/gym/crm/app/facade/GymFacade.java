@@ -6,8 +6,8 @@ import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
-import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
+import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
@@ -57,7 +57,12 @@ public class GymFacade {
 
     public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username, UserCredentialsDto userCredentials) {
         authService.authenticate(userCredentials);
-        return trainerService.getUnassignedTrainersByTraineeUsername(username);
+        return traineeService.getUnassignedTrainersByTraineeUsername(username);
+    }
+
+    public void updateListOfTrainers(String username, List<Long> trainerIds, UserCredentialsDto userCredentials) {
+        authService.authenticate(userCredentials);
+        traineeService.updateListOfTrainers(username, trainerIds);
     }
 
     public TrainerDto addTrainer(@Valid TrainerCreateRequest createRequest) {

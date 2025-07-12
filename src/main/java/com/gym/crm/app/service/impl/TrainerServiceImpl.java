@@ -6,7 +6,6 @@ import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
-import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -26,7 +25,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     private TrainerRepository repository;
     private ModelMapper modelMapper;
-    private TrainerMapper trainerMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
 
@@ -48,11 +46,6 @@ public class TrainerServiceImpl implements TrainerService {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-    }
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
     }
 
     @Override
@@ -107,12 +100,6 @@ public class TrainerServiceImpl implements TrainerService {
         repository.deleteByUsername(username);
 
         logger.info("Trainer {} deleted", username);
-    }
-
-    @Override
-    public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username) {
-        return repository.findUnassignedTrainersByTraineeUsername(username)
-                .stream().map(trainer -> trainerMapper.toResponse(trainer)).toList();
     }
 
     private Trainer mapTrainerWithUser(TrainerCreateRequest createRequest, String username, String password) {
