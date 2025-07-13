@@ -34,6 +34,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Trainer {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

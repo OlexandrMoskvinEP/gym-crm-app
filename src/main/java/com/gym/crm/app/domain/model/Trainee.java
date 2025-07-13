@@ -35,13 +35,16 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainee {
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @EqualsAndHashCode.Include
     @Column(name = "address", length = 128)
     private String address;
 

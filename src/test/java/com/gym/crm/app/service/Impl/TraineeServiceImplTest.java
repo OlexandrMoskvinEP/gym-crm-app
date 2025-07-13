@@ -119,7 +119,7 @@ class TraineeServiceImplTest {
         Trainee savedTrainee = traineeCaptor.getValue();
         assertNotNull(savedTrainee);
         assertNotNull(actual);
-        assertEquals(trainee, savedTrainee);
+        assertEquals(trainee.getUser().getUsername(), savedTrainee.getUser().getUsername());
         assertEquals(expected.getUserId(), actual.getUserId());
         assertEquals(username, actual.getUsername());
         assertEquals(expected.getFirstName(), actual.getFirstName());
@@ -208,8 +208,8 @@ class TraineeServiceImplTest {
         assertEquals(expected.get(1).getFirstName(), actual.get(1).getFirstName());
 
         verify(repository).findUnassignedTrainersByTraineeUsername(username);
-        verify(trainerMapper, times(2)).toDto(unassignedTrainers.get(0));
-        verify(trainerMapper, times(2)).toDto(unassignedTrainers.get(1));
+        verify(trainerMapper, times(1)).toDto(unassignedTrainers.get(0));
+        verify(trainerMapper, times(1)).toDto(unassignedTrainers.get(1));
     }
 
     @Test

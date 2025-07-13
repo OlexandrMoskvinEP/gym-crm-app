@@ -174,8 +174,9 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
         assertTrue(updatedOpt.isPresent());
         Trainee updated = updatedOpt.get();
 
-        assertEquals(1, updated.getTrainers().size());
+        assertEquals(2, updated.getTrainers().size());
         assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 1L));
+        assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 2L));
     }
 
     private static Stream<Arguments> provideTraineesForIdTest() {
