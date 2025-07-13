@@ -14,7 +14,7 @@ public interface TrainingService {
 
     TrainingDto updateTraining(TrainingSaveRequest saveRequest);
 
-    List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter criteria);
+    List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter);
 
     List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter);
 

@@ -74,7 +74,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         return txExecutor.performReturningWithinTx(entityManager -> {
             var session = entityManager.unwrap(org.hibernate.Session.class);
             var cb = session.getCriteriaBuilder();
-            var query = traineeQueryBuilder.build(cb, filter);
+            var query = trainerQueryBuilder.build(cb, filter);
 
             return session.createQuery(query).getResultList();
         });

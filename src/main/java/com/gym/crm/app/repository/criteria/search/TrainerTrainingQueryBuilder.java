@@ -22,12 +22,12 @@ public class TrainerTrainingQueryBuilder extends TrainingQueryBuilder {
 
     @Override
     protected Predicate getUsernamePredicate(CriteriaBuilder cb, Root<Training> root, String username) {
-        return cb.equal(root.get("trainee").get("user").get("username"), username);
+        return cb.equal(root.get("trainer").get("user").get("username"), username);
     }
 
     private void addTraineeFullNamePredicate(CriteriaBuilder cb, Root<Training> root,
                                              TrainerTrainingSearchFilter criteria, List<Predicate> predicates) {
         addFullNameLikePredicate(cb, root, predicates,
-                criteria.getTraineeFullName(), "trainer.user");
+                criteria.getTraineeFullName(), "trainee.user");
     }
 }
