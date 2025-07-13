@@ -157,8 +157,9 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 throw new IllegalArgumentException("Some trainer IDs not found");
             }
 
-            trainee.toBuilder().trainers(new HashSet<>(trainers));
-            entityManager.merge(trainee);
+            HashSet<Trainer> updated = new HashSet<>(trainers);
+            Trainee toMerge = trainee.toBuilder().trainers(updated).build();
+            entityManager.merge(toMerge);
         });
     }
 }

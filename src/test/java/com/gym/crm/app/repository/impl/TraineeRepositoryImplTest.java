@@ -4,10 +4,14 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainees.xml", cleanBefore = true, cleanAfter = true)
 public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRepository> {
+    private EntityManager entityManager;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
+    @BeforeEach
+    void init() {
+        this.entityManager = entityManagerFactory.createEntityManager();
+    }
 
     @Test
     void shouldReturnAllTrainees() {
@@ -143,6 +155,27 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
 
         Optional<Trainee> foundTrainee = repository.findByUsername("john.smith");
         assertFalse(foundTrainee.isPresent());
+    }
+
+    @Test
+    @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
+    void shouldUpdateTraineeTrainers() {
+        String username = "olga.ivanova";
+        List<Long> newTrainerIds = List.of(1L, 2L);
+
+        repository.updateTraineeTrainers(username, newTrainerIds);
+
+        Optional<Trainee> updatedOpt = entityManager
+                .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst();
+
+        assertTrue(updatedOpt.isPresent());
+        Trainee updated = updatedOpt.get();
+
+        assertEquals(1, updated.getTrainers().size());
+        assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 1L));
     }
 
     private static Stream<Arguments> provideTraineesForIdTest() {
