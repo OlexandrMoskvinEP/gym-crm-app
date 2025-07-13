@@ -15,5 +15,5 @@ public interface TrainingMapper {
 
     @Mapping(source = "trainee.id", target = "traineeId")
     @Mapping(source = "trainer.id", target = "trainerId")
-    TrainingDto toResponse(Training training);
+    TrainingDto toDto(Training training);
 }

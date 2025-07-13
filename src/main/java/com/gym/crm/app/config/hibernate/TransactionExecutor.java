@@ -5,10 +5,12 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Component
 public class TransactionExecutor {
     private static final Logger log = LoggerFactory.getLogger(TransactionExecutor.class);
 

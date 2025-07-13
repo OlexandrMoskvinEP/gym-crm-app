@@ -4,7 +4,11 @@ import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.exception.DuplicateEntityException;
 import com.gym.crm.app.repository.TrainingRepository;
-import jakarta.persistence.EntityManagerFactory;
+import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
+import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
+import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -12,14 +16,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class TrainingRepositoryImpl implements TrainingRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainingRepositoryImpl.class);
 
     private final TransactionExecutor txExecutor;
-
-    public TrainingRepositoryImpl(EntityManagerFactory managerFactory) {
-        this.txExecutor = new TransactionExecutor(managerFactory);
-    }
+    private final TrainerTrainingQueryBuilder trainerQueryBuilder;
+    private final TraineeTrainingQueryBuilder traineeQueryBuilder;
 
     @Override
     public List<Training> findAll() {
@@ -66,4 +69,25 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         });
     }
 
+    @Override
+    public List<Training> findByTrainerCriteria(TrainerTrainingSearchFilter filter) {
+        return txExecutor.performReturningWithinTx(entityManager -> {
+            var session = entityManager.unwrap(org.hibernate.Session.class);
+            var cb = session.getCriteriaBuilder();
+            var query = trainerQueryBuilder.build(cb, filter);
+
+            return session.createQuery(query).getResultList();
+        });
+    }
+
+    @Override
+    public List<Training> findByTraineeCriteria(TraineeTrainingSearchFilter filter) {
+        return txExecutor.performReturningWithinTx(entityManager -> {
+            var session = entityManager.unwrap(org.hibernate.Session.class);
+            var cb = session.getCriteriaBuilder();
+            var query = traineeQueryBuilder.build(cb, filter);
+
+            return session.createQuery(query).getResultList();
+        });
+    }
 }

@@ -10,6 +10,8 @@ import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -258,6 +261,36 @@ class GymFacadeTest {
                 .username("username")
                 .password("password")
                 .build();
+    }
+
+    @Test
+    void shouldReturnTrainingFoundByTraineeCriteria() {
+        TraineeTrainingSearchFilter searchFilter = TraineeTrainingSearchFilter.builder()
+                .username(USERNAME)
+                .build();
+        when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
+
+        List<TrainingDto> actual = facade.getTraineeTrainingsByFilter(searchFilter, USER_CREDENTIALS);
+
+        assertEquals(1, actual.size());
+        assertEquals(TRAINING_DTO, actual.iterator().next());
+        verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
+        verify(authService).authenticate(USER_CREDENTIALS);
+    }
+
+    @Test
+    void shouldReturnTrainingFoundByTrainerCriteria() {
+        TrainerTrainingSearchFilter searchFilter = TrainerTrainingSearchFilter.builder()
+                .username(USERNAME)
+                .build();
+        when(trainingService.getTrainerTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
+
+        List<TrainingDto> actual = facade.getTrainerTrainingsByFilter(searchFilter, USER_CREDENTIALS);
+
+        assertEquals(1, actual.size());
+        assertEquals(TRAINING_DTO, actual.iterator().next());
+        verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
+        verify(authService).authenticate(USER_CREDENTIALS);
     }
 
     private static TrainerDto buildTrainerDto() {

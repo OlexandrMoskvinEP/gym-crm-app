@@ -6,7 +6,11 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingRepository;
+import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -61,6 +65,137 @@ public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingR
         List<Training> persistedTrainings = repository.findAll();
         assertFalse(persistedTrainings.contains(oldTraining));
         assertTrue(persistedTrainings.contains(updatedTraining));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "john.smith,2",
+            "olga.ivanova,2",
+            "irina.petrova,1"
+    })
+    void testFindByTraineeCriteria_WithUsername(String username, int expectedCount) {
+        TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder()
+                .username(username)
+                .build();
+
+        List<Training> result = repository.findByTraineeCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "john.smith,2025-06-01,2025-06-30,2",
+            "john.smith,2025-06-01,2025-06-01,1",
+            "john.smith,2025-06-11,2025-06-30,0"
+    })
+    void testFindByTraineeCriteria_WithDateRange(String username, String fromDate, String toDate, int expectedCount) {
+        TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder()
+                .username(username)
+                .fromDate(LocalDate.parse(fromDate))
+                .toDate(LocalDate.parse(toDate))
+                .build();
+
+        List<Training> result = repository.findByTraineeCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "john.smith,Boris Krasnov,1",
+            "john.smith,Unknown Trainer,0"
+    })
+    void testFindByTraineeCriteria_WithTrainerName(String username, String trainerName, int expectedCount) {
+        TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder()
+                .username(username)
+                .trainerFullName(trainerName)
+                .build();
+
+        List<Training> result = repository.findByTraineeCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "john.smith,Cardio,1",
+            "john.smith,Yoga,0"
+    })
+    void testFindByTraineeCriteria_WithTrainingType(String username, String trainingTypeName, int expectedCount) {
+        TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder()
+                .username(username)
+                .trainingTypeName(trainingTypeName)
+                .build();
+
+        List<Training> result = repository.findByTraineeCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "boris.krasnov,2",
+            "mykyta.solntcev,1",
+            "arnold.schwarzenegger,2"
+    })
+    void testGetTrainerTrainings_ByUsername(String username, int expectedCount) {
+        TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder()
+                .username(username)
+                .build();
+
+        List<Training> result = repository.findByTrainerCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "boris.krasnov,2025-06-01,2025-06-30,2",
+            "boris.krasnov,2025-06-01,2025-06-01,1",
+            "boris.krasnov,2025-06-11,2025-06-30,0"
+    })
+    void testGetTrainerTrainings_ByDateRange(String username, String from, String to, int expectedCount) {
+        TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder()
+                .username(username)
+                .fromDate(LocalDate.parse(from))
+                .toDate(LocalDate.parse(to))
+                .build();
+
+        List<Training> result = repository.findByTrainerCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "boris.krasnov,John Smith,1",
+            "boris.krasnov,Unknown Trainee,0"
+    })
+    void testGetTrainerTrainings_ByTraineeFullName(String username, String traineeFullName, int expectedCount) {
+        TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder()
+                .username(username)
+                .traineeFullName(traineeFullName)
+                .build();
+
+        List<Training> result = repository.findByTrainerCriteria(filter);
+
+        assertEquals(expectedCount, result.size());
+    }
+
+    @Test
+    void testReturnedTrainingDtoFields() {
+        TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder()
+                .username("boris.krasnov")
+                .build();
+
+        List<Training> result = repository.findByTrainerCriteria(filter);
+
+        assertFalse(result.isEmpty());
+        Training dto = result.iterator().next();
+        assertEquals("Morning Cardio", dto.getTrainingName());
+        assertEquals("john.smith", dto.getTrainee().getUser().getUsername());
+        assertEquals("Cardio", dto.getTrainingType().getTrainingTypeName());
     }
 
     private Training constructTrainingFromDataset() {

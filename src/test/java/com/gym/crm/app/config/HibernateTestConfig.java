@@ -1,6 +1,7 @@
 package com.gym.crm.app.config;
 
 import com.gym.crm.app.YamlPropertySourceFactory;
+import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
@@ -54,6 +55,11 @@ public class HibernateTestConfig {
         org.hibernate.boot.Metadata metadata = sources.buildMetadata();
 
         return metadata.buildSessionFactory();
+    }
+
+    @Bean
+    public TransactionExecutor transactionExecutor(EntityManagerFactory emf) {
+        return new TransactionExecutor(emf);
     }
 }
 
