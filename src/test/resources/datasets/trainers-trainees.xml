@@ -1,0 +1,25 @@
+<dataset>
+    <!-- Training Types (Specializations) -->
+    <training_types id="1" training_type_name="Cardio"/>
+    <training_types id="2" training_type_name="Crossfit"/>
+    <training_types id="6" training_type_name="Bodybuilding"/>
+
+    <!-- Users for Trainers -->
+    <users id="1" first_name="John" last_name="Doe" username="john.doe" password="123" is_active="true"/>
+    <users id="2" first_name="Mike" last_name="Tyson" username="mike.tyson" password="123" is_active="true"/>
+    <users id="6" first_name="Arnold" last_name="Schwarzenegger" username="arnold" password="123" is_active="true"/>
+
+    <!-- Users for Trainee -->
+    <users id="10" first_name="Olga" last_name="Ivanova" username="olga.ivanova" password="123" is_active="true"/>
+
+    <!-- Trainers -->
+    <trainers id="1" specialization_id="1" user_id="1"/>
+    <trainers id="2" specialization_id="2" user_id="2"/>
+    <trainers id="6" specialization_id="6" user_id="6"/>
+
+    <!-- Trainee -->
+    <trainees id="100" date_of_birth="1998-07-10" address="Lviv, Ukraine" user_id="10"/>
+
+    <!-- Many-to-many trainee ↔ trainers -->
+    <trainee_trainer trainee_id="100" trainer_id="6"/>
+</dataset>
