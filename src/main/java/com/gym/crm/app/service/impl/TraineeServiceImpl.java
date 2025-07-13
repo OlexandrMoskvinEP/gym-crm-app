@@ -1,5 +1,6 @@
 package com.gym.crm.app.service.impl;
 
+import com.gym.crm.app.aspect.tx.CoreTransactional;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -120,6 +122,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @CoreTransactional
     public void updateTraineeTrainers(String username, List<Long> trainerIds) {
         repository.updateTraineeTrainers(username, trainerIds);
     }
