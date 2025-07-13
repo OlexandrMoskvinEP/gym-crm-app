@@ -23,21 +23,29 @@ import java.time.LocalDate;
 @Table(name = "trainings")
 @Getter
 @Builder(toBuilder = true)
-@ToString
-@EqualsAndHashCode
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class Training {
     @Id
+    @EqualsAndHashCode.Include
+    @ToString.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
+    @ToString.Include
     @Column(name = "training_name", nullable = false, length = 32)
     private String trainingName;
 
+    @EqualsAndHashCode.Include
+    @ToString.Include
     @Column(name = "training_date", nullable = false)
     private LocalDate trainingDate;
 
+    @EqualsAndHashCode.Include
+    @ToString.Include
     @Column(name = "training_duration", nullable = false)
     private BigDecimal trainingDuration;
 
