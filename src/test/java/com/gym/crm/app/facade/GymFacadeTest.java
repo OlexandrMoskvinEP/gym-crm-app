@@ -10,6 +10,8 @@ import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.repository.criteria.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.criteria.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -258,6 +261,30 @@ class GymFacadeTest {
                 .username("username")
                 .password("password")
                 .build();
+    }
+
+    @Test
+    void getTrainerTrainingsByFilter() {
+        TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder().build();
+
+        when(trainingService.getTrainerTrainingsByFilter(filter)).thenReturn(List.of(TRAINING_DTO));
+
+        List<TrainingDto>actual = facade.getTrainerTrainingsByFilter(filter, USER_CREDENTIALS);
+
+        assertNotNull(actual);
+        verify(trainingService).getTrainerTrainingsByFilter(filter);
+    }
+
+    @Test
+    void getTraineeTrainingsByFilter() {
+        TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder().build();
+
+        when(trainingService.getTraineeTrainingsByFilter(filter)).thenReturn(List.of(TRAINING_DTO));
+
+        List<TrainingDto>actual = facade.getTraineeTrainingsByFilter(filter, USER_CREDENTIALS);
+
+        assertNotNull(actual);
+        verify(trainingService).getTraineeTrainingsByFilter(filter);
     }
 
     private static TrainerDto buildTrainerDto() {

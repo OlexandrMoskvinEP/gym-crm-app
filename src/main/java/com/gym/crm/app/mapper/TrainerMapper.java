@@ -24,5 +24,5 @@ public interface TrainerMapper {
     @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "specialization", target = "specialization")
-    TrainerDto toResponse(Trainer trainer);
+    TrainerDto toDto(Trainer trainer);
 }

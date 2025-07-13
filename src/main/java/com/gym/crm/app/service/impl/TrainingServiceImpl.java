@@ -99,7 +99,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter) {
         return repository.findByTraineeCriteria(filter)
                 .stream()
-                .map(trainingMapper::toResponse)
+                .map(trainingMapper::toDto)
                 .toList();
     }
 
@@ -107,7 +107,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter) {
         return repository.findByTrainerCriteria(filter)
                 .stream()
-                .map(trainingMapper::toResponse)
+                .map(trainingMapper::toDto)
                 .toList();
     }
 

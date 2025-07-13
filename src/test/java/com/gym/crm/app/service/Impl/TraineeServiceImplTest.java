@@ -193,7 +193,7 @@ class TraineeServiceImplTest {
         traineeServiceWithMapper.setRepository(repository);
 
         when(repository.findUnassignedTrainersByTraineeUsername(username)).thenReturn(unassignedTrainers);
-        when(trainerMapper.toResponse(any(Trainer.class))).thenAnswer(invocation -> {
+        when(trainerMapper.toDto(any(Trainer.class))).thenAnswer(invocation -> {
             Trainer t = invocation.getArgument(0);
             if (t == null) return null;
             if (t.getId() == 1L) return dto1;
@@ -208,8 +208,8 @@ class TraineeServiceImplTest {
         assertEquals(expected.get(1).getFirstName(), actual.get(1).getFirstName());
 
         verify(repository).findUnassignedTrainersByTraineeUsername(username);
-        verify(trainerMapper, times(2)).toResponse(unassignedTrainers.get(0));
-        verify(trainerMapper, times(2)).toResponse(unassignedTrainers.get(1));
+        verify(trainerMapper, times(2)).toDto(unassignedTrainers.get(0));
+        verify(trainerMapper, times(2)).toDto(unassignedTrainers.get(1));
     }
 
     @Test
