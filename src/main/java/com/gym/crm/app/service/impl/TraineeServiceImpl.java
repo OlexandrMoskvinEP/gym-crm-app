@@ -1,5 +1,6 @@
 package com.gym.crm.app.service.impl;
 
+import com.gym.crm.app.aspect.tx.CoreTransactional;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
@@ -121,7 +122,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    @Transactional
+    @CoreTransactional
     public void updateTraineeTrainers(String username, List<Long> trainerIds) {
         repository.updateTraineeTrainers(username, trainerIds);
     }
