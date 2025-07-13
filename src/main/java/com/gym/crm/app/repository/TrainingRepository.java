@@ -1,8 +1,8 @@
 package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.repository.criteria.search.filters.TraineeTrainingSearchFilter;
-import com.gym.crm.app.repository.criteria.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
+import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 
 import java.util.List;
 

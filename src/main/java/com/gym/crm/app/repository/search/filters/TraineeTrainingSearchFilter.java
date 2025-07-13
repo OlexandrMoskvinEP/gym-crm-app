@@ -1,4 +1,4 @@
-package com.gym.crm.app.repository.criteria.search.filters;
+package com.gym.crm.app.repository.search.filters;
 
 import jakarta.validation.constraints.Size;
 import lombok.Data;
