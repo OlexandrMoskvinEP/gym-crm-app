@@ -1,6 +1,6 @@
 # Gym CRM – REST API Endpoints
 
-Полный список REST endpoint’ов согласно техническому заданию (Task_Rest.pdf). Используется для описания API, генерации OpenAPI YAML и реализации контроллеров.
+Full list of  REST endpoints
 
 ---
 

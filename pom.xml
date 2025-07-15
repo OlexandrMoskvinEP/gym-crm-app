@@ -149,6 +149,11 @@
             <artifactId>lombok-mapstruct-binding</artifactId>
             <version>0.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
         <!--=== Security=== -->
         <dependency>
@@ -269,12 +274,19 @@
                             <inputSpec>${project.basedir}/src/main/resources/openapi/gym-crm-rest.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <apiPackage>com.gymcrm.api</apiPackage>
-                            <modelPackage>com.gymcrm.dto</modelPackage>
+                            <apiPackage>com.gym.api</apiPackage>
+                            <modelPackage>com.gym.dto</modelPackage>
+                            <!--====OpenApi config====-->
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useTags>true</useTags>
+                                <nullableReferenceTypes>false</nullableReferenceTypes>
+                                <generateApiTests>false</generateApiTests>
+                                <generateModelTests>false</generateModelTests>
+                                <generateApiDocumentation>false</generateApiDocumentation>
+                                <generateModelDocumentation>false</generateModelDocumentation>
                             </configOptions>
+
                         </configuration>
                     </execution>
                 </executions>
