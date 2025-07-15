@@ -19,5 +19,4 @@ GRANT ALL PRIVILEGES ON DATABASE "gym" TO gym;
 +
 ## API Reference
 
-➡️ REST endpoints: [docs/ docs-gym-crm-rest-endpoints.md](docs/gym-crm-rest-endpoints.md)  
 ➡️ Swagger-spec: [openapi-spec.yaml](src/main/resources/openapi/gym-crm-rest.yaml)
