@@ -1,0 +1,29 @@
+TraineeCreateRequest:
+  type: object
+  required:
+    - firstName
+    - lastName
+  properties:
+    firstName:
+      type: string
+      example: John
+    lastName:
+      type: string
+      example: Smith
+    dateOfBirth:
+      type: string
+      format: date
+      example: 1990-01-01
+    address:
+      type: string
+      example: "123 Main St, NY"
+
+TraineeRegistrationResponse:
+  type: object
+  properties:
+    username:
+      type: string
+      example: John.Smith
+    password:
+      type: string
+      example: "p@55w0rdX9"
