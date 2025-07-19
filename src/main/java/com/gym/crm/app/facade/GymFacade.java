@@ -16,6 +16,7 @@ import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
@@ -116,15 +117,17 @@ public class GymFacade {
     public TraineeCreateResponse addTrainee(@Valid TraineeCreateRequest createRequest) {
         TraineeDto traineeDto = traineeService.addTrainee(createRequest);
 
-        return traineeMapper.dtoToResponse(traineeDto);
+        return traineeMapper.dtoToCreateResponse(traineeDto);
     }
 
-    public TraineeDto updateTraineeByUsername(String username,
-                                              @Valid TraineeUpdateRequest updateRequest,
-                                              UserCredentialsDto userCredentials) {
+    public TraineeUpdateResponse updateTraineeByUsername(String username,
+                                                         @Valid TraineeUpdateRequest updateRequest) {
+
+        UserCredentialsDto userCredentials = userMapper.toCredentialsDto(currentUserHolder.get());
+
         authService.authenticate(userCredentials);
 
-        return traineeService.updateTraineeByUsername(username, updateRequest);
+        return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
     public void deleteTraineeByUsername(String username, UserCredentialsDto userCredentials) {

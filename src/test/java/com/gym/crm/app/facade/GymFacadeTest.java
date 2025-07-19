@@ -9,7 +9,6 @@ import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
-import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
@@ -18,6 +17,7 @@ import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
@@ -38,13 +38,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GymFacadeTest {
@@ -60,10 +56,11 @@ class GymFacadeTest {
     private static final TraineeDto TRAINEE_DTO = buildTraineeDto();
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
     private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
-    private static final User SIMPLE_USER = User.builder().build();
+    private static final User SIMPLE_USER = buildSimpleUser();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
     private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
+    private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
 
     @Mock
     private UserProfileService userProfileService;
@@ -184,12 +181,12 @@ class GymFacadeTest {
 
     @Test
     void shouldUpdateTraineeByUsername() {
-        TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
+        com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
         when(traineeService.updateTraineeByUsername(USERNAME, updateRequest)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = facade.updateTraineeByUsername(USERNAME, updateRequest, USER_CREDENTIALS);
+        TraineeUpdateResponse actual = facade.updateTraineeByUsername(USERNAME, updateRequest);
 
-        assertEquals(TRAINEE_DTO, actual);
+        assertEquals(TRAINEE_UPDATE_RESPONSE, actual);
         verify(traineeService).updateTraineeByUsername(USERNAME, updateRequest);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -363,4 +360,19 @@ class GymFacadeTest {
                 .dateOfBirth(TRAINEE_DTO.getDateOfBirth())
                 .isActive(TRAINEE_DTO.isActive());
     }
+
+    private static TraineeUpdateResponse buildTraineeUpdateResponse() {
+        return new TraineeUpdateResponse()
+                .firstName(TRAINEE_DTO.getFirstName())
+                .lastName(TRAINEE_DTO.getLastName())
+                .username(TRAINEE_DTO.getUsername())
+                .address(TRAINEE_DTO.getAddress())
+                .dateOfBirth(TRAINEE_DTO.getDateOfBirth())
+                .isActive(TRAINEE_DTO.isActive());
+    }
+
+    private static User buildSimpleUser() {
+        return User.builder().username("username").password("password").build();
+    }
+
 }

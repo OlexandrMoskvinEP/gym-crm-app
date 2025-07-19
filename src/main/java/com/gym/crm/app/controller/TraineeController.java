@@ -2,6 +2,7 @@ package com.gym.crm.app.controller;
 
 import com.gym.crm.app.api.TraineesApi;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
+import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.*;
 import jakarta.validation.Valid;
@@ -28,15 +29,16 @@ public class TraineeController implements TraineesApi {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable  String username) {
+    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable String username) {
         TraineeGetResponse response = facade.getTraineeByUsername(username);
 
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(String username, TraineeUpdateRequest traineeUpdateRequest) {
-        return TraineesApi.super.updateTraineeProfile(username, traineeUpdateRequest);
+    @PutMapping("/{username}")
+    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(@PathVariable String username, TraineeUpdateRequest traineeUpdateRequest) {
+        TraineeUpdateResponse response = facade.updateTraineeByUsername(username, traineeUpdateRequest);
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -50,17 +52,20 @@ public class TraineeController implements TraineesApi {
     }
 
     @Override
-    public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType) {
+    public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(String username, LocalDate
+            fromDate, LocalDate toDate, String trainerName, String trainingType) {
         return TraineesApi.super.getTraineeTrainings(username, fromDate, toDate, trainerName, trainingType);
     }
 
     @Override
-    public ResponseEntity<Void> changeTraineeActivationStatus(String username, ActivationStatusRequest activationStatusRequest) {
+    public ResponseEntity<Void> changeTraineeActivationStatus(String username, ActivationStatusRequest
+            activationStatusRequest) {
         return TraineesApi.super.changeTraineeActivationStatus(username, activationStatusRequest);
     }
 
     @Override
-    public ResponseEntity<List<TraineeAssignedTrainersUpdateResponse>> updateTraineeTrainers(String username, TraineeAssignedTrainersUpdateRequest traineeAssignedTrainersUpdateRequest) {
+    public ResponseEntity<List<TraineeAssignedTrainersUpdateResponse>> updateTraineeTrainers(String
+                                                                                                     username, TraineeAssignedTrainersUpdateRequest traineeAssignedTrainersUpdateRequest) {
         return TraineesApi.super.updateTraineeTrainers(username, traineeAssignedTrainersUpdateRequest);
     }
 }

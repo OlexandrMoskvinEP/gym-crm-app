@@ -10,15 +10,15 @@ import java.util.List;
 public interface TraineeService {
     List<TraineeDto> getAllTrainees();
 
-    TraineeDto getTraineeByUsername (String username);
+    TraineeDto getTraineeByUsername(String username);
 
     TraineeDto addTrainee(TraineeCreateRequest traineeCreateRequest);
 
-   TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest traineeUpdateRequest);
+    TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest traineeUpdateRequest);
 
     void deleteTraineeByUsername(String username);
 
     List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username);
 
-   void updateTraineeTrainers(String username, List<Long> trainerIds);
+    void updateTraineeTrainers(String username, List<Long> trainerIds);
 }
