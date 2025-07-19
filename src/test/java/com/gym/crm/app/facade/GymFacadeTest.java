@@ -13,6 +13,7 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
+import com.gym.crm.app.mapper.TrainingMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
@@ -76,6 +77,8 @@ class GymFacadeTest {
     private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
     @Spy
     private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
+    @Spy
+    private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     @Spy
@@ -297,11 +300,12 @@ class GymFacadeTest {
                 .username(USERNAME)
                 .build();
         when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
+        when(trainerService.getTrainerNameById(anyLong())).thenReturn("anna.smith");
 
-        List<TrainingDto> actual = facade.getTraineeTrainingsByFilter(searchFilter, USER_CREDENTIALS);
+        List<TraineeTrainingGetResponse> actual = facade.getTraineeTrainingsByFilter(searchFilter);
 
         assertEquals(1, actual.size());
-        assertEquals(TRAINING_DTO, actual.iterator().next());
+        assertEquals(buildTrainingByTraineeCriteriaGetResponse(List.of(TRAINING_DTO)), actual.iterator().next());
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -395,4 +399,10 @@ class GymFacadeTest {
         return new TraineeAssignedTrainersUpdateRequest(list);
     }
 
+    private TraineeTrainingGetResponse buildTrainingByTraineeCriteriaGetResponse(List<TrainingDto> trainingDto) {
+        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto.get(0));
+        response.setTrainerName(TRAINER_DTO.getUsername());
+
+        return response;
+    }
 }

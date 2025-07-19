@@ -4,6 +4,7 @@ import com.gym.crm.app.api.TraineesApi;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
+import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.rest.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,15 +64,30 @@ public class TraineeController implements TraineesApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(String username, LocalDate
+    @GetMapping("/{username}/trainings")
+    public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(@PathVariable String username, LocalDate
             fromDate, LocalDate toDate, String trainerName, String trainingType) {
-        return TraineesApi.super.getTraineeTrainings(username, fromDate, toDate, trainerName, trainingType);
+
+        List<TraineeTrainingGetResponse> responses = facade
+                .getTraineeTrainingsByFilter(buildTraineeSearchFilter(username, fromDate, toDate, trainerName, trainingType));
+
+        return ResponseEntity.ok(responses);
     }
 
     @Override
     public ResponseEntity<Void> changeTraineeActivationStatus(String username, ActivationStatusRequest
             activationStatusRequest) {
         return TraineesApi.super.changeTraineeActivationStatus(username, activationStatusRequest);
+    }
+
+    private @Valid TraineeTrainingSearchFilter buildTraineeSearchFilter(String username, LocalDate fromDate,
+                                                                        LocalDate toDate, String trainerName, String trainingType) {
+
+        return TraineeTrainingSearchFilter.builder()
+                .trainerFullName(trainerName)
+                .trainingTypeName(trainingType)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .username(username).build();
     }
 }

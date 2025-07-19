@@ -17,5 +17,7 @@ public interface TrainerService {
 
     Long getTrainerIdByUsername(String username);
 
+    String getTrainerNameById(Long id);
+
     void deleteTrainerByUsername(String username);
 }

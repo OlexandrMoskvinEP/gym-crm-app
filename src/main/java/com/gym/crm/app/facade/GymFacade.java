@@ -11,6 +11,7 @@ import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
+import com.gym.crm.app.mapper.TrainingMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
@@ -39,6 +40,7 @@ public class GymFacade {
     private final AuthenticationService authService;
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
+    private final TrainingMapper trainingMapper;
 
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
@@ -50,7 +52,7 @@ public class GymFacade {
                      UserProfileService userProfileService,
                      AuthenticationService authService,
                      TraineeMapper traineeMapper,
-                     TrainerMapper trainerMapper,
+                     TrainerMapper trainerMapper, TrainingMapper trainingMapper,
                      UserMapper userMapper, CurrentUserHolder currentUserHolder) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
@@ -59,6 +61,7 @@ public class GymFacade {
         this.authService = authService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
+        this.trainingMapper = trainingMapper;
         this.userMapper = userMapper;
         this.currentUserHolder = currentUserHolder;
     }
@@ -88,7 +91,7 @@ public class GymFacade {
         authService.authenticate(getCurrentCredentials());
         traineeService.updateTraineeTrainers(username, getIds(request));
 
-        List<TrainerDto>trainers = getTraineeTrainers(request);
+        List<TrainerDto> trainers = getTraineeTrainers(request);
 
         return trainers.stream()
                 .map(trainerMapper::dtoToUpdateAssignedTrainerResponse)
@@ -181,10 +184,14 @@ public class GymFacade {
         return trainingService.getTrainerTrainingsByFilter(criteria);
     }
 
-    public List<TrainingDto> getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public List<TraineeTrainingGetResponse> getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
+        authService.authenticate(getCurrentCredentials());
 
-        return trainingService.getTraineeTrainingsByFilter(filter);
+        List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
+
+        return trainings.stream()
+                .map(this::buildTraineeTrainingGetResponse)
+                .toList();
     }
 
     private UserCredentialsDto getCurrentCredentials() {
@@ -198,10 +205,20 @@ public class GymFacade {
                 .toList();
     }
 
-    private List<TrainerDto>getTraineeTrainers(TraineeAssignedTrainersUpdateRequest request){
+    private List<TrainerDto> getTraineeTrainers(TraineeAssignedTrainersUpdateRequest request) {
         return request.getTrainerUsernames().stream()
                 .map(trainerService::getTrainerByUsername)
                 .toList();
     }
+
+    private TraineeTrainingGetResponse buildTraineeTrainingGetResponse(TrainingDto trainingDto) {
+        String trainerName = trainerService.getTrainerNameById(trainingDto.getTrainerId());
+
+        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto);
+        response.setTrainerName(trainerName);
+
+        return response;
+    }
+
 
 }

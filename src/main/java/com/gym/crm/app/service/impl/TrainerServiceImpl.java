@@ -90,9 +90,17 @@ public class TrainerServiceImpl implements TrainerService {
         logger.info("Trainer {} updated", username);
         return modelMapper.map(repository.findByUsername(username), TrainerDto.class);
     }
+
     @Override
     public Long getTrainerIdByUsername(String username) {
         return repository.findByUsername(username).get().getId();
+    }
+
+    @Override
+    public String getTrainerNameById(Long id) {
+        Trainer trainer = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
+
+        return trainer.getUser().getFirstName() + " " + trainer.getUser().getLastName();
     }
 
     @Override
