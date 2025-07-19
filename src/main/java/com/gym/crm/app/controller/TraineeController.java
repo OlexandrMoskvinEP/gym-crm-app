@@ -46,7 +46,7 @@ public class TraineeController implements TraineesApi {
     public ResponseEntity<Void> deleteTraineeProfile(@PathVariable String username) {
         facade.deleteTraineeByUsername(username);
 
-        return TraineesApi.super.deleteTraineeProfile(username);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("{username}/available-trainers")
@@ -74,10 +74,12 @@ public class TraineeController implements TraineesApi {
         return ResponseEntity.ok(responses);
     }
 
-    @Override
-    public ResponseEntity<Void> changeTraineeActivationStatus(String username, ActivationStatusRequest
+    @PatchMapping("/{username}/change-activation-status")
+    public ResponseEntity<Void> changeTraineeActivationStatus(@PathVariable String username, ActivationStatusRequest
             activationStatusRequest) {
-        return TraineesApi.super.changeTraineeActivationStatus(username, activationStatusRequest);
+
+        facade.switchActivationStatus(username);
+        return ResponseEntity.ok().build();
     }
 
     private @Valid TraineeTrainingSearchFilter buildTraineeSearchFilter(String username, LocalDate fromDate,

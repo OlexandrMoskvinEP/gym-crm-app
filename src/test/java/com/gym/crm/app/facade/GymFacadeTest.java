@@ -282,7 +282,7 @@ class GymFacadeTest {
     void shouldSwitchActivationStatus() {
         doNothing().when(userProfileService).switchActivationStatus(anyString());
 
-        facade.switchActivationStatus("username", USER_CREDENTIALS);
+        facade.switchActivationStatus("username");
 
         verify(userProfileService).switchActivationStatus("username");
     }

@@ -166,8 +166,8 @@ public class GymFacade {
         return trainingService.updateTraining(updateRequest);
     }
 
-    public void switchActivationStatus(String username, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public void switchActivationStatus(String username) {
+        authService.authenticate(getCurrentCredentials());
 
         userProfileService.switchActivationStatus(username);
     }
