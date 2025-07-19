@@ -9,8 +9,11 @@ import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.mapper.TraineeMapper;
+import com.gym.crm.app.mapper.TraineeMapperImpl;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
@@ -31,18 +34,20 @@ public class GymFacade {
     private final TrainingService trainingService;
     private final UserProfileService userProfileService;
     private final AuthenticationService authService;
+    private final TraineeMapper traineeMapper;
 
     @Autowired
     public GymFacade(TraineeService traineeService,
                      TrainerService trainerService,
                      TrainingService trainingService,
                      UserProfileService userProfileService,
-                     AuthenticationService authService) {
+                     AuthenticationService authService, TraineeMapper traineeMapper) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
         this.userProfileService = userProfileService;
         this.authService = authService;
+        this.traineeMapper = traineeMapper;
     }
 
     public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
@@ -97,8 +102,10 @@ public class GymFacade {
         return traineeService.getTraineeByUsername(username);
     }
 
-    public TraineeDto addTrainee(@Valid TraineeCreateRequest createRequest) {
-        return traineeService.addTrainee(createRequest);
+    public TraineeCreateResponse addTrainee(@Valid TraineeCreateRequest createRequest) {
+        TraineeDto traineeDto = traineeService.addTrainee(createRequest);
+
+        return traineeMapper.dtoToResponse(traineeDto);
     }
 
     public TraineeDto updateTraineeByUsername(String username,

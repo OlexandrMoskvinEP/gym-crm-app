@@ -4,6 +4,7 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.rest.TraineeCreateResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +25,6 @@ public interface TraineeMapper {
     @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
     TraineeDto toDto(Trainee trainee);
+
+    TraineeCreateResponse dtoToResponse(TraineeDto traineeDto);
 }

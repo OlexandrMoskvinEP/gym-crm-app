@@ -10,8 +10,10 @@ import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
@@ -19,8 +21,10 @@ import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -51,6 +55,8 @@ class GymFacadeTest {
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
     private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
 
+    private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
+
     @Mock
     private UserProfileService userProfileService;
     @Mock
@@ -61,6 +67,9 @@ class GymFacadeTest {
     private TrainingService trainingService;
     @Mock
     private AuthenticationService authService;
+    @Spy
+    private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
+
 
     @InjectMocks
     private GymFacade facade;
@@ -149,9 +158,9 @@ class GymFacadeTest {
         TraineeCreateRequest createRequest = TraineeCreateRequest.builder().build();
         when(traineeService.addTrainee(createRequest)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = facade.addTrainee(createRequest);
+        TraineeCreateResponse actual = facade.addTrainee(createRequest);
 
-        assertEquals(TRAINEE_DTO, actual);
+        assertEquals(TRAINEE_CREATE_RESPONSE, actual);
         verify(traineeService).addTrainee(createRequest);
         verifyNoInteractions(authService);
     }
@@ -324,4 +333,9 @@ class GymFacadeTest {
                 .trainingType(TRAINING_TYPE)
                 .build();
     }
+
+    private static TraineeCreateResponse buildTraineeCreateResponse() {
+        return new TraineeCreateResponse(GymFacadeTest.TRAINEE_DTO.getUsername(), GymFacadeTest.TRAINEE_DTO.getPassword());
+    }
+
 }
