@@ -10,11 +10,14 @@ import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.mapper.TraineeMapper;
-import com.gym.crm.app.mapper.TraineeMapperImpl;
+import com.gym.crm.app.mapper.TrainerMapper;
+import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.TraineeCreateResponse;
+import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -35,19 +38,25 @@ public class GymFacade {
     private final UserProfileService userProfileService;
     private final AuthenticationService authService;
     private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
+    private final UserMapper userMapper;
+    private final CurrentUserHolder currentUserHolder;
 
     @Autowired
     public GymFacade(TraineeService traineeService,
                      TrainerService trainerService,
                      TrainingService trainingService,
                      UserProfileService userProfileService,
-                     AuthenticationService authService, TraineeMapper traineeMapper) {
+                     AuthenticationService authService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, UserMapper userMapper, CurrentUserHolder currentUserHolder) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
         this.userProfileService = userProfileService;
         this.authService = authService;
         this.traineeMapper = traineeMapper;
+        this.trainerMapper = trainerMapper;
+        this.userMapper = userMapper;
+        this.currentUserHolder = currentUserHolder;
     }
 
     public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
@@ -96,10 +105,12 @@ public class GymFacade {
         return traineeService.getAllTrainees();
     }
 
-    public TraineeDto getTraineeByUsername(String username, UserCredentialsDto userCredentials) {
+    public TraineeGetResponse getTraineeByUsername(String username) {
+        UserCredentialsDto userCredentials = userMapper.toCredentialsDto(currentUserHolder.get());
+
         authService.authenticate(userCredentials);
 
-        return traineeService.getTraineeByUsername(username);
+        return traineeMapper.dtoToGetResponse(traineeService.getTraineeByUsername(username));
     }
 
     public TraineeCreateResponse addTrainee(@Valid TraineeCreateRequest createRequest) {

@@ -7,10 +7,7 @@ import com.gym.crm.app.rest.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,9 +27,11 @@ public class TraineeController implements TraineesApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<TraineeGetResponse> getTraineeProfile(String username) {
-        return TraineesApi.super.getTraineeProfile(username);
+    @GetMapping("/{username}")
+    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable  String username) {
+        TraineeGetResponse response = facade.getTraineeByUsername(username);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override

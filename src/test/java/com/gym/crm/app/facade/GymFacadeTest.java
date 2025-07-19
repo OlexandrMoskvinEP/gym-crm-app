@@ -9,16 +9,22 @@ import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
+import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.TraineeCreateResponse;
+import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -54,8 +60,10 @@ class GymFacadeTest {
     private static final TraineeDto TRAINEE_DTO = buildTraineeDto();
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
     private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
+    private static final User SIMPLE_USER = User.builder().build();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
+    private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
 
     @Mock
     private UserProfileService userProfileService;
@@ -69,10 +77,19 @@ class GymFacadeTest {
     private AuthenticationService authService;
     @Spy
     private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
-
+    @Spy
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    @Spy
+    private CurrentUserHolder currentUserHolder;
 
     @InjectMocks
     private GymFacade facade;
+
+    @BeforeEach
+    void setup() {
+        UserCredentialsDto mockUser = new UserCredentialsDto("kevin.jackson", "password123");
+        currentUserHolder.set(SIMPLE_USER);
+    }
 
     @Test
     void shouldReturnAllTrainers() {
@@ -147,9 +164,9 @@ class GymFacadeTest {
     void shouldReturnTraineeByUsername() {
         when(traineeService.getTraineeByUsername(USERNAME)).thenReturn(TRAINEE_DTO);
 
-        TraineeDto actual = facade.getTraineeByUsername(USERNAME, USER_CREDENTIALS);
+        TraineeGetResponse actual = facade.getTraineeByUsername(USERNAME);
 
-        assertEquals(TRAINEE_DTO, actual);
+        assertEquals(TRAINEE_GET_RESPONSE, actual);
         verify(traineeService).getTraineeByUsername(USERNAME);
     }
 
@@ -335,7 +352,15 @@ class GymFacadeTest {
     }
 
     private static TraineeCreateResponse buildTraineeCreateResponse() {
-        return new TraineeCreateResponse(GymFacadeTest.TRAINEE_DTO.getUsername(), GymFacadeTest.TRAINEE_DTO.getPassword());
+        return new TraineeCreateResponse(TRAINEE_DTO.getUsername(), TRAINEE_DTO.getPassword());
     }
 
+    private static TraineeGetResponse buildTraineeGetResponse() {
+        return new TraineeGetResponse()
+                .firstName(TRAINEE_DTO.getFirstName())
+                .lastName(TRAINEE_DTO.getLastName())
+                .address(TRAINEE_DTO.getAddress())
+                .dateOfBirth(TRAINEE_DTO.getDateOfBirth())
+                .isActive(TRAINEE_DTO.isActive());
+    }
 }
