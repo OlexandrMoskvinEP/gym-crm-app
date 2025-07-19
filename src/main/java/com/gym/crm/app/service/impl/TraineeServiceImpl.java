@@ -6,10 +6,13 @@ import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.repository.impl.TrainerRepositoryImpl;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -91,7 +94,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeDto updateTraineeByUsername(String username, com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest updateRequest) {
+    public TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest updateRequest) {
         Trainee existTrainee = repository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
 

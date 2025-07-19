@@ -16,10 +16,7 @@ import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
-import com.gym.crm.app.rest.AvailableTrainerGetResponse;
-import com.gym.crm.app.rest.TraineeCreateResponse;
-import com.gym.crm.app.rest.TraineeGetResponse;
-import com.gym.crm.app.rest.TraineeUpdateResponse;
+import com.gym.crm.app.rest.*;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
@@ -63,6 +60,7 @@ class GymFacadeTest {
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
     private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
+    private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
 
     @Mock
     private UserProfileService userProfileService;
@@ -272,9 +270,9 @@ class GymFacadeTest {
     void shouldUpdateTraineeTrainersList() {
         doNothing().when(traineeService).updateTraineeTrainers(anyString(), anyList());
 
-        facade.updateTraineeTrainersList("username", List.of(1L), USER_CREDENTIALS);
+        facade.updateTraineeTrainersList("username", TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST);
 
-        verify(traineeService).updateTraineeTrainers("username", List.of(1L));
+        verify(traineeService).updateTraineeTrainers("username", List.of(0L));
     }
 
     @Test
@@ -380,6 +378,21 @@ class GymFacadeTest {
 
     private static User buildSimpleUser() {
         return User.builder().username("username").password("password").build();
+    }
+
+
+    private static TraineeAssignedTrainersUpdateResponse buildAssignedTrainerResponse() {
+        return new TraineeAssignedTrainersUpdateResponse()
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .username("username")
+                .specialization("Yoga");
+    }
+
+    private static TraineeAssignedTrainersUpdateRequest buildAssignedTrainerRequest() {
+        List<String> list = List.of("username");
+
+        return new TraineeAssignedTrainersUpdateRequest(list);
     }
 
 }

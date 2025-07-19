@@ -55,6 +55,14 @@ public class TraineeController implements TraineesApi {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{username}/trainers")
+    public ResponseEntity<List<TraineeAssignedTrainersUpdateResponse>> updateTraineeTrainers(@PathVariable String username,
+                                                                                             TraineeAssignedTrainersUpdateRequest request) {
+        List<TraineeAssignedTrainersUpdateResponse> response = facade.updateTraineeTrainersList(username, request);
+
+        return ResponseEntity.ok(response);
+    }
+
     @Override
     public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(String username, LocalDate
             fromDate, LocalDate toDate, String trainerName, String trainingType) {
@@ -65,11 +73,5 @@ public class TraineeController implements TraineesApi {
     public ResponseEntity<Void> changeTraineeActivationStatus(String username, ActivationStatusRequest
             activationStatusRequest) {
         return TraineesApi.super.changeTraineeActivationStatus(username, activationStatusRequest);
-    }
-
-    @Override
-    public ResponseEntity<List<TraineeAssignedTrainersUpdateResponse>> updateTraineeTrainers(String
-                                                                                                     username, TraineeAssignedTrainersUpdateRequest traineeAssignedTrainersUpdateRequest) {
-        return TraineesApi.super.updateTraineeTrainers(username, traineeAssignedTrainersUpdateRequest);
     }
 }

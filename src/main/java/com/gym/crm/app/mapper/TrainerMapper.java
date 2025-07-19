@@ -5,6 +5,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,4 +30,7 @@ public interface TrainerMapper {
 
     @Mapping(source = "specialization.trainingTypeName", target = "specialization")
     AvailableTrainerGetResponse dtoToAvailableTrainerResponse(TrainerDto trainerDto);
+
+    @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    TraineeAssignedTrainersUpdateResponse dtoToUpdateAssignedTrainerResponse(TrainerDto dto);
 }

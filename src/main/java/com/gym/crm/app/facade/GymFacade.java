@@ -14,10 +14,7 @@ import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
-import com.gym.crm.app.rest.AvailableTrainerGetResponse;
-import com.gym.crm.app.rest.TraineeCreateResponse;
-import com.gym.crm.app.rest.TraineeGetResponse;
-import com.gym.crm.app.rest.TraineeUpdateResponse;
+import com.gym.crm.app.rest.*;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
@@ -30,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Component
@@ -85,9 +83,16 @@ public class GymFacade {
                 .toList();
     }
 
-    public void updateTraineeTrainersList(String username, List<Long> trainerIds, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
-        traineeService.updateTraineeTrainers(username, trainerIds);
+    public List<TraineeAssignedTrainersUpdateResponse> updateTraineeTrainersList(String username,
+                                                                                 TraineeAssignedTrainersUpdateRequest request) {
+        authService.authenticate(getCurrentCredentials());
+        traineeService.updateTraineeTrainers(username, getIds(request));
+
+        List<TrainerDto>trainers = getTraineeTrainers(request);
+
+        return trainers.stream()
+                .map(trainerMapper::dtoToUpdateAssignedTrainerResponse)
+                .collect(Collectors.toList());
     }
 
     public TrainerDto addTrainer(@Valid TrainerCreateRequest createRequest) {
@@ -186,4 +191,17 @@ public class GymFacade {
         return userMapper.toCredentialsDto(
                 currentUserHolder.get());
     }
+
+    private List<Long> getIds(TraineeAssignedTrainersUpdateRequest request) {
+        return request.getTrainerUsernames().stream()
+                .map(trainerService::getTrainerIdByUsername)
+                .toList();
+    }
+
+    private List<TrainerDto>getTraineeTrainers(TraineeAssignedTrainersUpdateRequest request){
+        return request.getTrainerUsernames().stream()
+                .map(trainerService::getTrainerByUsername)
+                .toList();
+    }
+
 }

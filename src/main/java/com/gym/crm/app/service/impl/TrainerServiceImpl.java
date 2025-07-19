@@ -90,6 +90,10 @@ public class TrainerServiceImpl implements TrainerService {
         logger.info("Trainer {} updated", username);
         return modelMapper.map(repository.findByUsername(username), TrainerDto.class);
     }
+    @Override
+    public Long getTrainerIdByUsername(String username) {
+        return repository.findByUsername(username).get().getId();
+    }
 
     @Override
     public void deleteTrainerByUsername(String username) {
