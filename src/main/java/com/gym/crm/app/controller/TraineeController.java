@@ -41,8 +41,10 @@ public class TraineeController implements TraineesApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<Void> deleteTraineeProfile(String username) {
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable String username) {
+        facade.deleteTraineeByUsername(username);
+
         return TraineesApi.super.deleteTraineeProfile(username);
     }
 

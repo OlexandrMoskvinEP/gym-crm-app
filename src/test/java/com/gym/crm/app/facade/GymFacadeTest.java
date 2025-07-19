@@ -195,7 +195,7 @@ class GymFacadeTest {
     void shouldDeleteTraineeByUsername() {
         doNothing().when(traineeService).deleteTraineeByUsername(USERNAME);
 
-        facade.deleteTraineeByUsername(USERNAME, USER_CREDENTIALS);
+        facade.deleteTraineeByUsername(USERNAME);
 
         verify(traineeService).deleteTraineeByUsername(USERNAME);
         verify(authService).authenticate(USER_CREDENTIALS);

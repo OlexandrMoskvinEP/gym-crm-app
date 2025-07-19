@@ -12,6 +12,7 @@ import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.UserMapper;
+import com.gym.crm.app.mapper.UserMapperImpl;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.TraineeCreateResponse;
@@ -40,6 +41,7 @@ public class GymFacade {
     private final AuthenticationService authService;
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
+
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
 
@@ -48,7 +50,10 @@ public class GymFacade {
                      TrainerService trainerService,
                      TrainingService trainingService,
                      UserProfileService userProfileService,
-                     AuthenticationService authService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, UserMapper userMapper, CurrentUserHolder currentUserHolder) {
+                     AuthenticationService authService,
+                     TraineeMapper traineeMapper,
+                     TrainerMapper trainerMapper,
+                     UserMapper userMapper, CurrentUserHolder currentUserHolder) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
@@ -107,9 +112,7 @@ public class GymFacade {
     }
 
     public TraineeGetResponse getTraineeByUsername(String username) {
-        UserCredentialsDto userCredentials = userMapper.toCredentialsDto(currentUserHolder.get());
-
-        authService.authenticate(userCredentials);
+        authService.authenticate(getCurrentCredentials());
 
         return traineeMapper.dtoToGetResponse(traineeService.getTraineeByUsername(username));
     }
@@ -123,15 +126,13 @@ public class GymFacade {
     public TraineeUpdateResponse updateTraineeByUsername(String username,
                                                          @Valid TraineeUpdateRequest updateRequest) {
 
-        UserCredentialsDto userCredentials = userMapper.toCredentialsDto(currentUserHolder.get());
-
-        authService.authenticate(userCredentials);
+        authService.authenticate(getCurrentCredentials());
 
         return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
-    public void deleteTraineeByUsername(String username, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public void deleteTraineeByUsername(String username) {
+        authService.authenticate(getCurrentCredentials());
 
         traineeService.deleteTraineeByUsername(username);
     }
@@ -176,5 +177,10 @@ public class GymFacade {
         authService.authenticate(userCredentials);
 
         return trainingService.getTraineeTrainingsByFilter(filter);
+    }
+
+    private UserCredentialsDto getCurrentCredentials() {
+        return userMapper.toCredentialsDto(
+                currentUserHolder.get());
     }
 }
