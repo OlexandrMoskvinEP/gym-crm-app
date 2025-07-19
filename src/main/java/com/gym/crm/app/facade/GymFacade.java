@@ -12,9 +12,9 @@ import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.mapper.UserMapperImpl;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
@@ -77,9 +77,12 @@ public class GymFacade {
         return trainerService.getTrainerByUsername(username);
     }
 
-    public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
-        return traineeService.getUnassignedTrainersByTraineeUsername(username);
+    public List<AvailableTrainerGetResponse> getUnassignedTrainersByTraineeUsername(String username) {
+        authService.authenticate(getCurrentCredentials());
+
+        return traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
+                .map(trainerMapper::dtoToAvailableTrainerResponse)
+                .toList();
     }
 
     public void updateTraineeTrainersList(String username, List<Long> trainerIds, UserCredentialsDto userCredentials) {

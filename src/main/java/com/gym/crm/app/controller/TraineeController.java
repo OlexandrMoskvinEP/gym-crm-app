@@ -48,9 +48,11 @@ public class TraineeController implements TraineesApi {
         return TraineesApi.super.deleteTraineeProfile(username);
     }
 
-    @Override
-    public ResponseEntity<List<AvailableTrainerGetResponse>> getAvailableTrainers(String username) {
-        return TraineesApi.super.getAvailableTrainers(username);
+    @GetMapping("{username}/available-trainers")
+    public ResponseEntity<List<AvailableTrainerGetResponse>> getAvailableTrainers(@PathVariable String username) {
+        List<AvailableTrainerGetResponse> response = facade.getUnassignedTrainersByTraineeUsername(username);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override

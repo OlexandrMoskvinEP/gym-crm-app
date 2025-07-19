@@ -12,9 +12,11 @@ import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
@@ -74,6 +76,8 @@ class GymFacadeTest {
     private AuthenticationService authService;
     @Spy
     private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
+    @Spy
+    private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     @Spy
@@ -250,11 +254,14 @@ class GymFacadeTest {
 
     @Test
     void shouldReturnUnassignedTrainersByTraineeUsername() {
-        List<TrainerDto> expected = List.of(TRAINER_DTO);
+        List<TrainerDto> trainerDtoList = List.of(TRAINER_DTO);
+        List<AvailableTrainerGetResponse> expected = trainerDtoList.stream()
+                .map(trainerMapper::dtoToAvailableTrainerResponse)
+                .toList();
 
-        when(traineeService.getUnassignedTrainersByTraineeUsername(anyString())).thenReturn(expected);
+        when(traineeService.getUnassignedTrainersByTraineeUsername(anyString())).thenReturn(trainerDtoList);
 
-        List<TrainerDto> actual = facade.getUnassignedTrainersByTraineeUsername("username", USER_CREDENTIALS);
+        List<AvailableTrainerGetResponse> actual = facade.getUnassignedTrainersByTraineeUsername("username");
 
         assertEquals(expected, actual);
         verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
