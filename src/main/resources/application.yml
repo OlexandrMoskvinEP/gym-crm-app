@@ -5,14 +5,26 @@ project:
   name: "Gym CRM"
   version: "1.0"
 
+#database:
+#  driver: org.postgresql.Driver
+#  url: jdbc:postgresql://localhost:5432/gym_crm_db
+#  username: gym
+#  password: gym
+#
+#hibernate:
+#  dialect: org.hibernate.dialect.PostgreSQLDialect
+#  show_sql: true
+#  format_sql: true
+#  hbm2ddl.auto: none
+
 database:
-  driver: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/gym_crm_db
+  driver: org.h2.Driver
+  url: jdbc:h2:mem:gym_crm_db;MODE=PostgreSQL
   username: gym
   password: gym
 
 hibernate:
-  dialect: org.hibernate.dialect.PostgreSQLDialect
+  dialect: org.hibernate.dialect.H2Dialect
   show_sql: true
   format_sql: true
   hbm2ddl.auto: none
