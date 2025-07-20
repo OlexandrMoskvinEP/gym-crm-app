@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -44,27 +45,27 @@ public class TraineeController implements TraineesApi {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable ("username") String username) {
+    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable("username") String username) {
         TraineeGetResponse response = facade.getTraineeByUsername(username);
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(@PathVariable ("username") String username,@Valid @RequestBody TraineeUpdateRequest traineeUpdateRequest) {
+    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(@PathVariable("username") String username, @Valid @RequestBody TraineeUpdateRequest traineeUpdateRequest) {
         TraineeUpdateResponse response = facade.updateTraineeByUsername(username, traineeUpdateRequest);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable ("username") String username) {
+    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable("username") String username) {
         facade.deleteTraineeByUsername(username);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{username}/available-trainers")
-    public ResponseEntity<AvailableTrainerGetResponse> getAvailableTrainers(@PathVariable ("username") String username) {
+    public ResponseEntity<AvailableTrainerGetResponse> getAvailableTrainers(@PathVariable("username") String username) {
         AvailableTrainerGetResponse response = facade.getUnassignedTrainersByTraineeUsername(username);
 
         return ResponseEntity.ok(response);
@@ -72,14 +73,18 @@ public class TraineeController implements TraineesApi {
 
     @PutMapping("/{username}/trainers")
     public ResponseEntity<TraineeAssignedTrainersUpdateResponse> updateTraineeTrainers(
-           @Valid @RequestBody TraineeAssignedTrainersUpdateRequest request, @PathVariable ("username") String username) {
+            @Valid @RequestBody TraineeAssignedTrainersUpdateRequest request, @PathVariable("username") String username) {
         TraineeAssignedTrainersUpdateResponse response = facade.updateTraineeTrainersList(username, request);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{username}/trainings")
-    public ResponseEntity<TraineeTrainingGetResponse> getTraineeTrainings(LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType, @PathVariable String username) {
+    public ResponseEntity<TraineeTrainingGetResponse> getTraineeTrainings(@RequestParam(name = "fromDate", required = false) LocalDate fromDate,
+                                                                          @RequestParam(name = "toDate", required = false) LocalDate toDate,
+                                                                          @RequestParam(name = "trainerName", required = false) String trainerName,
+                                                                          @RequestParam(name = "trainingType", required = false) String trainingType,
+                                                                          @PathVariable("username") String username) {
         TraineeTrainingGetResponse response = facade
                 .getTraineeTrainingsByFilter(buildTraineeSearchFilter(username, fromDate, toDate, trainerName, trainingType));
 

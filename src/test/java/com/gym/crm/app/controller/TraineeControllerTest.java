@@ -12,8 +12,10 @@ import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.Trainer;
+import com.gym.crm.app.rest.TrainingWithTrainerName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,6 +55,7 @@ class TraineeControllerTest {
     private final AvailableTrainerGetResponse AVAILABLE_TRAINERS_GET_RESPONSE = getAvailableTrainerGetResponse();
     private final TraineeAssignedTrainersUpdateRequest TRAINEE_TRAINERS_UPDATE_REQUEST = getTraineeAssignedTrainersUpdateRequest();
     private final TraineeAssignedTrainersUpdateResponse TRAINEE_TRAINERS_UPDATE_RESPONSE = getTraineeAssignedTrainersUpdateResponse();
+    TrainingWithTrainerName TRAINING_WITH_TRAINER_NAME = getTrainingWithTrainerName();
 
 
     private MockMvc mockMvc;
@@ -162,7 +167,28 @@ class TraineeControllerTest {
     }
 
     @Test
-    void getTraineeTrainings() {
+    void shouldReturnTraineeTrainingsWithFilter() throws Exception {
+        TraineeTrainingGetResponse response = new TraineeTrainingGetResponse();
+        response.setTrainings(List.of(TRAINING_WITH_TRAINER_NAME));
+
+        when(facade.getTraineeTrainingsByFilter(any())).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/trainees/{username}/trainings", TRAINEE_USERNAME)
+                        .param("fromDate", "2025-07-01")
+                        .param("toDate", "2025-07-31")
+                        .param("trainerName", "John")
+                        .param("trainingType", "Cardio"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trainings[0].trainingName").value("Cardio Session"))
+                .andExpect(jsonPath("$.trainings[0].trainerName").value("John Doe"));
+
+        verify(facade).getTraineeTrainingsByFilter(argThat(filter ->
+                filter.getUsername().equals(TRAINEE_USERNAME) &&
+                        filter.getFromDate().equals(LocalDate.of(2025, 7, 1)) &&
+                        filter.getToDate().equals(LocalDate.of(2025, 7, 31)) &&
+                        filter.getTrainerFullName().equals("John") &&
+                        filter.getTrainingTypeName().equals("Cardio")
+        ));
     }
 
     @Test
@@ -245,5 +271,17 @@ class TraineeControllerTest {
         response.setTrainers(List.of(trainer1, trainer2));
 
         return response;
+    }
+
+    private static TrainingWithTrainerName getTrainingWithTrainerName() {
+        TrainingWithTrainerName training = new TrainingWithTrainerName();
+
+        training.setTrainingName("Cardio Session");
+        training.setTrainingDate(LocalDate.of(2025, 7, 10));
+        training.setTrainingType("Cardio");
+        training.setTrainingDuration(60);
+        training.setTrainerName("John Doe");
+
+        return training;
     }
 }
