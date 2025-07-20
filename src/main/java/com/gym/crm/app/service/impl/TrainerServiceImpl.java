@@ -92,11 +92,6 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public Long getTrainerIdByUsername(String username) {
-        return repository.findByUsername(username).get().getId();
-    }
-
-    @Override
     public String getTrainerNameById(Long id) {
         Trainer trainer = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
 

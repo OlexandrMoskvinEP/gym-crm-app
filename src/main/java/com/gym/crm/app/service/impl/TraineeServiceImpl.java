@@ -6,6 +6,7 @@ import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.mapper.TrainerMapper;
@@ -127,8 +128,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void updateTraineeTrainersByUsername(String username, List<String> usernames) {
-        repository.updateTraineeTrainersByUsername(username, usernames);
+    public List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames) {
+       return repository.updateTraineeTrainersByUsername(username, usernames);
     }
 
     private Trainee mapTraineeWithUser(TraineeCreateRequest createRequest, String username, String password) {

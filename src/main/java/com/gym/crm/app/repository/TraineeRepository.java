@@ -26,5 +26,5 @@ public interface TraineeRepository {
 
     void updateTraineeTrainersById(String username, List<Long> trainerIds);
 
-    void updateTraineeTrainersByUsername(String username, List<String> usernames);
+    List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames);
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
@@ -164,18 +165,18 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public void updateTraineeTrainersByUsername(String traineeUsername, List<String> trainerUsernames) {
+    public List<Trainer> updateTraineeTrainersByUsername(String traineeUsername, List<String> trainerUsernames) {
         logger.debug("Updating trainers for trainee '{}'. New trainer usernames: {}", traineeUsername, trainerUsernames);
 
+        AtomicReference<List<Trainer>> result = new AtomicReference<>();
+
         txExecutor.performWithinTx(entityManager -> {
-            // получаем trainee с текущими связями
             TypedQuery<Trainee> query = entityManager.createQuery(
                     "SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class);
             query.setParameter("username", traineeUsername);
 
             Trainee trainee = query.getSingleResult();
 
-            // ищем всех тренеров по username
             List<Trainer> trainers = entityManager.createQuery(
                             "SELECT tr FROM Trainer tr WHERE tr.user.username IN :usernames", Trainer.class)
                     .setParameter("usernames", trainerUsernames)
@@ -188,7 +189,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             HashSet<Trainer> updated = new HashSet<>(trainers);
             Trainee updatedTrainee = trainee.toBuilder().trainers(updated).build();
             entityManager.merge(updatedTrainee);
-        });
-    }
 
+            result.set(trainers);
+        });
+
+        return result.get();
+    }
 }

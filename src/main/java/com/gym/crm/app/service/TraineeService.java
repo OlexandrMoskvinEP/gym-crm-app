@@ -4,6 +4,8 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
+import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
 
 import java.util.List;
 
@@ -22,5 +24,5 @@ public interface TraineeService {
 
     void updateTraineeTrainersById(String username, List<Long> trainerIds);
 
-    void updateTraineeTrainersByUsername(String username, List<String> usernames);
+    List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames);
 }

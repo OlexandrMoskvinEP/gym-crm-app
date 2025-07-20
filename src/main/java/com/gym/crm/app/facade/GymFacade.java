@@ -89,10 +89,9 @@ public class GymFacade {
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainersList(String username,
                                                                            TraineeAssignedTrainersUpdateRequest request) {
         authService.authenticate(getCurrentCredentials());
-        traineeService.updateTraineeTrainersById(username, getIds(request));
 
-        List<Trainer> trainers = getTraineeTrainers(request).stream()
-                .map(trainerMapper::toEntity).toList();
+        List<Trainer> trainers = traineeService.updateTraineeTrainersByUsername(username, request.getTrainerUsernames()).stream()
+                .map(trainerMapper::entityToRestTrainer).toList();
 
         return new TraineeAssignedTrainersUpdateResponse(trainers);
     }
@@ -198,18 +197,6 @@ public class GymFacade {
     private UserCredentialsDto getCurrentCredentials() {
         return userMapper.toCredentialsDto(
                 currentUserHolder.get());
-    }
-
-    private List<Long> getIds(TraineeAssignedTrainersUpdateRequest request) {
-        return request.getTrainerUsernames().stream()
-                .map(trainerService::getTrainerIdByUsername)
-                .toList();
-    }
-
-    private List<TrainerDto> getTraineeTrainers(TraineeAssignedTrainersUpdateRequest request) {
-        return request.getTrainerUsernames().stream()
-                .map(trainerService::getTrainerByUsername)
-                .toList();
     }
 
     private TrainingWithTrainerName buildTrainingWithName(TrainingDto trainingDto) {

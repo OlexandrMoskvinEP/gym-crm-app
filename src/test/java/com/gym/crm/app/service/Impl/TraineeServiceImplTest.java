@@ -222,7 +222,7 @@ class TraineeServiceImplTest {
         String username = "Eva.Davis";
         List<String> usernames = List.of("qqqqq", "lllll", "pppppp");
 
-        doNothing().when(repository).updateTraineeTrainersByUsername(username, usernames);
+        when(repository.updateTraineeTrainersByUsername(username, usernames)).thenReturn(List.of());
 
         traineeService.updateTraineeTrainersByUsername(username, usernames);
 
