@@ -72,7 +72,7 @@ public class TraineeController implements TraineesApi {
 
     @PutMapping("/{username}/trainers")
     public ResponseEntity<TraineeAssignedTrainersUpdateResponse> updateTraineeTrainers(
-            TraineeAssignedTrainersUpdateRequest request, @PathVariable String username) {
+           @Valid @RequestBody TraineeAssignedTrainersUpdateRequest request, @PathVariable ("username") String username) {
         TraineeAssignedTrainersUpdateResponse response = facade.updateTraineeTrainersList(username, request);
 
         return ResponseEntity.ok(response);

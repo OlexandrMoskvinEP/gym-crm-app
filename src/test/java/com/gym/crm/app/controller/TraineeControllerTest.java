@@ -8,6 +8,8 @@ import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
@@ -47,6 +49,8 @@ class TraineeControllerTest {
     private final TraineeCreateRequest TRAINEE_CREATE_REQUEST = buildTraineeCreateRequest();
     private final TraineeUpdateRequest TRAINEE_UPDATE_REQUEST = buildTraineeUpdateRequest();
     private final AvailableTrainerGetResponse AVAILABLE_TRAINERS_GET_RESPONSE = getAvailableTrainerGetResponse();
+    private final TraineeAssignedTrainersUpdateRequest TRAINEE_TRAINERS_UPDATE_REQUEST = getTraineeAssignedTrainersUpdateRequest();
+    private final TraineeAssignedTrainersUpdateResponse TRAINEE_TRAINERS_UPDATE_RESPONSE = getTraineeAssignedTrainersUpdateResponse();
 
 
     private MockMvc mockMvc;
@@ -142,7 +146,19 @@ class TraineeControllerTest {
     }
 
     @Test
-    void updateTraineeTrainers() {
+    void shouldUpdateTraineeTrainersList() throws Exception {
+        when(facade.updateTraineeTrainersList(TRAINEE_USERNAME, TRAINEE_TRAINERS_UPDATE_REQUEST)).thenReturn(TRAINEE_TRAINERS_UPDATE_RESPONSE);
+
+        mockMvc.perform(put("/api/v1/trainees/{username}/trainers", TRAINEE_USERNAME)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(TRAINEE_TRAINERS_UPDATE_REQUEST)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trainers[0].username").value("john.doe"))
+                .andExpect(jsonPath("$.trainers[1].username").value("mike.tyson"))
+                .andExpect(jsonPath("$.trainers[0].specialization").value("Cardio"))
+                .andExpect(jsonPath("$.trainers[1].specialization").value("Boxing"));
+
+        verify(facade).updateTraineeTrainersList(TRAINEE_USERNAME, TRAINEE_TRAINERS_UPDATE_REQUEST);
     }
 
     @Test
@@ -196,6 +212,37 @@ class TraineeControllerTest {
         trainer.setSpecialization("Bodybuilding");
 
         response.setTrainers(List.of(trainer));
+
+        return response;
+    }
+
+    private TraineeAssignedTrainersUpdateRequest getTraineeAssignedTrainersUpdateRequest() {
+        List<String> usernames = List.of("john.doe", "mike.tyson");
+
+        TraineeAssignedTrainersUpdateRequest request = new TraineeAssignedTrainersUpdateRequest();
+        request.setTrainerUsernames(usernames);
+
+        return request;
+    }
+
+    private static TraineeAssignedTrainersUpdateResponse getTraineeAssignedTrainersUpdateResponse() {
+        Trainer trainer1 = new Trainer();
+
+        trainer1.setFirstName("John");
+        trainer1.setLastName("Doe");
+        trainer1.setSpecialization("Cardio");
+        trainer1.username("john.doe");
+
+        Trainer trainer2 = new Trainer();
+
+        trainer2.setFirstName("Mike");
+        trainer2.setLastName("tyson");
+        trainer2.setSpecialization("Boxing");
+        trainer2.username("mike.tyson");
+
+
+        TraineeAssignedTrainersUpdateResponse response = new TraineeAssignedTrainersUpdateResponse();
+        response.setTrainers(List.of(trainer1, trainer2));
 
         return response;
     }
