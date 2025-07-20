@@ -51,20 +51,20 @@ public class TraineeController implements TraineesApi {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(@PathVariable String username, TraineeUpdateRequest traineeUpdateRequest) {
+    public ResponseEntity<TraineeUpdateResponse> updateTraineeProfile(@PathVariable ("username") String username,@Valid @RequestBody TraineeUpdateRequest traineeUpdateRequest) {
         TraineeUpdateResponse response = facade.updateTraineeByUsername(username, traineeUpdateRequest);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable String username) {
+    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable ("username") String username) {
         facade.deleteTraineeByUsername(username);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{username}/available-trainers")
-    public ResponseEntity<AvailableTrainerGetResponse> getAvailableTrainers(@PathVariable String username) {
+    public ResponseEntity<AvailableTrainerGetResponse> getAvailableTrainers(@PathVariable ("username") String username) {
         AvailableTrainerGetResponse response = facade.getUnassignedTrainersByTraineeUsername(username);
 
         return ResponseEntity.ok(response);

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
+import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.facade.GymFacade;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.Trainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +24,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,8 +42,11 @@ class TraineeControllerTest {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+    private final String TRAINEE_USERNAME = "olga.ivanova";
     private final UserCreateRequest USER_CREATE_REQUEST = buildUserCreateRequest();
     private final TraineeCreateRequest TRAINEE_CREATE_REQUEST = buildTraineeCreateRequest();
+    private final TraineeUpdateRequest TRAINEE_UPDATE_REQUEST = buildTraineeUpdateRequest();
+    private final AvailableTrainerGetResponse AVAILABLE_TRAINERS_GET_RESPONSE = getAvailableTrainerGetResponse();
 
 
     private MockMvc mockMvc;
@@ -58,9 +68,9 @@ class TraineeControllerTest {
 
     @Test
     void shouldRegisterTraineeSuccessfully() throws Exception {
-        TraineeCreateResponse expected = new TraineeCreateResponse("john.smith", "password123");
+        TraineeCreateResponse response = new TraineeCreateResponse("john.smith", "password123");
 
-        when(facade.addTrainee(TRAINEE_CREATE_REQUEST)).thenReturn(expected);
+        when(facade.addTrainee(TRAINEE_CREATE_REQUEST)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/trainees/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,14 +84,12 @@ class TraineeControllerTest {
 
     @Test
     void shouldReturnTraineeProfileSuccessfully() throws Exception {
-        String username = "olga.ivanova";
-
         Trainer trainer = new Trainer("Arnold", "Schwarzenegger", "Bodybuilding", "Schwarz");
         TraineeGetResponse response = getTraineeGetResponse(trainer);
 
-        when(facade.getTraineeByUsername(username)).thenReturn(response);
+        when(facade.getTraineeByUsername(TRAINEE_USERNAME)).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/trainees/{username}", username))
+        mockMvc.perform(get("/api/v1/trainees/{username}", TRAINEE_USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Olga"))
                 .andExpect(jsonPath("$.lastName").value("Ivanova"))
@@ -93,15 +101,44 @@ class TraineeControllerTest {
     }
 
     @Test
-    void updateTraineeProfile() {
+    void shouldUpdateTraineeSuccessfully() throws Exception {
+        TraineeUpdateResponse response = new TraineeUpdateResponse("Olga", "Ivanova");
+
+        when(facade.updateTraineeByUsername(TRAINEE_USERNAME, TRAINEE_UPDATE_REQUEST)).thenReturn(response);
+
+        mockMvc.perform(put("/api/v1/trainees/{username}", TRAINEE_USERNAME)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(TRAINEE_UPDATE_REQUEST)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Olga"))
+                .andExpect(jsonPath("$.lastName").value("Ivanova"));
+
+        verify(facade).updateTraineeByUsername(TRAINEE_USERNAME, TRAINEE_UPDATE_REQUEST);
     }
 
     @Test
-    void deleteTraineeProfile() {
+    void shouldDeleteTraineeProfileSuccessfully() throws Exception {
+        doNothing().when(facade).deleteTraineeByUsername(TRAINEE_USERNAME);
+
+        mockMvc.perform(delete("/api/v1/trainees/{username}", TRAINEE_USERNAME))
+                .andExpect(status().isNoContent());
+
+        verify(facade).deleteTraineeByUsername(TRAINEE_USERNAME);
     }
 
+
     @Test
-    void getAvailableTrainers() {
+    void shouldReturnAvailableTrainers() throws Exception {
+        when(facade.getUnassignedTrainersByTraineeUsername(TRAINEE_USERNAME)).thenReturn(AVAILABLE_TRAINERS_GET_RESPONSE);
+
+        mockMvc.perform(get("/api/v1/trainees/{username}/available-trainers", TRAINEE_USERNAME))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trainers[0].username").value("arnold.schwarzenegger"))
+                .andExpect(jsonPath("$.trainers[0].firstName").value("Arnold"))
+                .andExpect(jsonPath("$.trainers[0].lastName").value("Schwarzenegger"))
+                .andExpect(jsonPath("$.trainers[0].specialization").value("Bodybuilding"));
+
+        verify(facade).getUnassignedTrainersByTraineeUsername(TRAINEE_USERNAME);
     }
 
     @Test
@@ -137,6 +174,28 @@ class TraineeControllerTest {
         response.setAddress("Lviv, Ukraine");
         response.setIsActive(true);
         response.setTrainer(trainer);
+
+        return response;
+    }
+
+    private TraineeUpdateRequest buildTraineeUpdateRequest() {
+        return TraineeUpdateRequest.builder()
+                .user(USER_CREATE_REQUEST)
+                .dateOfBirth(LocalDate.of(1998, 7, 10))
+                .address("Updated Address")
+                .build();
+    }
+
+    private AvailableTrainerGetResponse getAvailableTrainerGetResponse() {
+        AvailableTrainerGetResponse response = new AvailableTrainerGetResponse();
+
+        Trainer trainer = new Trainer();
+        trainer.setFirstName("Arnold");
+        trainer.setLastName("Schwarzenegger");
+        trainer.setUsername("arnold.schwarzenegger");
+        trainer.setSpecialization("Bodybuilding");
+
+        response.setTrainers(List.of(trainer));
 
         return response;
     }
