@@ -184,14 +184,16 @@ public class GymFacade {
         return trainingService.getTrainerTrainingsByFilter(criteria);
     }
 
-    public List<TraineeTrainingGetResponse> getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
+    public TraineeTrainingGetResponse getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
         authService.authenticate(getCurrentCredentials());
 
         List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
 
-        return trainings.stream()
-                .map(this::buildTraineeTrainingGetResponse)
+        List<TrainingWithTrainerName> trainingWithTrainerNames = trainings.stream()
+                .map(this::buildTrainingWithName)
                 .toList();
+
+        return new TraineeTrainingGetResponse(trainingWithTrainerNames);
     }
 
     private UserCredentialsDto getCurrentCredentials() {
@@ -211,14 +213,17 @@ public class GymFacade {
                 .toList();
     }
 
-    private TraineeTrainingGetResponse buildTraineeTrainingGetResponse(TrainingDto trainingDto) {
+    private TrainingWithTrainerName buildTrainingWithName(TrainingDto trainingDto) {
         String trainerName = trainerService.getTrainerNameById(trainingDto.getTrainerId());
 
-        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto);
-        response.setTrainerName(trainerName);
+        TrainingWithTrainerName trainingWithTrainerName = new TrainingWithTrainerName();
 
-        return response;
+        trainingWithTrainerName.setTrainerName(trainerName);
+        trainingWithTrainerName.setTrainingName(trainingDto.getTrainingName());
+        trainingWithTrainerName.setTrainingDate(trainingDto.getTrainingDate());
+        trainingWithTrainerName.setTrainingType(trainingDto.getTrainingType().getTrainingTypeName());
+        trainingWithTrainerName.setTrainingDuration(trainingDto.getTrainingDuration().intValue());
+
+        return trainingWithTrainerName;
     }
-
-
 }

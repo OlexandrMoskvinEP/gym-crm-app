@@ -65,13 +65,11 @@ public class TraineeController implements TraineesApi {
     }
 
     @GetMapping("/{username}/trainings")
-    public ResponseEntity<List<TraineeTrainingGetResponse>> getTraineeTrainings(@PathVariable String username, LocalDate
-            fromDate, LocalDate toDate, String trainerName, String trainingType) {
-
-        List<TraineeTrainingGetResponse> responses = facade
+    public ResponseEntity<TraineeTrainingGetResponse> getTraineeTrainings(LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType, @PathVariable String username) {
+        TraineeTrainingGetResponse response = facade
                 .getTraineeTrainingsByFilter(buildTraineeSearchFilter(username, fromDate, toDate, trainerName, trainingType));
 
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{username}/change-activation-status")
@@ -79,6 +77,7 @@ public class TraineeController implements TraineesApi {
             activationStatusRequest) {
 
         facade.switchActivationStatus(username);
+
         return ResponseEntity.ok().build();
     }
 

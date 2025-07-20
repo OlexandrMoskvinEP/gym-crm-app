@@ -560,9 +560,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TraineeTrainingGetResponse'
+               $ref: '#/components/schemas/TraineeTrainingGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -1057,6 +1055,21 @@ components:
         trainingDate: "2025-07-14"
         trainingDuration: 90
     TraineeTrainingGetResponse:
+      type: object
+      properties:
+        trainings:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingWithTrainerName'
+      required:
+        - trainings
+      example:
+        trainingName: "Strength Training"
+        trainingDate: "2025-07-01"
+        trainingDuration: 60
+        trainingType: "Stretching"
+        trainerName: "Mufasa"
+    TrainingWithTrainerName:
       allOf:
         - $ref: '#/components/schemas/Training'
         - type: object
@@ -1066,12 +1079,6 @@ components:
             trainerName:
               type: string
               description: Name of the trainer
-      example:
-        trainingName: "Strength Training"
-        trainingDate: "2025-07-01"
-        trainingDuration: 60
-        trainingType: "Stretching"
-        trainerName: "Mufasa"
     TrainerTrainingGetResponse:
       allOf:
         - $ref: '#/components/schemas/Training'

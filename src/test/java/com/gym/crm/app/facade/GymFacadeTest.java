@@ -298,13 +298,23 @@ class GymFacadeTest {
         TraineeTrainingSearchFilter searchFilter = TraineeTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
+
         when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
-        when(trainerService.getTrainerNameById(anyLong())).thenReturn("anna.smith");
+        when(trainerService.getTrainerNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
 
-        List<TraineeTrainingGetResponse> actual = facade.getTraineeTrainingsByFilter(searchFilter);
+        TraineeTrainingGetResponse actual = facade.getTraineeTrainingsByFilter(searchFilter);
 
-        assertEquals(1, actual.size());
-        assertEquals(buildTrainingByTraineeCriteriaGetResponse(List.of(TRAINING_DTO)), actual.iterator().next());
+        assertEquals(1, actual.getTrainings().size());
+
+        TrainingWithTrainerName expected = new TrainingWithTrainerName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTrainerName("anna.smith");
+
+        assertEquals(expected, actual.getTrainings().get(0)); // сравнение одного элемента
+
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -389,10 +399,10 @@ class GymFacadeTest {
         return new TraineeAssignedTrainersUpdateRequest(list);
     }
 
-    private TraineeTrainingGetResponse buildTrainingByTraineeCriteriaGetResponse(List<TrainingDto> trainingDto) {
-        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto.get(0));
-        response.setTrainerName(TRAINER_DTO.getUsername());
-
-        return response;
-    }
+//    private TraineeTrainingGetResponse buildTrainingByTraineeCriteriaGetResponse(List<TrainingDto> trainingDto) {
+//        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto);
+//        response.setTrainerName(TRAINER_DTO.getUsername());
+//
+//        return response;
+//    }
 }
