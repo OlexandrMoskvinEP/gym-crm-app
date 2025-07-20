@@ -122,8 +122,13 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @CoreTransactional
-    public void updateTraineeTrainers(String username, List<Long> trainerIds) {
+    public void updateTraineeTrainersById(String username, List<Long> trainerIds) {
         repository.updateTraineeTrainersById(username, trainerIds);
+    }
+
+    @Override
+    public void updateTraineeTrainersByUsername(String username, List<String> usernames) {
+        repository.updateTraineeTrainersByUsername(username, usernames);
     }
 
     private Trainee mapTraineeWithUser(TraineeCreateRequest createRequest, String username, String password) {

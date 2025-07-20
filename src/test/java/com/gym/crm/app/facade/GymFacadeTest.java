@@ -270,11 +270,11 @@ class GymFacadeTest {
 
     @Test
     void shouldUpdateTraineeTrainersList() {
-        doNothing().when(traineeService).updateTraineeTrainers(anyString(), anyList());
+        doNothing().when(traineeService).updateTraineeTrainersById(anyString(), anyList());
 
         facade.updateTraineeTrainersList("username", TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST);
 
-        verify(traineeService).updateTraineeTrainers("username", List.of(0L));
+        verify(traineeService).updateTraineeTrainersById("username", List.of(0L));
     }
 
     @Test

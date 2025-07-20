@@ -20,5 +20,7 @@ public interface TraineeService {
 
     List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username);
 
-    void updateTraineeTrainers(String username, List<Long> trainerIds);
+    void updateTraineeTrainersById(String username, List<Long> trainerIds);
+
+    void updateTraineeTrainersByUsername(String username, List<String> usernames);
 }

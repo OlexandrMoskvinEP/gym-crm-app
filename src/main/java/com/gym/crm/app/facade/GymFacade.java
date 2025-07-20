@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Component
@@ -90,7 +89,7 @@ public class GymFacade {
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainersList(String username,
                                                                            TraineeAssignedTrainersUpdateRequest request) {
         authService.authenticate(getCurrentCredentials());
-        traineeService.updateTraineeTrainers(username, getIds(request));
+        traineeService.updateTraineeTrainersById(username, getIds(request));
 
         List<Trainer> trainers = getTraineeTrainers(request).stream()
                 .map(trainerMapper::toEntity).toList();
