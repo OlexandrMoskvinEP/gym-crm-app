@@ -44,7 +44,7 @@ public class TraineeController implements TraineesApi {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable String username) {
+    public ResponseEntity<TraineeGetResponse> getTraineeProfile(@PathVariable ("username") String username) {
         TraineeGetResponse response = facade.getTraineeByUsername(username);
 
         return ResponseEntity.ok(response);

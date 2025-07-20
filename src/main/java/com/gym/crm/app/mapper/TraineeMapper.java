@@ -31,7 +31,7 @@ public interface TraineeMapper {
     TraineeCreateResponse dtoToCreateResponse(TraineeDto traineeDto);
 
     @Mapping(source = "active", target = "isActive")
-    @Mapping(target = "trainers", ignore = true)
+    @Mapping(target = "trainer", ignore = true)
     TraineeGetResponse dtoToGetResponse(TraineeDto dto);
 
     @Mapping(source = "active", target = "isActive")

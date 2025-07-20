@@ -798,7 +798,7 @@ components:
             isActive:
               type: boolean
               description: Indicates if the trainee is active
-            trainers:
+            trainer:
               $ref: '#/components/schemas/Trainer'
       example:
         firstName: "Kevin"
