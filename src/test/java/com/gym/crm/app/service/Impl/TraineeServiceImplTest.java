@@ -210,11 +210,11 @@ class TraineeServiceImplTest {
         String username = "Eva.Davis";
         List<Long> trainerIds = List.of(1L, 3L, 5L);
 
-        doNothing().when(repository).updateTraineeTrainers(username, trainerIds);
+        doNothing().when(repository).updateTraineeTrainersById(username, trainerIds);
 
         traineeService.updateTraineeTrainers(username, trainerIds);
 
-        verify(repository).updateTraineeTrainers(username, trainerIds);
+        verify(repository).updateTraineeTrainersById(username, trainerIds);
     }
 
     private TraineeCreateRequest buildCreateRequest(Trainee trainee) {

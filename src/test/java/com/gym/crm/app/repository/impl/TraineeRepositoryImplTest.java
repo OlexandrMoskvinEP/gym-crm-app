@@ -159,11 +159,11 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
 
     @Test
     @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
-    void shouldUpdateTraineeTrainers() {
+    void shouldUpdateTraineeTrainersById() {
         String username = "olga.ivanova";
         List<Long> newTrainerIds = List.of(1L, 2L);
 
-        repository.updateTraineeTrainers(username, newTrainerIds);
+        repository.updateTraineeTrainersById(username, newTrainerIds);
 
         Optional<Trainee> updatedOpt = entityManager
                 .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
@@ -177,6 +177,29 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
         assertEquals(2, updated.getTrainers().size());
         assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 1L));
         assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 2L));
+    }
+
+    @Test
+    @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
+    void shouldUpdateTraineeTrainersByUsername() {
+        String username = "olga.ivanova";
+        List<String> newTrainerUsernames = List.of("john.doe", "mike.tyson");
+
+        repository.updateTraineeTrainersByUsername(username, newTrainerUsernames);
+
+        Optional<Trainee> updatedOpt = entityManager
+                .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst();
+
+        assertTrue(updatedOpt.isPresent());
+        Trainee updated = updatedOpt.get();
+
+        assertEquals(2, updated.getTrainers().size());
+        assertTrue(updated.getTrainers().stream().anyMatch(t -> "john.doe".equals(t.getUser().getUsername())));
+        assertTrue(updated.getTrainers().stream().anyMatch(t -> "mike.tyson".equals(t.getUser().getUsername())));
+        assertFalse(updated.getTrainers().stream().anyMatch(t -> "arnold".equals(t.getUser().getUsername())));
     }
 
     private static Stream<Arguments> provideTraineesForIdTest() {

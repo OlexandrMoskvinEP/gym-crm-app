@@ -455,7 +455,7 @@ paths:
         - Assignment
       summary: Update trainee's trainer list
       description: Updates the list of trainers assigned to a trainee
-      operationId: updateTraineeTrainers
+      operationId: updateTraineeTrainersById
       parameters:
         - $ref: '#/components/parameters/Username'
       requestBody:
