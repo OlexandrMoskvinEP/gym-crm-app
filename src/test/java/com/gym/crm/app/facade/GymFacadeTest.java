@@ -256,13 +256,13 @@ class GymFacadeTest {
     @Test
     void shouldReturnUnassignedTrainersByTraineeUsername() {
         List<TrainerDto> trainerDtoList = List.of(TRAINER_DTO);
-        List<AvailableTrainerGetResponse> expected = trainerDtoList.stream()
+        AvailableTrainerGetResponse expected = trainerDtoList.stream()
                 .map(trainerMapper::dtoToAvailableTrainerResponse)
-                .toList();
+                .findFirst().get();
 
         when(traineeService.getUnassignedTrainersByTraineeUsername(anyString())).thenReturn(trainerDtoList);
 
-        List<AvailableTrainerGetResponse> actual = facade.getUnassignedTrainersByTraineeUsername("username");
+       AvailableTrainerGetResponse actual = facade.getUnassignedTrainersByTraineeUsername("username");
 
         assertEquals(expected, actual);
         verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
