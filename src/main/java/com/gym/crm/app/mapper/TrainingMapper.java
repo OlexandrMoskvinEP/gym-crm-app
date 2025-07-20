@@ -1,9 +1,8 @@
 package com.gym.crm.app.mapper;
 
-import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
+import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

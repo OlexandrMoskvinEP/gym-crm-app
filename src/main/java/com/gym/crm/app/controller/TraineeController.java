@@ -5,11 +5,26 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
-import com.gym.crm.app.rest.*;
+import com.gym.crm.app.rest.ActivationStatusRequest;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
+import com.gym.crm.app.rest.TraineeCreateResponse;
+import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeTrainingGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
