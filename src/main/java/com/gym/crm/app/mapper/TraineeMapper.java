@@ -4,6 +4,8 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;

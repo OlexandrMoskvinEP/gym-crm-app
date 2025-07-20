@@ -50,8 +50,8 @@ public class TraineeController implements TraineesApi {
     }
 
     @GetMapping("{username}/available-trainers")
-    public ResponseEntity<List<AvailableTrainerGetResponse>> getAvailableTrainers(@PathVariable String username) {
-        List<AvailableTrainerGetResponse> response = facade.getUnassignedTrainersByTraineeUsername(username);
+    public ResponseEntity<AvailableTrainerGetResponse> getAvailableTrainers(@PathVariable String username) {
+        AvailableTrainerGetResponse response = facade.getUnassignedTrainersByTraineeUsername(username);
 
         return ResponseEntity.ok(response);
     }

@@ -78,12 +78,13 @@ public class GymFacade {
         return trainerService.getTrainerByUsername(username);
     }
 
-    public List<AvailableTrainerGetResponse> getUnassignedTrainersByTraineeUsername(String username) {
+    public AvailableTrainerGetResponse getUnassignedTrainersByTraineeUsername(String username) {
         authService.authenticate(getCurrentCredentials());
 
-        return traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
-                .map(trainerMapper::dtoToAvailableTrainerResponse)
-                .toList();
+       List<Trainer> trainers = traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
+               .map(trainerMapper::toEntity).toList();
+
+        return new AvailableTrainerGetResponse(trainers);
     }
 
     public List<TraineeAssignedTrainersUpdateResponse> updateTraineeTrainersList(String username,

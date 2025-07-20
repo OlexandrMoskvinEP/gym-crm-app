@@ -427,9 +427,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AvailableTrainerGetResponse'
+               $ref: '#/components/schemas/AvailableTrainerGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -979,9 +977,15 @@ components:
             firstName: "Konami"
             lastName: "Kitoe"
     AvailableTrainerGetResponse:
+      type: object
       description: Response with unassigned trainers
-      allOf:
-        - $ref: '#/components/schemas/Trainer'
+      properties:
+        trainers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trainer'
+      required:
+        - trainers
     Trainer:
       allOf:
         - type: object
