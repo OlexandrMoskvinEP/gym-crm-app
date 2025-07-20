@@ -7,6 +7,7 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.facade.GymFacade;
+import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
@@ -32,11 +33,13 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,15 +51,14 @@ class TraineeControllerTest {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    private final String TRAINEE_USERNAME = "olga.ivanova";
     private final UserCreateRequest USER_CREATE_REQUEST = buildUserCreateRequest();
     private final TraineeCreateRequest TRAINEE_CREATE_REQUEST = buildTraineeCreateRequest();
     private final TraineeUpdateRequest TRAINEE_UPDATE_REQUEST = buildTraineeUpdateRequest();
     private final AvailableTrainerGetResponse AVAILABLE_TRAINERS_GET_RESPONSE = getAvailableTrainerGetResponse();
     private final TraineeAssignedTrainersUpdateRequest TRAINEE_TRAINERS_UPDATE_REQUEST = getTraineeAssignedTrainersUpdateRequest();
     private final TraineeAssignedTrainersUpdateResponse TRAINEE_TRAINERS_UPDATE_RESPONSE = getTraineeAssignedTrainersUpdateResponse();
-    TrainingWithTrainerName TRAINING_WITH_TRAINER_NAME = getTrainingWithTrainerName();
-
+    private final TrainingWithTrainerName TRAINING_WITH_TRAINER_NAME = getTrainingWithTrainerName();
+    private final String TRAINEE_USERNAME = "olga.ivanova";
 
     private MockMvc mockMvc;
 
@@ -192,7 +194,18 @@ class TraineeControllerTest {
     }
 
     @Test
-    void changeTraineeActivationStatus() {
+    void changeTraineeActivationStatus() throws Exception {
+        ActivationStatusRequest request = new ActivationStatusRequest();
+        request.setIsActive(true);
+
+        doNothing().when(facade).switchActivationStatus(TRAINEE_USERNAME);
+
+        mockMvc.perform(patch("/api/v1/trainees/{username}/change-activation-status", TRAINEE_USERNAME)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(facade).switchActivationStatus(eq(TRAINEE_USERNAME));
     }
 
     private UserCreateRequest buildUserCreateRequest() {

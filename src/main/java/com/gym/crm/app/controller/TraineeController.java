@@ -92,7 +92,7 @@ public class TraineeController implements TraineesApi {
     }
 
     @PatchMapping("/{username}/change-activation-status")
-    public ResponseEntity<Void> changeTraineeActivationStatus(@PathVariable String username, ActivationStatusRequest
+    public ResponseEntity<Void> changeTraineeActivationStatus(@PathVariable("username") String username, @RequestBody ActivationStatusRequest
             activationStatusRequest) {
 
         facade.switchActivationStatus(username);
