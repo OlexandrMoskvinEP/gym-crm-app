@@ -30,8 +30,5 @@ public interface TrainerMapper {
     TrainerDto toDto(Trainer trainer);
 
     @Mapping(source = "specialization.trainingTypeName", target = "specialization")
-    TraineeAssignedTrainersUpdateResponse dtoToUpdateAssignedTrainerResponse(TrainerDto dto);
-
-    @Mapping(source = "specialization.trainingTypeName", target = "specialization")
     com.gym.crm.app.rest.Trainer toEntity(TrainerDto dto);
 }

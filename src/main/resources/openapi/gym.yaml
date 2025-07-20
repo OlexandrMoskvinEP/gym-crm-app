@@ -470,9 +470,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TraineeAssignedTrainersUpdateResponse'
+               $ref: '#/components/schemas/TraineeAssignedTrainersUpdateResponse'
         '400':
           description: Invalid input data or trainer not found
           content:
@@ -891,8 +889,15 @@ components:
           example: ["chris.tenet"]
           minItems: 1
     TraineeAssignedTrainersUpdateResponse:
-      allOf:
-        - $ref: '#/components/schemas/Trainer'
+        type: object
+        description: Response with updated trainee`s trainers
+        properties:
+          trainers:
+            type: array
+            items:
+              $ref: '#/components/schemas/Trainer'
+        required:
+          - trainers
     TrainerKeys:
       allOf:
         - $ref: '#/components/schemas/User'

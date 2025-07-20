@@ -383,15 +383,6 @@ class GymFacadeTest {
         return User.builder().username("username").password("password").build();
     }
 
-
-    private static TraineeAssignedTrainersUpdateResponse buildAssignedTrainerResponse() {
-        return new TraineeAssignedTrainersUpdateResponse()
-                .firstName(FIRST_NAME)
-                .lastName(LAST_NAME)
-                .username("username")
-                .specialization("Yoga");
-    }
-
     private static TraineeAssignedTrainersUpdateRequest buildAssignedTrainerRequest() {
         List<String> list = List.of("username");
 
