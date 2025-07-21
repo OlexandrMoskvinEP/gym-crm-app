@@ -23,6 +23,7 @@ import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
+import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -68,6 +69,7 @@ class GymFacadeTest {
     private static final User SIMPLE_USER = buildSimpleUser();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
+    private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = builtTrainerCreateResponse();
     private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
@@ -130,9 +132,9 @@ class GymFacadeTest {
         TrainerCreateRequest createRequest = TrainerCreateRequest.builder().build();
         when(trainerService.addTrainer(createRequest)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = facade.addTrainer(createRequest);
+        TrainerCreateResponse actual = facade.addTrainer(createRequest);
 
-        assertEquals(TRAINER_DTO, actual);
+        assertEquals(TRAINER_CREATE_RESPONSE, actual);
         verify(trainerService).addTrainer(createRequest);
         verifyNoInteractions(authService);
     }
@@ -375,6 +377,10 @@ class GymFacadeTest {
 
     private static TraineeCreateResponse buildTraineeCreateResponse() {
         return new TraineeCreateResponse(TRAINEE_DTO.getUsername(), TRAINEE_DTO.getPassword());
+    }
+
+    private static TrainerCreateResponse builtTrainerCreateResponse() {
+        return new TrainerCreateResponse(TRAINER_DTO.getUsername(), TRAINER_DTO.getPassword());
     }
 
     private static TraineeGetResponse buildTraineeGetResponse() {
