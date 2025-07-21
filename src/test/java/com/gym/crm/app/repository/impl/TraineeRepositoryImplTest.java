@@ -26,14 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainees.xml", cleanBefore = true, cleanAfter = true)
 public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRepository> {
-    private EntityManager entityManager;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
-
-    @BeforeEach
-    void init() {
-        this.entityManager = entityManagerFactory.createEntityManager();
-    }
 
     @Test
     void shouldReturnAllTrainees() {
