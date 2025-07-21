@@ -13,8 +13,8 @@ import com.gym.crm.app.rest.TrainerUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,9 +57,9 @@ public class TrainerController implements TrainersApi {
 
     @GetMapping("/{username}/trainings")
     public ResponseEntity<TrainerTrainingGetResponse> getTrainerTrainings(@PathVariable("username") String username,
-                                                                          @RequestParam(required = false) LocalDate fromDate,
-                                                                          @RequestParam(required = false) LocalDate toDate,
-                                                                          @RequestParam(required = false) String traineeName) {
+                                                                          @RequestParam(name = "fromDate", required = false) LocalDate fromDate,
+                                                                          @RequestParam(name = "toDate", required = false) LocalDate toDate,
+                                                                          @RequestParam(name = "traineeName", required = false) String traineeName) {
         TrainerTrainingSearchFilter filter = buildTrainerTrainingSearchFilter(fromDate, toDate, traineeName, username);
 
         TrainerTrainingGetResponse response = facade.getTrainerTrainingsByFilter(filter);
@@ -67,9 +67,9 @@ public class TrainerController implements TrainersApi {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{username}")
+    @PatchMapping("/{username}/change-activation-status")
     public ResponseEntity<Void> changeTrainerActivationStatus(@PathVariable("username") String username,
-                                                              @RequestParam ActivationStatusRequest activationStatusRequest) {
+                                                              @RequestBody ActivationStatusRequest activationStatusRequest) {
         facade.switchActivationStatus(username);
 
         return ResponseEntity.ok().build();

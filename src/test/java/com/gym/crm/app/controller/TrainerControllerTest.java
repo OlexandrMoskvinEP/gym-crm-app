@@ -9,11 +9,12 @@ import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.facade.GymFacade;
-import com.gym.crm.app.rest.TraineeUpdateResponse;
+import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
+import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
-import jakarta.validation.Valid;
+import com.gym.crm.app.rest.TrainingWithTraineeName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +26,17 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,6 +52,7 @@ class TrainerControllerTest {
     private static final UserCreateRequest USER_CREATE_REQUEST = buildUserCreateRequest();
     private static final String TRAINER_USERNAME = "arnold.schwarzenegger";
     private static final TrainerUpdateRequest TRAINER_UPDATE_REQUEST = buildTrainerUpdateRequest();
+    private static final TrainingWithTraineeName TRAINING_WITH_TRAINEE_NAME = buildTrainingWithTraineeName();
 
     private MockMvc mockMvc;
 
@@ -108,11 +118,40 @@ class TrainerControllerTest {
     }
 
     @Test
-    void getTrainerTrainings() {
+    void shouldReturnTrainerTrainingsWithFilter() throws Exception {
+        TrainerTrainingGetResponse response = new TrainerTrainingGetResponse();
+        response.setTrainings(List.of(TRAINING_WITH_TRAINEE_NAME));
+
+        when(facade.getTrainerTrainingsByFilter(any())).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/trainers/{username}/trainings", TRAINER_USERNAME)
+                        .param("fromDate", "2025-07-01")
+                        .param("toDate", "2025-07-31")
+                        .param("traineeName", "Mark Freedman"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.trainings[0].trainingName").value("Cardio Session"))
+                .andExpect(jsonPath("$.trainings[0].traineeName").value("Mark Freedman"));
+
+        verify(facade).getTrainerTrainingsByFilter(argThat(filter ->
+                filter.getUsername().equals(TRAINER_USERNAME) &&
+                        filter.getFromDate().equals(LocalDate.of(2025, 7, 1)) &&
+                        filter.getToDate().equals(LocalDate.of(2025, 7, 31)) &&
+                        filter.getTraineeFullName().equals("Mark Freedman")));
     }
 
     @Test
-    void changeTrainerActivationStatus() {
+    void changeTrainerActivationStatus() throws Exception {
+        ActivationStatusRequest request = new ActivationStatusRequest();
+        request.setIsActive(true);
+
+        doNothing().when(facade).switchActivationStatus(TRAINER_USERNAME);
+
+        mockMvc.perform(patch("/api/v1/trainers/{username}/change-activation-status", TRAINER_USERNAME)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(facade).switchActivationStatus(eq(TRAINER_USERNAME));
     }
 
     private static UserCreateRequest buildUserCreateRequest() {
@@ -138,4 +177,13 @@ class TrainerControllerTest {
                 .build();
     }
 
+    private static TrainingWithTraineeName buildTrainingWithTraineeName() {
+        TrainingWithTraineeName training = new TrainingWithTraineeName();
+        training.setTrainingName("Cardio Session");
+        training.setTrainingDate(LocalDate.of(2025, 7, 10));
+        training.setTrainingType("Cardio");
+        training.setTrainingDuration(60);
+        training.setTraineeName("Mark Freedman");
+        return training;
+    }
 }
