@@ -15,7 +15,6 @@
     </properties>
 
     <dependencies>
-        <!-- === Spring Framework === -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -251,7 +250,6 @@
         </dependency>
     </dependencies>
 
-    <!-- === Plugins === -->
     <build>
         <plugins>
             <plugin>
