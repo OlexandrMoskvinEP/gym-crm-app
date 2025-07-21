@@ -5,6 +5,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
+import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
@@ -179,7 +180,7 @@ class TrainerServiceImplTest {
     }
 
     private TrainerUpdateRequest buildUpdateRequest(Trainer trainer) {
-        UserCreateRequest user = UserCreateRequest.builder()
+        UserUpdateRequest user = UserUpdateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
                 .isActive(trainer.getUser().isActive())
