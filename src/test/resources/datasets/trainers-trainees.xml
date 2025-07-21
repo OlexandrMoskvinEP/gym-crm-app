@@ -7,7 +7,7 @@
     <!-- Users for Trainers -->
     <users id="1" first_name="John" last_name="Doe" username="john.doe" password="123" is_active="true"/>
     <users id="2" first_name="Mike" last_name="Tyson" username="mike.tyson" password="123" is_active="true"/>
-    <users id="6" first_name="Arnold" last_name="Schwarzenegger" username="arnold" password="123" is_active="true"/>
+    <users id="6" first_name="Arnold" last_name="Schwarzenegger" username="arnold.schwarzenegger" password="123" is_active="true"/>
 
     <!-- Users for Trainee -->
     <users id="10" first_name="Olga" last_name="Ivanova" username="olga.ivanova" password="123" is_active="true"/>
