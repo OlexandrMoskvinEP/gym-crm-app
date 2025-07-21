@@ -24,6 +24,7 @@ import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.Trainer;
 import com.gym.crm.app.rest.TrainerCreateResponse;
+import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -98,10 +99,12 @@ public class GymFacade {
         return traineeService.getAllTrainees();
     }
 
-    public TrainerDto getTrainerByUsername(String username, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public TrainerGetResponse getTrainerByUsername(String username) {
+        authService.authenticate(getCurrentCredentials());
 
-        return trainerService.getTrainerByUsername(username);
+        TrainerDto trainerDto = trainerService.getTrainerByUsername(username);
+
+        return trainerMapper.toGetResponse(trainerDto);
     }
 
     public TraineeGetResponse getTraineeByUsername(String username) {

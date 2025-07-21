@@ -5,6 +5,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.rest.TrainerCreateResponse;
+import com.gym.crm.app.rest.TrainerGetResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -37,4 +38,8 @@ public interface TrainerMapper {
     com.gym.crm.app.rest.Trainer entityToRestTrainer(Trainer trainer);
 
     TrainerCreateResponse toCreateResponse(TrainerDto trainerDto);
+
+    @Mapping(source = "active", target = "isActive")
+    @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    TrainerGetResponse toGetResponse(TrainerDto trainer);
 }

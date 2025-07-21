@@ -12,6 +12,8 @@ import com.gym.crm.app.rest.TrainerUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,9 +36,11 @@ public class TrainerController implements TrainersApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<TrainerGetResponse> getTrainerProfile(String username) {
-        return TrainersApi.super.getTrainerProfile(username);
+    @GetMapping("/{username}")
+    public ResponseEntity<TrainerGetResponse> getTrainerProfile(@PathVariable("username") String username) {
+        TrainerGetResponse response = facade.getTrainerByUsername(username);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -53,11 +57,6 @@ public class TrainerController implements TrainersApi {
     public ResponseEntity<Void> changeTrainerActivationStatus(String username, ActivationStatusRequest activationStatusRequest) {
         return TrainersApi.super.changeTrainerActivationStatus(username, activationStatusRequest);
     }
-
-
-
-
-
 
 
 }

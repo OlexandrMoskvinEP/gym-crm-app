@@ -24,6 +24,7 @@ import com.gym.crm.app.rest.TraineeGetResponse;
 import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.TrainerCreateResponse;
+import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -69,8 +70,10 @@ class GymFacadeTest {
     private static final User SIMPLE_USER = buildSimpleUser();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
-    private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = builtTrainerCreateResponse();
+    private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = buildTrainerCreateResponse();
     private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
+    private static final TrainerGetResponse TRAINER_GET_RESPONSE = buildTrainerGetResponse();
+
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
 
@@ -120,9 +123,9 @@ class GymFacadeTest {
     void shouldReturnTrainerByUsername() {
         when(trainerService.getTrainerByUsername(USERNAME)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = facade.getTrainerByUsername(USERNAME, USER_CREDENTIALS);
+        TrainerGetResponse actual = facade.getTrainerByUsername(USERNAME);
 
-        assertEquals(TRAINER_DTO, actual);
+        assertEquals(TRAINER_GET_RESPONSE, actual);
         verify(trainerService).getTrainerByUsername(USERNAME);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -379,7 +382,7 @@ class GymFacadeTest {
         return new TraineeCreateResponse(TRAINEE_DTO.getUsername(), TRAINEE_DTO.getPassword());
     }
 
-    private static TrainerCreateResponse builtTrainerCreateResponse() {
+    private static TrainerCreateResponse buildTrainerCreateResponse() {
         return new TrainerCreateResponse(TRAINER_DTO.getUsername(), TRAINER_DTO.getPassword());
     }
 
@@ -390,6 +393,14 @@ class GymFacadeTest {
                 .address(TRAINEE_DTO.getAddress())
                 .dateOfBirth(TRAINEE_DTO.getDateOfBirth())
                 .isActive(TRAINEE_DTO.isActive());
+    }
+
+    private static TrainerGetResponse buildTrainerGetResponse() {
+        return new TrainerGetResponse()
+                .firstName(TRAINER_DTO.getFirstName())
+                .lastName(TRAINER_DTO.getLastName())
+                .specialization(TRAINER_DTO.getSpecialization().getTrainingTypeName())
+                .isActive(TRAINER_DTO.isActive());
     }
 
     private static TraineeUpdateResponse buildTraineeUpdateResponse() {
