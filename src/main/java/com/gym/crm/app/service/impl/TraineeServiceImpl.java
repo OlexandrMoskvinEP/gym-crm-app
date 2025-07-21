@@ -9,9 +9,11 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.TraineeService;
+import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import org.modelmapper.ModelMapper;
@@ -34,6 +36,7 @@ public class TraineeServiceImpl implements TraineeService {
     private TrainerMapper trainerMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
+    private TrainerService trainerService;
 
     @Autowired
     public void setUserProfileService(UserProfileService userProfileService) {
@@ -48,6 +51,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     public void setRepository(TraineeRepository repository) {
         this.repository = repository;
+    }
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {
+        this.trainerService = trainerService;
     }
 
     @Autowired
@@ -81,6 +89,10 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.createUsername(createRequest.getUser().getFirstName(),
                 createRequest.getUser().getLastName());
         String password = passwordService.generatePassword();
+
+        if (isDuplicateUsername(username)) {
+            throw new RegistrationConflictException("Registration as both trainee and trainer is not allowed");
+        }
 
         logger.info("Adding trainee with username {}", username);
         Trainee entityToAdd = mapTraineeWithUser(createRequest, username, password);
@@ -129,7 +141,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames) {
-       return repository.updateTraineeTrainersByUsername(username, usernames);
+        return repository.updateTraineeTrainersByUsername(username, usernames);
     }
 
     @Override
@@ -183,5 +195,10 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getAddress(),
                 trainee.getId()
         );
+    }
+
+    private boolean isDuplicateUsername(String username) {
+        return trainerService.getAllTrainers().stream()
+                .anyMatch(trainer -> trainer.getUsername().equals(username));
     }
 }

@@ -12,6 +12,7 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TraineeServiceImpl;
@@ -61,6 +62,8 @@ class TraineeServiceImplTest {
     private PasswordService passwordService;
     @Mock
     private UserProfileService userProfileService;
+    @Mock
+    private TrainerService trainerService;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
