@@ -2,12 +2,12 @@ package com.gym.crm.app.controller;
 
 import com.gym.crm.app.api.TrainersApi;
 import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
+import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainerTrainingGetResponse;
-import com.gym.crm.app.rest.TrainerUpdateRequest;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,9 +44,12 @@ public class TrainerController implements TrainersApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<TrainerUpdateResponse> updateTrainerProfile(String username, TrainerUpdateRequest trainerUpdateRequest) {
-        return TrainersApi.super.updateTrainerProfile(username, trainerUpdateRequest);
+    @PutMapping("/{username}")
+    public ResponseEntity<TrainerUpdateResponse> updateTrainerProfile(@PathVariable("username") String username,
+                                                                      @RequestBody @Valid TrainerUpdateRequest trainerUpdateRequest) {
+        TrainerUpdateResponse response = facade.updateTrainerByUsername(username, trainerUpdateRequest);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override

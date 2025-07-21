@@ -25,6 +25,7 @@ import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
+import com.gym.crm.app.rest.TrainerUpdateResponse;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -73,8 +74,9 @@ class GymFacadeTest {
     private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = buildTrainerCreateResponse();
     private static final TraineeGetResponse TRAINEE_GET_RESPONSE = buildTraineeGetResponse();
     private static final TrainerGetResponse TRAINER_GET_RESPONSE = buildTrainerGetResponse();
-
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
+    private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
+
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
 
     @Mock
@@ -147,9 +149,9 @@ class GymFacadeTest {
         TrainerUpdateRequest updateRequest = TrainerUpdateRequest.builder().build();
         when(trainerService.updateTrainerByUsername(USERNAME, updateRequest)).thenReturn(TRAINER_DTO);
 
-        TrainerDto actual = facade.updateTrainerByUsername(USERNAME, updateRequest, USER_CREDENTIALS);
+        TrainerUpdateResponse actual = facade.updateTrainerByUsername(USERNAME, updateRequest);
 
-        assertEquals(TRAINER_DTO, actual);
+        assertEquals(TRAINER_UPDATE_RESPONSE, actual);
         verify(trainerService).updateTrainerByUsername(USERNAME, updateRequest);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -412,6 +414,16 @@ class GymFacadeTest {
                 .dateOfBirth(TRAINEE_DTO.getDateOfBirth())
                 .isActive(TRAINEE_DTO.isActive());
     }
+
+    private static TrainerUpdateResponse buildTrainerUpdateResponse() {
+        return new TrainerUpdateResponse()
+                .firstName(TRAINER_DTO.getFirstName())
+                .lastName(TRAINER_DTO.getLastName())
+                .specialization(TRAINER_DTO.getSpecialization().getTrainingTypeName())
+                .isActive(TRAINER_DTO.isActive())
+                .username(TRAINER_DTO.getUsername());
+    }
+
 
     private static User buildSimpleUser() {
         return User.builder().username("username").password("password").build();

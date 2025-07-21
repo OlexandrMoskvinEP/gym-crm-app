@@ -25,6 +25,7 @@ import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.Trainer;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
+import com.gym.crm.app.rest.TrainerUpdateResponse;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -76,15 +77,13 @@ public class GymFacade {
     }
 
     public TrainerCreateResponse addTrainer(@Valid TrainerCreateRequest createRequest) {
-        TrainerDto trainerDto = trainerService.addTrainer(createRequest);
 
-        return trainerMapper.toCreateResponse(trainerDto);
+        return trainerMapper.toCreateResponse(trainerService.addTrainer(createRequest));
     }
 
     public TraineeCreateResponse addTrainee(@Valid TraineeCreateRequest createRequest) {
-        TraineeDto traineeDto = traineeService.addTrainee(createRequest);
 
-        return traineeMapper.dtoToCreateResponse(traineeDto);
+        return traineeMapper.dtoToCreateResponse(traineeService.addTrainee(createRequest));
     }
 
     public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
@@ -102,9 +101,7 @@ public class GymFacade {
     public TrainerGetResponse getTrainerByUsername(String username) {
         authService.authenticate(getCurrentCredentials());
 
-        TrainerDto trainerDto = trainerService.getTrainerByUsername(username);
-
-        return trainerMapper.toGetResponse(trainerDto);
+        return trainerMapper.toGetResponse(trainerService.getTrainerByUsername(username));
     }
 
     public TraineeGetResponse getTraineeByUsername(String username) {
@@ -125,18 +122,16 @@ public class GymFacade {
 
     public TraineeUpdateResponse updateTraineeByUsername(String username,
                                                          @Valid TraineeUpdateRequest updateRequest) {
-
         authService.authenticate(getCurrentCredentials());
 
         return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
-    public TrainerDto updateTrainerByUsername(String username,
-                                              @Valid TrainerUpdateRequest updateRequest,
-                                              UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public TrainerUpdateResponse updateTrainerByUsername(String username,
+                                                         @Valid TrainerUpdateRequest updateRequest) {
+        authService.authenticate(getCurrentCredentials());
 
-        return trainerService.updateTrainerByUsername(username, updateRequest);
+        return trainerMapper.toUpdateResponse(trainerService.updateTrainerByUsername(username, updateRequest));
     }
 
     public void deleteTrainerByUsername(String username, UserCredentialsDto userCredentials) {
