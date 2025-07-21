@@ -222,7 +222,6 @@ class TraineeControllerTest {
 
     private static TraineeGetResponse getTraineeGetResponse(Trainer trainer) {
         TraineeGetResponse response = new TraineeGetResponse();
-
         response.setFirstName("Olga");
         response.setLastName("Ivanova");
         response.setDateOfBirth(LocalDate.of(1998, 7, 10));
@@ -266,19 +265,16 @@ class TraineeControllerTest {
 
     private static TraineeAssignedTrainersUpdateResponse getTraineeAssignedTrainersUpdateResponse() {
         Trainer trainer1 = new Trainer();
-
         trainer1.setFirstName("John");
         trainer1.setLastName("Doe");
         trainer1.setSpecialization("Cardio");
         trainer1.username("john.doe");
 
         Trainer trainer2 = new Trainer();
-
         trainer2.setFirstName("Mike");
         trainer2.setLastName("tyson");
         trainer2.setSpecialization("Boxing");
         trainer2.username("mike.tyson");
-
 
         TraineeAssignedTrainersUpdateResponse response = new TraineeAssignedTrainersUpdateResponse();
         response.setTrainers(List.of(trainer1, trainer2));
@@ -288,7 +284,6 @@ class TraineeControllerTest {
 
     private static TrainingWithTrainerName getTrainingWithTrainerName() {
         TrainingWithTrainerName training = new TrainingWithTrainerName();
-
         training.setTrainingName("Cardio Session");
         training.setTrainingDate(LocalDate.of(2025, 7, 10));
         training.setTrainingType("Cardio");

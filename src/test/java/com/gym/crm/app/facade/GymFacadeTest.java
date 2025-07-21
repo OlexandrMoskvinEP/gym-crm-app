@@ -17,7 +17,13 @@ import com.gym.crm.app.mapper.TrainingMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
-import com.gym.crm.app.rest.*;
+import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
+import com.gym.crm.app.rest.TraineeCreateResponse;
+import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeTrainingGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
+import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.service.TraineeService;
@@ -40,7 +46,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GymFacadeTest {
@@ -299,13 +308,6 @@ class GymFacadeTest {
                 .username(USERNAME)
                 .build();
 
-        when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
-        when(trainerService.getTrainerNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
-
-        TraineeTrainingGetResponse actual = facade.getTraineeTrainingsByFilter(searchFilter);
-
-        assertEquals(1, actual.getTrainings().size());
-
         TrainingWithTrainerName expected = new TrainingWithTrainerName();
         expected.setTrainingName(TRAINING_DTO.getTrainingName());
         expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
@@ -313,8 +315,13 @@ class GymFacadeTest {
         expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
         expected.setTrainerName("anna.smith");
 
-        assertEquals(expected, actual.getTrainings().get(0)); // сравнение одного элемента
+        when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
+        when(trainerService.getTrainerNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
 
+        TraineeTrainingGetResponse actual = facade.getTraineeTrainingsByFilter(searchFilter);
+
+        assertEquals(1, actual.getTrainings().size());
+        assertEquals(expected, actual.getTrainings().get(0));
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
         verify(authService).authenticate(USER_CREDENTIALS);
     }
@@ -398,11 +405,4 @@ class GymFacadeTest {
 
         return new TraineeAssignedTrainersUpdateRequest(list);
     }
-
-//    private TraineeTrainingGetResponse buildTrainingByTraineeCriteriaGetResponse(List<TrainingDto> trainingDto) {
-//        TraineeTrainingGetResponse response = trainingMapper.toTraineeTrainingResponse(trainingDto);
-//        response.setTrainerName(TRAINER_DTO.getUsername());
-//
-//        return response;
-//    }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Repository
@@ -158,7 +159,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 throw new IllegalArgumentException("Some trainer IDs not found");
             }
 
-            HashSet<Trainer> updated = new HashSet<>(trainers);
+            Set<Trainer> updated = new HashSet<>(trainers);
             Trainee toMerge = trainee.toBuilder().trainers(updated).build();
             entityManager.merge(toMerge);
         });
@@ -186,7 +187,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 throw new IllegalArgumentException("Some trainer usernames not found");
             }
 
-            HashSet<Trainer> updated = new HashSet<>(trainers);
+            Set<Trainer> updated = new HashSet<>(trainers);
             Trainee updatedTrainee = trainee.toBuilder().trainers(updated).build();
             entityManager.merge(updatedTrainee);
 
