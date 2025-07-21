@@ -15,5 +15,7 @@ public interface TrainerService {
 
     TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest);
 
+    String getTrainerNameById(Long id);
+
     void deleteTrainerByUsername(String username);
 }

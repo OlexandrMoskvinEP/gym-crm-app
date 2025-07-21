@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface TrainingTypeRepository {
     Optional<TrainingType> findByName(String trainingTypeName);
 
-   List<TrainingType> findAll();
+    List<TrainingType> findAll();
 }

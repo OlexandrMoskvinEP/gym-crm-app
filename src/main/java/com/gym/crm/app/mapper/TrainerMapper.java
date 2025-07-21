@@ -25,4 +25,13 @@ public interface TrainerMapper {
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "specialization", target = "specialization")
     TrainerDto toDto(Trainer trainer);
+
+    @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    com.gym.crm.app.rest.Trainer toEntity(TrainerDto dto);
+
+    @Mapping(source = "user.firstName", target = "firstName")
+    @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(source = "user.username", target = "username")
+    @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    com.gym.crm.app.rest.Trainer entityToRestTrainer(Trainer trainer);
 }

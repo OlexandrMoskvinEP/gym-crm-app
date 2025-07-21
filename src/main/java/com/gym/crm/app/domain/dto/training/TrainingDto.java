@@ -1,10 +1,7 @@
 package com.gym.crm.app.domain.dto.training;
 
 import com.gym.crm.app.domain.model.TrainingType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

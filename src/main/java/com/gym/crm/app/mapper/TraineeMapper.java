@@ -4,6 +4,9 @@ import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.rest.TraineeCreateResponse;
+import com.gym.crm.app.rest.TraineeGetResponse;
+import com.gym.crm.app.rest.TraineeUpdateResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +27,14 @@ public interface TraineeMapper {
     @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
     TraineeDto toDto(Trainee trainee);
+
+    TraineeCreateResponse dtoToCreateResponse(TraineeDto traineeDto);
+
+    @Mapping(source = "active", target = "isActive")
+    @Mapping(target = "trainer", ignore = true)
+    TraineeGetResponse dtoToGetResponse(TraineeDto dto);
+
+    @Mapping(source = "active", target = "isActive")
+    @Mapping(target = "trainers", ignore = true)
+    TraineeUpdateResponse dtoToUpdateResponse(TraineeDto traineeDto);
 }

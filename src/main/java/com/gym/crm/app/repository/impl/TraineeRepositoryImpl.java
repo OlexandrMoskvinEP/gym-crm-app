@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
@@ -138,7 +140,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public void updateTraineeTrainers(String username, List<Long> trainerIds) {
+    public void updateTraineeTrainersById(String username, List<Long> trainerIds) {
         logger.debug("Updating trainers for trainee '{}'. New trainer IDs: {}", username, trainerIds);
 
         txExecutor.performWithinTx(entityManager -> {
@@ -157,9 +159,41 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 throw new IllegalArgumentException("Some trainer IDs not found");
             }
 
-            HashSet<Trainer> updated = new HashSet<>(trainers);
+            Set<Trainer> updated = new HashSet<>(trainers);
             Trainee toMerge = trainee.toBuilder().trainers(updated).build();
             entityManager.merge(toMerge);
         });
+    }
+
+    @Override
+    public List<Trainer> updateTraineeTrainersByUsername(String traineeUsername, List<String> trainerUsernames) {
+        logger.debug("Updating trainers for trainee '{}'. New trainer usernames: {}", traineeUsername, trainerUsernames);
+
+        AtomicReference<List<Trainer>> result = new AtomicReference<>();
+
+        txExecutor.performWithinTx(entityManager -> {
+            TypedQuery<Trainee> query = entityManager.createQuery(
+                    "SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class);
+            query.setParameter("username", traineeUsername);
+
+            Trainee trainee = query.getSingleResult();
+
+            List<Trainer> trainers = entityManager.createQuery(
+                            "SELECT tr FROM Trainer tr WHERE tr.user.username IN :usernames", Trainer.class)
+                    .setParameter("usernames", trainerUsernames)
+                    .getResultList();
+
+            if (trainers.size() != trainerUsernames.size()) {
+                throw new IllegalArgumentException("Some trainer usernames not found");
+            }
+
+            Set<Trainer> updated = new HashSet<>(trainers);
+            Trainee updatedTrainee = trainee.toBuilder().trainers(updated).build();
+            entityManager.merge(updatedTrainee);
+
+            result.set(trainers);
+        });
+
+        return result.get();
     }
 }

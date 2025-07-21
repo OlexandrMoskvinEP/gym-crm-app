@@ -24,5 +24,7 @@ public interface TraineeRepository {
 
     List<Trainer> findUnassignedTrainersByTraineeUsername(String username);
 
-    void updateTraineeTrainers(String username, List<Long> trainerIds);
+    void updateTraineeTrainersById(String username, List<Long> trainerIds);
+
+    List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames);
 }

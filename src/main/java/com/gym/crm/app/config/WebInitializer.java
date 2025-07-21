@@ -1,6 +1,5 @@
-package com.gym.crm.app;
+package com.gym.crm.app.config;
 
-import com.gym.crm.app.config.AppConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
@@ -13,7 +12,9 @@ public class WebInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(AppConfig.class);
+
         DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
+
         ServletRegistration.Dynamic registration = servletContext.addServlet("dispatcher", dispatcherServlet);
         registration.setLoadOnStartup(1);
         registration.addMapping("/");

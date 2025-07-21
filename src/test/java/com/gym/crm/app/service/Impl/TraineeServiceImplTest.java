@@ -213,15 +213,27 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void updateTraineeTrainers() {
+    void updateTraineeTrainersById() {
         String username = "Eva.Davis";
         List<Long> trainerIds = List.of(1L, 3L, 5L);
 
-        doNothing().when(repository).updateTraineeTrainers(username, trainerIds);
+        doNothing().when(repository).updateTraineeTrainersById(username, trainerIds);
 
-        traineeService.updateTraineeTrainers(username, trainerIds);
+        traineeService.updateTraineeTrainersById(username, trainerIds);
 
-        verify(repository).updateTraineeTrainers(username, trainerIds);
+        verify(repository).updateTraineeTrainersById(username, trainerIds);
+    }
+
+    @Test
+    void shouldUpdateTraineeByUsername() {
+        String username = "Eva.Davis";
+        List<String> usernames = List.of("qqqqq", "lllll", "pppppp");
+
+        when(repository.updateTraineeTrainersByUsername(username, usernames)).thenReturn(List.of());
+
+        traineeService.updateTraineeTrainersByUsername(username, usernames);
+
+        verify(repository).updateTraineeTrainersByUsername(username, usernames);
     }
 
     private TraineeCreateRequest buildCreateRequest(Trainee trainee) {

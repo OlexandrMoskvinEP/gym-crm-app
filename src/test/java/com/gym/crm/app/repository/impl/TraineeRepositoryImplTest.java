@@ -2,21 +2,21 @@ package com.gym.crm.app.repository.impl;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainee;
+import com.gym.crm.app.domain.model.Trainer;
+import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.TraineeRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,14 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainees.xml", cleanBefore = true, cleanAfter = true)
 public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRepository> {
-    private EntityManager entityManager;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
-
-    @BeforeEach
-    void init() {
-        this.entityManager = entityManagerFactory.createEntityManager();
-    }
 
     @Test
     void shouldReturnAllTrainees() {
@@ -118,7 +110,6 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
     void shouldUpdateTrainee() {
         Trainee original = repository.findByUsername("olga.ivanova")
                 .orElseThrow(() -> new IllegalArgumentException("Test user was not found"));
-
         Trainee toUpdate = original.toBuilder()
                 .address("Updated Address")
                 .dateOfBirth(LocalDate.of(2001, 2, 2))
@@ -132,7 +123,6 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
         assertEquals(2L, updated.getId());
         assertEquals("Updated Address", updated.getAddress());
         assertEquals(LocalDate.of(2001, 2, 2), updated.getDateOfBirth());
-
         assertNotNull(updated.getUser());
         assertEquals("olga.ivanova", updated.getUser().getUsername());
         assertEquals("Olga", updated.getUser().getFirstName());
@@ -159,24 +149,48 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
 
     @Test
     @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
-    void shouldUpdateTraineeTrainers() {
+    void shouldUpdateTraineeTrainersById() {
         String username = "olga.ivanova";
         List<Long> newTrainerIds = List.of(1L, 2L);
+        Set<Trainer> expectedTrainers = buildExpectedTrainers();
+        Trainer arnoldTrainer = buildArnoldTrainer();
 
-        repository.updateTraineeTrainers(username, newTrainerIds);
+        repository.updateTraineeTrainersById(username, newTrainerIds);
 
-        Optional<Trainee> updatedOpt = entityManager
+        Optional<Trainee> updated = entityManager
                 .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
                 .setParameter("username", username)
                 .getResultStream()
                 .findFirst();
+        assertTrue(updated.isPresent());
+        Set<Trainer> actualTrainers = updated.get().getTrainers();
 
-        assertTrue(updatedOpt.isPresent());
-        Trainee updated = updatedOpt.get();
+        assertEquals(2, actualTrainers.size());
+        assertTrue(actualTrainers.containsAll(expectedTrainers));
+        assertFalse(actualTrainers.contains(arnoldTrainer));
+    }
 
-        assertEquals(2, updated.getTrainers().size());
-        assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 1L));
-        assertTrue(updated.getTrainers().stream().anyMatch(t -> t.getId() == 2L));
+    @Test
+    @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
+    void shouldUpdateTraineeTrainersByUsername() {
+        String username = "olga.ivanova";
+        List<String> newTrainerUsernames = List.of("john.doe", "mike.tyson");
+        Set<Trainer> expectedTrainers = buildExpectedTrainers();
+        Trainer arnoldTrainer = buildArnoldTrainer();
+
+        repository.updateTraineeTrainersByUsername(username, newTrainerUsernames);
+
+        Optional<Trainee> updated = entityManager
+                .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst();
+        assertTrue(updated.isPresent());
+        Set<Trainer> actualTrainers = updated.get().getTrainers();
+
+        assertEquals(2, actualTrainers.size());
+        assertTrue(actualTrainers.containsAll(expectedTrainers));
+        assertFalse(actualTrainers.contains(arnoldTrainer));
     }
 
     private static Stream<Arguments> provideTraineesForIdTest() {
@@ -197,7 +211,6 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
 
     private static Trainee constructTrainee() {
         int id = new Random().nextInt(200);
-
         User user = User.builder()
                 .firstName("Trainee" + id)
                 .lastName("Test")
@@ -210,6 +223,41 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
                 .dateOfBirth(LocalDate.of(1990 + id, 1, 13))
                 .address("Test address " + id)
                 .user(user)
+                .build();
+    }
+
+    private Set<Trainer> buildExpectedTrainers() {
+        Set<Trainer> trainers = new HashSet<>();
+        trainers.add(buildTrainer(1L, "John", "Doe", "john.doe", 1L, "Cardio"));
+        trainers.add(buildTrainer(2L, "Mike", "Tyson", "mike.tyson", 2L, "Crossfit"));
+
+        return trainers;
+    }
+
+    private Trainer buildArnoldTrainer() {
+        return buildTrainer(6L, "Arnold", "Schwarzenegger", "arnold.schwarzenegger", 6L, "Bodybuilding");
+    }
+
+    private Trainer buildTrainer(Long trainerId,
+                                 String firstName,
+                                 String lastName,
+                                 String username,
+                                 Long specializationId,
+                                 String specializationName) {
+        return Trainer.builder()
+                .id(trainerId)
+                .user(User.builder()
+                        .id(trainerId)
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .username(username)
+                        .password("123")
+                        .isActive(true)
+                        .build())
+                .specialization(TrainingType.builder()
+                        .id(specializationId)
+                        .trainingTypeName(specializationName)
+                        .build())
                 .build();
     }
 }
