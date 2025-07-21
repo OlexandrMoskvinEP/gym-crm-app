@@ -4,6 +4,7 @@ import com.gym.crm.app.api.TrainersApi;
 import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
+import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -52,9 +54,16 @@ public class TrainerController implements TrainersApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<TrainerTrainingGetResponse> getTrainerTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeName) {
-        return TrainersApi.super.getTrainerTrainings(username, fromDate, toDate, traineeName);
+    @GetMapping("/{username}/trainings")
+    public ResponseEntity<TrainerTrainingGetResponse> getTrainerTrainings(@PathVariable("username") String username,
+                                                                          @RequestParam(required = false) LocalDate fromDate,
+                                                                          @RequestParam(required = false) LocalDate toDate,
+                                                                          @RequestParam(required = false) String traineeName) {
+        TrainerTrainingSearchFilter filter = buildTrainerTrainingSearchFilter(fromDate, toDate, traineeName, username);
+
+        TrainerTrainingGetResponse response = facade.getTrainerTrainingsByFilter(filter);
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -62,5 +71,12 @@ public class TrainerController implements TrainersApi {
         return TrainersApi.super.changeTrainerActivationStatus(username, activationStatusRequest);
     }
 
-
+    private @Valid TrainerTrainingSearchFilter buildTrainerTrainingSearchFilter(LocalDate fromDate, LocalDate toDate, String traineeName, String username) {
+        return TrainerTrainingSearchFilter.builder()
+                .username(username)
+                .traineeFullName(traineeName)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .build();
+    }
 }

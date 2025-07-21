@@ -25,7 +25,9 @@ import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.Trainer;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
+import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
+import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -146,10 +148,16 @@ public class GymFacade {
         traineeService.deleteTraineeByUsername(username);
     }
 
-    public List<TrainingDto> getTrainerTrainingsByFilter(@Valid TrainerTrainingSearchFilter criteria, UserCredentialsDto userCredentials) {
-        authService.authenticate(userCredentials);
+    public TrainerTrainingGetResponse getTrainerTrainingsByFilter(@Valid TrainerTrainingSearchFilter criteria) {
+        authService.authenticate(getCurrentCredentials());
 
-        return trainingService.getTrainerTrainingsByFilter(criteria);
+        List<TrainingDto> trainings = trainingService.getTrainerTrainingsByFilter(criteria);
+
+        List<TrainingWithTraineeName>trainingWithTraineeNames = trainings.stream()
+                .map(this::buildTrainingWithTraineeName)
+                .toList();
+
+        return new TrainerTrainingGetResponse(trainingWithTraineeNames);
     }
 
     public TraineeTrainingGetResponse getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
@@ -158,7 +166,7 @@ public class GymFacade {
         List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
 
         List<TrainingWithTrainerName> trainingWithTrainerNames = trainings.stream()
-                .map(this::buildTrainingWithName)
+                .map(this::buildTrainingWithTrainerName)
                 .toList();
 
         return new TraineeTrainingGetResponse(trainingWithTrainerNames);
@@ -208,7 +216,7 @@ public class GymFacade {
                 currentUserHolder.get());
     }
 
-    private TrainingWithTrainerName buildTrainingWithName(TrainingDto trainingDto) {
+    private TrainingWithTrainerName buildTrainingWithTrainerName(TrainingDto trainingDto) {
         String trainerName = trainerService.getTrainerNameById(trainingDto.getTrainerId());
 
         TrainingWithTrainerName trainingWithTrainerName = new TrainingWithTrainerName();
@@ -221,4 +229,19 @@ public class GymFacade {
 
         return trainingWithTrainerName;
     }
+
+    private TrainingWithTraineeName buildTrainingWithTraineeName(TrainingDto trainingDto) {
+        String traineeName = traineeService.getTraineeNameById(trainingDto.getTrainerId());
+
+        TrainingWithTraineeName trainingWithTraineeName = new TrainingWithTraineeName();
+
+        trainingWithTraineeName.setTraineeName(traineeName);
+        trainingWithTraineeName.setTrainingName(trainingDto.getTrainingName());
+        trainingWithTraineeName.setTrainingDate(trainingDto.getTrainingDate());
+        trainingWithTraineeName.setTrainingType(trainingDto.getTrainingType().getTrainingTypeName());
+        trainingWithTraineeName.setTrainingDuration(trainingDto.getTrainingDuration().intValue());
+
+        return trainingWithTraineeName;
+    }
+
 }

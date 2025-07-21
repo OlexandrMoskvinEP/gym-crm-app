@@ -25,7 +25,9 @@ import com.gym.crm.app.rest.TraineeTrainingGetResponse;
 import com.gym.crm.app.rest.TraineeUpdateResponse;
 import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
+import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
+import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
@@ -338,12 +340,21 @@ class GymFacadeTest {
         TrainerTrainingSearchFilter searchFilter = TrainerTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
+
+        TrainingWithTraineeName expected = new TrainingWithTraineeName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTraineeName("anna.smith");
+
         when(trainingService.getTrainerTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
+        when(traineeService.getTraineeNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
 
-        List<TrainingDto> actual = facade.getTrainerTrainingsByFilter(searchFilter, USER_CREDENTIALS);
+        TrainerTrainingGetResponse actual =  facade.getTrainerTrainingsByFilter(searchFilter);
 
-        assertEquals(1, actual.size());
-        assertEquals(TRAINING_DTO, actual.iterator().next());
+        assertEquals(1, actual.getTrainings().size());
+        assertEquals(expected, actual.getTrainings().get(0));
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
         verify(authService).authenticate(USER_CREDENTIALS);
     }

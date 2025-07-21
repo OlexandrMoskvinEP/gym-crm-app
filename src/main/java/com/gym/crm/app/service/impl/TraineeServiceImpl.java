@@ -132,6 +132,13 @@ public class TraineeServiceImpl implements TraineeService {
        return repository.updateTraineeTrainersByUsername(username, usernames);
     }
 
+    @Override
+    public String getTraineeNameById(Long id) {
+        Trainee trainee = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trainee not found"));
+
+        return trainee.getUser().getFirstName() + " " + trainee.getUser().getLastName();
+    }
+
     private Trainee mapTraineeWithUser(TraineeCreateRequest createRequest, String username, String password) {
         User user = User.builder()
                 .username(username)
