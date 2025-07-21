@@ -13,6 +13,7 @@ import com.gym.crm.app.rest.TrainerUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,9 +67,12 @@ public class TrainerController implements TrainersApi {
         return ResponseEntity.ok(response);
     }
 
-    @Override
-    public ResponseEntity<Void> changeTrainerActivationStatus(String username, ActivationStatusRequest activationStatusRequest) {
-        return TrainersApi.super.changeTrainerActivationStatus(username, activationStatusRequest);
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> changeTrainerActivationStatus(@PathVariable("username") String username,
+                                                              @RequestParam ActivationStatusRequest activationStatusRequest) {
+        facade.switchActivationStatus(username);
+
+        return ResponseEntity.ok().build();
     }
 
     private @Valid TrainerTrainingSearchFilter buildTrainerTrainingSearchFilter(LocalDate fromDate, LocalDate toDate, String traineeName, String username) {
