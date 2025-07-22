@@ -427,7 +427,7 @@ paths:
           content:
             application/json:
               schema:
-               $ref: '#/components/schemas/AvailableTrainerGetResponse'
+                $ref: '#/components/schemas/AvailableTrainerGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -470,7 +470,7 @@ paths:
           content:
             application/json:
               schema:
-               $ref: '#/components/schemas/TraineeAssignedTrainersUpdateResponse'
+                $ref: '#/components/schemas/TraineeAssignedTrainersUpdateResponse'
         '400':
           description: Invalid input data or trainer not found
           content:
@@ -560,7 +560,7 @@ paths:
           content:
             application/json:
               schema:
-               $ref: '#/components/schemas/TraineeTrainingGetResponse'
+                $ref: '#/components/schemas/TraineeTrainingGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -639,9 +639,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TrainerTrainingGetResponse'
+                $ref: '#/components/schemas/TrainerTrainingGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -884,18 +882,18 @@ components:
           items:
             type: string
             pattern: '^[a-zA-Z]+\.[a-zA-Z]+(\d+)?$'
-          example: ["chris.tenet"]
+          example: [ "chris.tenet" ]
           minItems: 1
     TraineeAssignedTrainersUpdateResponse:
-        type: object
-        description: Response with updated trainee`s trainers
-        properties:
-          trainers:
-            type: array
-            items:
-              $ref: '#/components/schemas/Trainer'
-        required:
-          - trainers
+      type: object
+      description: Response with updated trainee`s trainers
+      properties:
+        trainers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trainer'
+      required:
+        - trainers
     TrainerKeys:
       allOf:
         - $ref: '#/components/schemas/User'
@@ -1080,6 +1078,21 @@ components:
               type: string
               description: Name of the trainer
     TrainerTrainingGetResponse:
+      type: object
+      properties:
+        trainings:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingWithTraineeName'
+      required:
+        - trainings
+      example:
+        trainingName: "Strength Training"
+        trainingDate: "2025-07-14"
+        trainingDuration: 90
+        trainingType: "Stretching"
+        traineeName: "Kevin"
+    TrainingWithTraineeName:
       allOf:
         - $ref: '#/components/schemas/Training'
         - type: object
@@ -1089,12 +1102,6 @@ components:
             traineeName:
               type: string
               description: Name of the trainee
-      example:
-        trainingName: "Strength Training"
-        trainingDate: "2025-07-14"
-        trainingDuration: 90
-        trainingType: "Stretching"
-        traineeName: "Kevin"
     TrainingTypeGetResponse:
       type: object
       required:
@@ -1168,4 +1175,4 @@ components:
       description: Basic authentication using username and password
 
 security:
-  - basicAuth: []
+  - basicAuth: [ ]

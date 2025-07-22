@@ -17,7 +17,7 @@ import lombok.ToString;
 @Table(name = "training_types")
 @Getter
 @ToString
-@Builder
+@Builder(toBuilder = true)
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(force = true)

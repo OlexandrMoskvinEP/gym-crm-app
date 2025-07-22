@@ -1,6 +1,6 @@
 package com.gym.crm.app.domain.dto.trainer;
 
-import com.gym.crm.app.domain.dto.user.UserCreateRequest;
+import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.TrainingType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class TrainerUpdateRequest {
     @NotNull(message = "User cannot be null")
-    private UserCreateRequest user;
+    private UserUpdateRequest user;
 
     @NotNull(message = "Specialization cannot be null")
     private TrainingType specialization;

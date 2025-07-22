@@ -5,11 +5,13 @@ import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
+import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TrainerServiceImpl;
@@ -55,6 +57,8 @@ class TrainerServiceImplTest {
     private PasswordService passwordService;
     @Mock
     private UserProfileService userProfileService;
+    @Mock
+    private TraineeService traineeService;
 
     @InjectMocks
     private TrainerServiceImpl trainerService;
@@ -176,7 +180,7 @@ class TrainerServiceImplTest {
     }
 
     private TrainerUpdateRequest buildUpdateRequest(Trainer trainer) {
-        UserCreateRequest user = UserCreateRequest.builder()
+        UserUpdateRequest user = UserUpdateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
                 .isActive(trainer.getUser().isActive())
