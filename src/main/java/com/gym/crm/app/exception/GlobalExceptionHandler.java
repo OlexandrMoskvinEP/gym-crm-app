@@ -5,9 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
@@ -68,5 +70,35 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.REGISTRATION_CONFLICT;
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(errorCode));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleUnhandledExceptions(Exception exception) {
+        log.error("Unhandled Exception: {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.SERVER_ERROR;
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(errorCode));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJson(HttpMessageNotReadableException exception) {
+        log.warn("Invalid JSON: {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        String message = String.format("Invalid value for parameter '%s': expected %s",
+                exception.getName(), exception.getRequiredType().getSimpleName());
+
+        log.warn("Type mismatch: {}", message, exception);
+
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
     }
 }

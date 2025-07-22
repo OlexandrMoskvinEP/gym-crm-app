@@ -15,8 +15,6 @@ public enum ErrorCode {
     UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted",HttpStatus.CONFLICT),
     REGISTRATION_CONFLICT(2911, "Username already exists", HttpStatus.CONFLICT);
 
-
-
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
