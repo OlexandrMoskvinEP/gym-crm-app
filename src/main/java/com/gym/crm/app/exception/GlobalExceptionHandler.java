@@ -54,10 +54,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnacceptableOperationException.class)
     public ResponseEntity<ErrorResponse> handleUnacceptable(UnacceptableOperationException exception) {
-        log.error("Unacceptable exception occurred", exception);
+        log.error("Unacceptable exception occurred - {} ", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.UNACCEPTABLE_OPERATION;
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse(errorCode));
+    }
+
+    @ExceptionHandler(RegistrationConflictException.class)
+    public ResponseEntity<ErrorResponse> handleRegistrationConflict(RegistrationConflictException exception) {
+        log.error("Registration conflict exception occurred - {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.REGISTRATION_CONFLICT;
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(errorCode));
     }
 }
