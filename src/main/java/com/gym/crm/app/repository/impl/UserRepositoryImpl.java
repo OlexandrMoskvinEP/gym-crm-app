@@ -2,7 +2,7 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseException;
 import com.gym.crm.app.repository.UserRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.query.Query;
@@ -90,7 +90,7 @@ public class UserRepositoryImpl implements UserRepository {
             int updatedRows = query.executeUpdate();
 
             if (updatedRows == 0) {
-                throw new EntityNotFoundException("User not found: " + username);
+                throw new DataBaseException("User not found: " + username);
             }
         });
     }
@@ -107,7 +107,7 @@ public class UserRepositoryImpl implements UserRepository {
                     .getSingleResult();
 
             if (isActive == null) {
-                throw new EntityNotFoundException("User not found: " + username);
+                throw new DataBaseException("User not found: " + username);
             }
 
             Query<?> query = (Query<?>) session.createQuery("""
@@ -119,7 +119,7 @@ public class UserRepositoryImpl implements UserRepository {
             int updatedRows = query.executeUpdate();
 
             if (updatedRows == 0) {
-                throw new EntityNotFoundException("User not found: " + username);
+                throw new DataBaseException("User not found: " + username);
             }
         });
     }

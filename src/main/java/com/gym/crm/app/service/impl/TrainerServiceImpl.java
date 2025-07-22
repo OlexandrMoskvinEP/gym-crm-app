@@ -5,7 +5,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.service.TraineeService;
@@ -67,7 +67,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerDto getTrainerByUsername(String username) {
         Trainer trainer = repository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+                .orElseThrow(() -> new DataBaseException(String.format("Trainer with username %s not found", username)));
 
         return modelMapper.map(trainer, TrainerDto.class);
     }
@@ -87,25 +87,27 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer returned = repository.save(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
+
         return getTrainerDtoFromEntity(returned);
     }
 
     @Override
     public TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest) {
         Trainer existTrainer = repository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+                .orElseThrow(() -> new DataBaseException(String.format("Trainer with username %s not found", username)));
 
         Trainer entityToUpdate = mapUpdatedTrainerWithUser(updateRequest, existTrainer);
 
         repository.save(entityToUpdate);
 
         logger.info("Trainer {} updated", username);
+
         return modelMapper.map(repository.findByUsername(username), TrainerDto.class);
     }
 
     @Override
     public String getTrainerNameById(Long id) {
-        Trainer trainer = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
+        Trainer trainer = repository.findById(id).orElseThrow(() -> new DataBaseException(String.format("Trainer with id %s not found", id)));
 
         return trainer.getUser().getFirstName() + " " + trainer.getUser().getLastName();
     }
@@ -113,7 +115,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public void deleteTrainerByUsername(String username) {
         if (repository.findByUsername(username).isEmpty()) {
-            throw new EntityNotFoundException("Trainer not found!");
+            throw new DataBaseException(String.format("Trainer with username %s not found", username));
         }
 
         repository.deleteByUsername(username);

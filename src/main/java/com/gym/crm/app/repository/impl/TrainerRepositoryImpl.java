@@ -2,7 +2,7 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseException;
 import com.gym.crm.app.repository.TrainerRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                     .setParameter("id", id)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new EntityNotFoundException("Cant deleteById trainer with id - " + id));
+                            () -> new DataBaseException("Cant deleteById trainer with id - " + id));
 
             Trainer managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
 
@@ -103,7 +103,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                     .setParameter("username", username)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new EntityNotFoundException("Cant deleteById trainer with username - " + username));
+                            () -> new DataBaseException("Cant deleteById trainer with username - " + username));
 
             Trainer managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
 

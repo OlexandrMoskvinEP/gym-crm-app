@@ -9,7 +9,7 @@ import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseException;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -163,7 +163,7 @@ class TrainerServiceImplTest {
     void shouldThrowExceptionWhenCantDeleteTrainerByUsername() {
         when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
+        assertThrows(DataBaseException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
     }
 
     private TrainerCreateRequest buildCreateRequest(Trainer trainer) {

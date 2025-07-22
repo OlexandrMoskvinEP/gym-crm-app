@@ -4,7 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseException;
 import com.gym.crm.app.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -118,7 +118,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
 
         Optional<Trainer> found = repository.findById(1L);
         assertFalse(found.isPresent());
-        assertThrows(EntityNotFoundException.class, () -> repository.deleteById(1L));
+        assertThrows(DataBaseException.class, () -> repository.deleteById(1L));
     }
 
     @Test
