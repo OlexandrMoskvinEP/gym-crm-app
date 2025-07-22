@@ -1,6 +1,5 @@
 package com.gym.crm.app.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -12,7 +11,9 @@ public enum ErrorCode {
     AUTHORIZATION_ERROR(2806, "Access denied", HttpStatus.FORBIDDEN),
     NOT_FOUND_ERROR(2835, "Resource not found", HttpStatus.NOT_FOUND),
     DATABASE_ERROR(3358, "Unexpected database failure", HttpStatus.INTERNAL_SERVER_ERROR),
-    SERVER_ERROR(3200, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+    SERVER_ERROR(3200, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted",HttpStatus.CONFLICT);
+
 
     private final int code;
     private final String message;
