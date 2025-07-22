@@ -2,6 +2,7 @@ package com.gym.crm.app.security;
 
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationException;
 import com.gym.crm.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,10 @@ public class AuthenticationService {
         String rawPassword = credentials.getPassword();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new SecurityException("User with such username does not exist"));
+                .orElseThrow(() -> new AuthentificationException("User with such username does not exist"));
 
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new SecurityException("User cannot be authenticated - invalid credentials");
+            throw new AuthentificationException("User cannot be authenticated - invalid credentials");
         }
 
         log.info("User [{}] authenticated successfully", username);
