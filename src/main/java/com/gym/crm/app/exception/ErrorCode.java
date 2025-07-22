@@ -12,7 +12,7 @@ public enum ErrorCode {
     NOT_FOUND_ERROR(2835, "Resource not found", HttpStatus.NOT_FOUND),
     DATABASE_ERROR(3358, "Unexpected database failure", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVER_ERROR(3200, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
-    UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted",HttpStatus.CONFLICT),
+    UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted", HttpStatus.CONFLICT),
     REGISTRATION_CONFLICT(2911, "Username already exists", HttpStatus.CONFLICT);
 
     private final int code;

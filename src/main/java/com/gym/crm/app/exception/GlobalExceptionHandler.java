@@ -101,4 +101,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
     }
+
+    @ExceptionHandler(AuthentificationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentificationException(AuthentificationException exception) {
+        log.error("Authentification exception occurred : {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.AUTHENTICATION_ERROR;
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errorCode));
+    }
+
+    @ExceptionHandler(AuthorisationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorisationException(AuthorisationException exception) {
+        log.error("Authorisation exception occurred : {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.AUTHORIZATION_ERROR;
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errorCode));
+    }
 }
