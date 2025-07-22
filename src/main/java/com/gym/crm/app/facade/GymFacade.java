@@ -8,7 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
-import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
+import com.gym.crm.app.security.model.UserCredentialsDto;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.TrainingMapper;
@@ -212,8 +212,7 @@ public class GymFacade {
     }
 
     private UserCredentialsDto getCurrentCredentials() {
-        return userMapper.toCredentialsDto(
-                currentUserHolder.get());
+        return userMapper.toCredentialsDto(currentUserHolder.get());
     }
 
     private TrainingWithTrainerName buildTrainingWithTrainerName(TrainingDto trainingDto) {

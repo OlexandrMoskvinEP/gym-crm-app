@@ -1,21 +1,20 @@
 package com.gym.crm.app.security;
 
-import com.gym.crm.app.domain.model.User;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import com.gym.crm.app.security.model.AuthenticatedUser;
+import com.gym.crm.app.exception.AuthentificationException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CurrentUserHolder {
-    private User currentUser;
+    private AuthenticatedUser currentUser;
 
-    public void set(User user) {
+    public void set(AuthenticatedUser user) {
         this.currentUser = user;
     }
 
-    public User get() {
+    public AuthenticatedUser get() {
         if (currentUser == null) {
-            throw new AuthenticationServiceException("No user is currently authenticated");
+            throw new AuthentificationException("No user is currently authenticated");
         }
         return currentUser;
     }

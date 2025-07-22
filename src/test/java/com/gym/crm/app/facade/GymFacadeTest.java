@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
-import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
@@ -31,6 +30,9 @@ import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
+import com.gym.crm.app.security.UserRole;
+import com.gym.crm.app.security.model.AuthenticatedUser;
+import com.gym.crm.app.security.model.UserCredentialsDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -71,6 +73,7 @@ class GymFacadeTest {
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
     private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
     private static final User SIMPLE_USER = buildSimpleUser();
+    private static final AuthenticatedUser SIMPLE_AUTH_USER = buildAuthUser();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
     private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = buildTrainerCreateResponse();
@@ -107,8 +110,8 @@ class GymFacadeTest {
 
     @BeforeEach
     void setup() {
-        UserCredentialsDto mockUser = new UserCredentialsDto("kevin.jackson", "password123");
-        currentUserHolder.set(SIMPLE_USER);
+        UserCredentialsDto mockUser = new UserCredentialsDto("kevin.jackson", "password123", "ADMIN");
+        currentUserHolder.set(SIMPLE_AUTH_USER);
     }
 
     @Test
@@ -308,6 +311,7 @@ class GymFacadeTest {
         return UserCredentialsDto.builder()
                 .username("username")
                 .password("password")
+                .role("ADMIN")
                 .build();
     }
 
@@ -443,5 +447,14 @@ class GymFacadeTest {
         List<String> list = List.of("username");
 
         return new TraineeAssignedTrainersUpdateRequest(list);
+    }
+
+    private static AuthenticatedUser buildAuthUser() {
+        return AuthenticatedUser.builder()
+                .userId(GymFacadeTest.SIMPLE_USER.getId())
+                .username(GymFacadeTest.SIMPLE_USER.getUsername())
+                .password(GymFacadeTest.SIMPLE_USER.getPassword())
+                .isActive(GymFacadeTest.SIMPLE_USER.isActive())
+                .role(UserRole.valueOf("ADMIN")).build();
     }
 }

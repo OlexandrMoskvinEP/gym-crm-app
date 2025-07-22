@@ -4,9 +4,12 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationException;
+import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.UserRepository;
+import com.gym.crm.app.security.model.AuthenticatedUser;
+import com.gym.crm.app.security.model.UserCredentialsDto;
 import lombok.Getter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ch.qos.logback.classic.Level.INFO;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,10 +35,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
     private static final String USERNAME = "maximus.cena";
-
     private static final String PLAIN_PASSWORD = "PASSWORD123";
     private static final String INVALID_PASSWORD = "PASSWORD321";
     private static final String ENCODED_PASSWORD = "gfjSl34so$#1";
+    private static final String USER_ROLE = UserRole.ADMIN.name();
 
     @Mock
     private UserRepository userRepository;
@@ -44,58 +46,60 @@ class AuthenticationServiceTest {
     private CurrentUserHolder currentUserHolder;
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    @Mock
+    private UserMapper userMapper;
     @InjectMocks
     private AuthenticationService service;
 
     @Test
     @DisplayName("should successfully authenticate user if credentials are correct")
     void shouldSuccessfullyAuthenticateUserIfCredentialsAreCorrect() {
-        User user = buildUserWithPassword(ENCODED_PASSWORD);
-        UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD);
+        User user = buildUserWithPassword();
+        UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
+        AuthenticatedUser authenticatedUser = buildAuthenticatedUser(user);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+        when(userMapper.toAuthenticatedUser(user)).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> service.authenticate(correctCredentials));
-
-        verify(currentUserHolder).set(user);
+        verify(currentUserHolder).set(authenticatedUser);
     }
 
     @Test
     @DisplayName("should throw exception if password is wrong")
     void shouldThrowExceptionIfPasswordIsWrong() {
-        User user = buildUserWithPassword(ENCODED_PASSWORD);
-        UserCredentialsDto wrongCredentials = new UserCredentialsDto(USERNAME, INVALID_PASSWORD);
+        User user = buildUserWithPassword();
+        UserCredentialsDto wrongCredentials = new UserCredentialsDto(USERNAME, INVALID_PASSWORD, USER_ROLE);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        SecurityException ex = assertThrows(SecurityException.class, () -> service.authenticate(wrongCredentials));
+        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authenticate(wrongCredentials));
 
-        assertEquals("User cannot be authenticated - invalid credentials", ex.getMessage());
+        assertEquals("User cannot be authenticated - invalid credentials", exception.getMessage());
         verifyNoInteractions(currentUserHolder);
     }
 
     @Test
     @DisplayName("should throw exception if user is not found for provided username")
     void shouldThrowExceptionIfUserIsNotFoundForProvidedUsername() {
-        User user = buildUserWithPassword(ENCODED_PASSWORD);
-        UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD);
+        UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 
-        SecurityException ex = assertThrows(SecurityException.class, () -> service.authenticate(userCredentials));
+        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authenticate(userCredentials));
 
-        assertEquals("User with such username does not exist", ex.getMessage());
+        assertEquals("User with such username does not exist", exception.getMessage());
         verifyNoInteractions(currentUserHolder);
     }
 
     @Test
     @DisplayName("should log if user was successfully authenticated")
     void shouldLogIfUserWasSuccessfullyAuthenticated() {
-        User user = buildUserWithPassword(ENCODED_PASSWORD);
-        UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD);
+        User user = buildUserWithPassword();
+        AuthenticatedUser authenticatedUser = buildAuthenticatedUser(user);
+        UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
         Logger logger = (Logger) LoggerFactory.getLogger(AuthenticationService.class);
         InMemoryLogAppender appender = new InMemoryLogAppender();
@@ -105,21 +109,23 @@ class AuthenticationServiceTest {
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+        when(userMapper.toAuthenticatedUser(user)).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> service.authenticate(correctCredentials));
 
         Optional<ILoggingEvent> actualEvent = appender.getLogs().stream().findFirst();
+
         assertTrue(actualEvent.isPresent());
         assertTrue(actualEvent.get().getFormattedMessage()
                 .contains("User [maximus.cena] authenticated successfully"));
-        assertEquals(INFO, actualEvent.get().getLevel());
-        verify(currentUserHolder).set(user);
+        assertEquals("INFO", actualEvent.get().getLevel().toString());
+        verify(currentUserHolder).set(authenticatedUser);
     }
 
-    private User buildUserWithPassword(String password) {
+    private User buildUserWithPassword() {
         return User.builder()
                 .username(USERNAME)
-                .password(password)
+                .password(AuthenticationServiceTest.ENCODED_PASSWORD)
                 .build();
     }
 
@@ -132,5 +138,14 @@ class AuthenticationServiceTest {
             logs.add(eventObject);
         }
 
+    }
+
+    private AuthenticatedUser buildAuthenticatedUser(User user) {
+        return AuthenticatedUser.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .isActive(user.isActive())
+                .role(UserRole.valueOf(USER_ROLE)).build();
     }
 }
