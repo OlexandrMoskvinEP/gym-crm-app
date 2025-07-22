@@ -351,7 +351,7 @@ class GymFacadeTest {
         when(trainingService.getTrainerTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
         when(traineeService.getTraineeNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
 
-        TrainerTrainingGetResponse actual =  facade.getTrainerTrainingsByFilter(searchFilter);
+        TrainerTrainingGetResponse actual = facade.getTrainerTrainingsByFilter(searchFilter);
 
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
@@ -434,7 +434,6 @@ class GymFacadeTest {
                 .isActive(TRAINER_DTO.isActive())
                 .username(TRAINER_DTO.getUsername());
     }
-
 
     private static User buildSimpleUser() {
         return User.builder().username("username").password("password").build();
