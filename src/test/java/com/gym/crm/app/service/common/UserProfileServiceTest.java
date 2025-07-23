@@ -11,8 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,6 +31,8 @@ class UserProfileServiceTest {
     TrainerRepository trainerRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private UserProfileService service;
 
@@ -52,19 +56,22 @@ class UserProfileServiceTest {
     }
 
     @Test
-    void changePassword() {
+    void shouldSuccessfullyChangePassword() {
         doNothing().when(userRepository).updatePassword(anyString(), anyString());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(User.builder().password("111").build()));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(passwordEncoder.encode(anyString())).thenReturn("qwerty321");
 
-        userRepository.updatePassword("username", "qwerty321");
+        service.changePassword("username", "111", "qwerty321");
 
         verify(userRepository).updatePassword("username", "qwerty321");
     }
 
     @Test
-    void switchActivationStatus() {
+    void shouldSuccessfullySwitchUserStatus() {
         doNothing().when(userRepository).changeStatus(anyString());
 
-        userRepository.changeStatus("username");
+        service.switchActivationStatus("username");
 
         verify(userRepository).changeStatus("username");
     }

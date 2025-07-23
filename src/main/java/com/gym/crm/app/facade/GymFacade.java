@@ -15,6 +15,7 @@ import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateResponse;
 import com.gym.crm.app.rest.TraineeCreateResponse;
@@ -209,10 +210,10 @@ public class GymFacade {
         userProfileService.switchActivationStatus(username);
     }
 
-    public void changePassword(String username, String password, UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN, TRAINER, TRAINEE);
+    public void changePassword(ChangePasswordRequest request) {
+        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
-        userProfileService.changePassword(username, password);
+        userProfileService.changePassword(request.getUsername(), request.getOldPassword(), request.getNewPassword());
     }
 
     private UserCredentialsDto getCurrentCredentials() {

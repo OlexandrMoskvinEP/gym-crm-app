@@ -17,6 +17,7 @@ import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
@@ -272,9 +273,9 @@ class GymFacadeTest {
         String username = "username";
         String password = "password";
 
-        facade.changePassword(username, password, USER_CREDENTIALS);
+        facade.changePassword(new ChangePasswordRequest(username, "", password));
 
-        verify(userProfileService).changePassword(username, password);
+        verify(userProfileService).changePassword(username, "", password);
     }
 
     @Test

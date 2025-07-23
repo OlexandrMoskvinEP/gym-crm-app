@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,8 +39,10 @@ public class AuthenticateController implements LoginApi, ChangePasswordApi {
         return ResponseEntity.ok().build();
     }
 
-    @Override
-    public ResponseEntity<Void> changePassword(ChangePasswordRequest changePasswordRequest) {
-        return ChangePasswordApi.super.changePassword(changePasswordRequest);
+    @PutMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        facade.changePassword(changePasswordRequest);
+
+        return ResponseEntity.ok().build();
     }
 }
