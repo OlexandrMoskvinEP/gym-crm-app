@@ -1,16 +1,16 @@
 package com.gym.crm.app.security;
 
+import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
+import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
-import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.AuthentificationErrorException;
-import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,10 +31,10 @@ public class AuthenticationService {
 
     public void login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new AuthentificationErrorException("Invalid username or password"));
+                .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new AuthentificationErrorException("Invalid username or password");
+            throw new AuthentificationErrorException("Invalid password");
         }
 
         UserRole role = defineUserRole(user);

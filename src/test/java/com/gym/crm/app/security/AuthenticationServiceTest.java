@@ -1,19 +1,18 @@
 package com.gym.crm.app.security;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
+import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
-import lombok.Getter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static com.gym.crm.app.security.UserRole.ADMIN;
@@ -31,8 +28,9 @@ import static com.gym.crm.app.security.UserRole.TRAINEE;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +40,9 @@ class AuthenticationServiceTest {
     private static final String INVALID_PASSWORD = "PASSWORD321";
     private static final String ENCODED_PASSWORD = "gfjSl34so$#1";
     private static final String USER_ROLE = ADMIN.name();
+    private static final User PLAIN_USER = buildUserWithPassword();
+    private static final LoginRequest LOGIN_REQUEST = new LoginRequest(USERNAME, PLAIN_PASSWORD);
+    private static final LoginRequest WRONG_LOGIN_REQUEST = new LoginRequest(USERNAME, INVALID_PASSWORD);
 
     @Mock
     private UserRepository userRepository;
@@ -50,13 +51,13 @@ class AuthenticationServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private UserMapper userMapper;
-    @Mock
     private TrainerRepository trainerRepository;
     @Mock
     TraineeRepository traineeRepository;
+    @Mock
+    private UserMapper userMapper;
     @InjectMocks
-    private AuthenticationService service;
+    private AuthenticationService authenticationService;
 
     @Test
     @DisplayName("should successfully allow user if credentials are correct")
@@ -70,7 +71,7 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertDoesNotThrow(() -> service.authorisationFilter(correctCredentials, TRAINEE));
+        assertDoesNotThrow(() -> authenticationService.authorisationFilter(correctCredentials, TRAINEE));
         verify(currentUserHolder).get();
     }
 
@@ -84,7 +85,7 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(AuthorizationErrorException.class, () -> service.authorisationFilter(wrongCredentials, ADMIN));
+        RuntimeException exception = assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(wrongCredentials, ADMIN));
 
         assertEquals("User cannot be authenticated - invalid password", exception.getMessage());
         verify(currentUserHolder).get();
@@ -95,7 +96,7 @@ class AuthenticationServiceTest {
     void shouldThrowExceptionIfUserIsNotFoundForProvidedUsername() {
         UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
-        RuntimeException exception = assertThrows(UnacceptableOperationException.class, () -> service.authorisationFilter(userCredentials, ADMIN));
+        RuntimeException exception = assertThrows(UnacceptableOperationException.class, () -> authenticationService.authorisationFilter(userCredentials, ADMIN));
 
         assertEquals("User cannot perform this operation on behalf of another user", exception.getMessage());
         verify(currentUserHolder).get();
@@ -113,26 +114,35 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertThrows(AuthorizationErrorException.class, () -> service.authorisationFilter(correctCredentials, ADMIN));
+        assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(correctCredentials, ADMIN));
         verify(currentUserHolder).get();
     }
 
-    private User buildUserWithPassword() {
-        return User.builder()
-                .username(USERNAME)
-                .password(AuthenticationServiceTest.ENCODED_PASSWORD)
-                .build();
+    @Test
+    void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
+        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
+        when(trainerRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
+        when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+        when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
+
+        assertDoesNotThrow(() -> authenticationService.login(LOGIN_REQUEST), "Invalid username or password");
+        verify(currentUserHolder).set(any(AuthenticatedUser.class));
     }
 
-    @Getter
-    private static class InMemoryLogAppender extends AppenderBase<ILoggingEvent> {
-        private final List<ILoggingEvent> logs = new ArrayList<>();
+    @Test
+    void shouldNotAuthoriseIfWrongCredentials() {
+        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
 
-        @Override
-        protected void append(ILoggingEvent eventObject) {
-            logs.add(eventObject);
-        }
+        assertThrows(AuthentificationErrorException.class, () -> authenticationService.login(WRONG_LOGIN_REQUEST),
+                "Invalid password");
+        verify(currentUserHolder, never()).set(any(AuthenticatedUser.class));
+    }
 
+    private static User buildUserWithPassword() {
+        return User.builder()
+                .username(USERNAME)
+                .password(ENCODED_PASSWORD)
+                .build();
     }
 
     private AuthenticatedUser buildAuthenticatedUser(User user) {
