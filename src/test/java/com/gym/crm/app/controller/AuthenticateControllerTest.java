@@ -1,0 +1,123 @@
+package com.gym.crm.app.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gym.crm.app.exception.AuthentificationErrorException;
+import com.gym.crm.app.facade.GymFacade;
+import com.gym.crm.app.rest.ChangePasswordRequest;
+import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.security.AuthenticationService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
+class AuthenticateControllerTest {
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+    private MockMvc mockMvc;
+
+    @Mock
+    AuthenticationService authenticationService;
+    @Mock
+    private GymFacade gymFacade;
+    @InjectMocks
+    private AuthenticateController authenticateController;
+
+    @BeforeEach
+    void setup() {
+        MappingJackson2HttpMessageConverter converter =
+                new MappingJackson2HttpMessageConverter(objectMapper);
+
+        mockMvc = MockMvcBuilders.standaloneSetup(authenticateController)
+                .setMessageConverters(converter)
+                .build();
+    }
+
+    @Test
+    void getRequestShouldNotBeNull() {
+        AuthenticateController controller = new AuthenticateController(gymFacade, authenticationService);
+        assertNotNull(controller.getRequest());
+    }
+
+    @Test
+    void shouldReturn2xxOnSuccessfulLogin() throws Exception {
+        LoginRequest request = getCorrectLoginRequest();
+
+        mockMvc.perform(post("/api/v1/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(authenticationService).login(request);
+    }
+
+    private static LoginRequest getCorrectLoginRequest() {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("john.smith");
+        request.setPassword("password123");
+        return request;
+    }
+
+    @Disabled("Will be enabled after global exception handler is added")
+    @Test
+    void shouldReturn4xxOnLoginFailure() throws Exception {
+        LoginRequest request = getWrongLoginRequest();
+
+        doThrow(new AuthentificationErrorException("Invalid credentials"))
+                .when(authenticationService).login(request);
+
+        mockMvc.perform(post("/api/v1/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.errorCode").value("AUTHENTICATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Invalid credentials"));
+    }
+
+    @Test
+    void shouldChangePasswordSuccessfully() throws Exception {
+        ChangePasswordRequest request = getChangePasswordRequest();
+
+        mockMvc.perform(put("/api/v1/login/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(gymFacade).changePassword(request);
+    }
+
+    private static ChangePasswordRequest getChangePasswordRequest() {
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setUsername("john.smith");
+        request.setOldPassword("oldPass123");
+        request.setNewPassword("newPass456");
+        return request;
+    }
+
+    private static LoginRequest getWrongLoginRequest() {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("john.smith");
+        request.setPassword("wrong");
+        return request;
+    }
+}
