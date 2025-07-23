@@ -50,6 +50,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.gym.crm.app.security.UserRole.ADMIN;
+import static com.gym.crm.app.security.UserRole.TRAINEE;
+import static com.gym.crm.app.security.UserRole.TRAINER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -123,7 +126,7 @@ class GymFacadeTest {
 
         assertEquals(expected, actual);
         verify(trainerService).getAllTrainers();
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -134,7 +137,7 @@ class GymFacadeTest {
 
         assertEquals(TRAINER_GET_RESPONSE, actual);
         verify(trainerService).getTrainerByUsername(USERNAME);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
 
     @Test
@@ -158,7 +161,7 @@ class GymFacadeTest {
 
         assertEquals(TRAINER_UPDATE_RESPONSE, actual);
         verify(trainerService).updateTrainerByUsername(USERNAME, updateRequest);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     @Test
@@ -168,7 +171,7 @@ class GymFacadeTest {
         facade.deleteTrainerByUsername(USERNAME, USER_CREDENTIALS);
 
         verify(trainerService).deleteTrainerByUsername(USERNAME);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     @Test
@@ -180,7 +183,7 @@ class GymFacadeTest {
 
         assertEquals(expected, actual);
         verify(traineeService).getAllTrainees();
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -214,7 +217,7 @@ class GymFacadeTest {
 
         assertEquals(TRAINEE_UPDATE_RESPONSE, actual);
         verify(traineeService).updateTraineeByUsername(USERNAME, updateRequest);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -224,7 +227,7 @@ class GymFacadeTest {
         facade.deleteTraineeByUsername(USERNAME);
 
         verify(traineeService).deleteTraineeByUsername(USERNAME);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -237,7 +240,7 @@ class GymFacadeTest {
 
         assertEquals(expected, actual);
         verify(trainingService).getAllTrainings();
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -249,7 +252,7 @@ class GymFacadeTest {
 
         assertEquals(TRAINING_DTO, actual);
         verify(trainingService).addTraining(saveRequest);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -261,7 +264,7 @@ class GymFacadeTest {
 
         assertEquals(TRAINING_DTO, actual);
         verify(trainingService).updateTraining(saveRequest);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -286,7 +289,7 @@ class GymFacadeTest {
 
         assertEquals(expected, actual);
         verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -336,7 +339,7 @@ class GymFacadeTest {
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
 
     @Test
@@ -360,7 +363,7 @@ class GymFacadeTest {
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
-        verify(authService).authorisationFilter(USER_CREDENTIALS);
+        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     private static TrainerDto buildTrainerDto() {

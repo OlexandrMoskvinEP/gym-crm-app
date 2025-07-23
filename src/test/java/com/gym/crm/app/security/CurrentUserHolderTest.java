@@ -1,11 +1,9 @@
 package com.gym.crm.app.security;
 
-import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.AuthentificationException;
+import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.AuthenticationServiceException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,7 +30,7 @@ class CurrentUserHolderTest {
 
     @Test
     void shouldThrowIfUserNotSet() {
-        assertThrows(AuthentificationException.class, holder::get);
+        assertThrows(AuthentificationErrorException.class, holder::get);
     }
 
     @Test
@@ -40,6 +38,6 @@ class CurrentUserHolderTest {
         holder.set(testUser);
         holder.clear();
 
-        assertThrows(AuthentificationException.class, holder::get);
+        assertThrows(AuthentificationErrorException.class, holder::get);
     }
 }

@@ -1,7 +1,7 @@
 package com.gym.crm.app.security;
 
 import com.gym.crm.app.security.model.AuthenticatedUser;
-import com.gym.crm.app.exception.AuthentificationException;
+import com.gym.crm.app.exception.AuthentificationErrorException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +14,7 @@ public class CurrentUserHolder {
 
     public AuthenticatedUser get() {
         if (currentUser == null) {
-            throw new AuthentificationException("No user is currently authenticated");
+            throw new AuthentificationErrorException("No user is currently authenticated");
         }
         return currentUser;
     }
