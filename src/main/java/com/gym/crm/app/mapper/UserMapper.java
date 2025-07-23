@@ -24,6 +24,7 @@ public interface UserMapper {
     @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
     UserCredentialsDto toCredentialsDto(AuthenticatedUser user);
 
+    @Mapping(source = "id", target = "userId")
     @Mapping(source = "active", target = "isActive")
     AuthenticatedUser toAuthenticatedUser(User user);
 

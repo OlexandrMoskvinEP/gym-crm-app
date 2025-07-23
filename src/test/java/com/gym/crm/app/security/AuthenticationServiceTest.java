@@ -61,9 +61,10 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(user)).thenReturn(authenticatedUser);
+        when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertDoesNotThrow(() -> service.authenticate(correctCredentials));
-        verify(currentUserHolder).set(authenticatedUser);
+        assertDoesNotThrow(() -> service.authorisationFilter(correctCredentials));
+        verify(currentUserHolder).get();
     }
 
     @Test
@@ -75,7 +76,7 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authenticate(wrongCredentials));
+        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authorisationFilter(wrongCredentials));
 
         assertEquals("User cannot be authenticated - invalid credentials", exception.getMessage());
         verifyNoInteractions(currentUserHolder);
@@ -88,7 +89,7 @@ class AuthenticationServiceTest {
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authenticate(userCredentials));
+        RuntimeException exception = assertThrows(AuthentificationException.class, () -> service.authorisationFilter(userCredentials));
 
         assertEquals("User with such username does not exist", exception.getMessage());
         verifyNoInteractions(currentUserHolder);
@@ -110,16 +111,17 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(user)).thenReturn(authenticatedUser);
+        when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertDoesNotThrow(() -> service.authenticate(correctCredentials));
+        assertDoesNotThrow(() -> service.authorisationFilter(correctCredentials));
 
         Optional<ILoggingEvent> actualEvent = appender.getLogs().stream().findFirst();
 
         assertTrue(actualEvent.isPresent());
         assertTrue(actualEvent.get().getFormattedMessage()
-                .contains("User [maximus.cena] authenticated successfully"));
+                .contains("User [maximus.cena] authorise successfully"));
         assertEquals("INFO", actualEvent.get().getLevel().toString());
-        verify(currentUserHolder).set(authenticatedUser);
+        verify(currentUserHolder).get();
     }
 
     private User buildUserWithPassword() {
