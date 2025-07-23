@@ -27,6 +27,7 @@ import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
+import com.gym.crm.app.rest.TrainingCreateRequest;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
@@ -55,8 +56,10 @@ import static com.gym.crm.app.security.UserRole.ADMIN;
 import static com.gym.crm.app.security.UserRole.TRAINEE;
 import static com.gym.crm.app.security.UserRole.TRAINER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -246,15 +249,34 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTraining() {
-        TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
-        when(trainingService.addTraining(saveRequest)).thenReturn(TRAINING_DTO);
+        TrainingCreateRequest request = new TrainingCreateRequest();
+        request.setTrainingName("Cardio");
+        request.setTrainingDate(LocalDate.of(2025, 7, 22));
+        request.setTrainingDuration(60);
+        request.setTrainingName("Stretching");
+        request.setTraineeUsername("kevin.jackson");
+        request.setTrainerUsername("chris.tenet");
 
-        TrainingDto actual = facade.addTraining(saveRequest, USER_CREDENTIALS);
+        TraineeDto trainee = new TraineeDto();
+        trainee.setUserId(1L);
 
-        assertEquals(TRAINING_DTO, actual);
-        verify(trainingService).addTraining(saveRequest);
-        verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
+        TrainerDto trainer = new TrainerDto();
+        trainer.setUserId(2L);
+
+        TrainingDto expected = new TrainingDto();
+        expected.setTrainingName("Cardio");
+
+        when(traineeService.getTraineeByUsername("kevin.jackson")).thenReturn(trainee);
+        when(trainerService.getTrainerByUsername("chris.tenet")).thenReturn(trainer);
+        when(trainingService.addTraining(any())).thenReturn(expected);
+
+        TrainingDto actual = facade.addTraining(request);
+
+        assertEquals(expected, actual);
+        verify(authService).authorisationFilter(any(), eq(UserRole.ADMIN));
+        verify(trainingService).addTraining(any(TrainingSaveRequest.class));
     }
+
 
     @Test
     void shouldUpdateTraining() {

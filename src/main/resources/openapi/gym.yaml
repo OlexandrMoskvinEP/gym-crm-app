@@ -668,7 +668,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/TrainingTypeGetResponse'
+                $ref: '#/components/schemas/TrainingTypeGetResponse'
         '500':
           description: Internal server error
           content:
@@ -1101,6 +1101,13 @@ components:
               type: string
               description: Name of the trainee
     TrainingTypeGetResponse:
+      type: object
+      properties:
+        trainingTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingTypeRestDto'
+    TrainingTypeRestDto:
       type: object
       required:
         - trainingType

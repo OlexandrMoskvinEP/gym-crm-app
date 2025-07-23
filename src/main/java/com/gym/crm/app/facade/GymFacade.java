@@ -11,6 +11,7 @@ import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.TrainingMapper;
+import com.gym.crm.app.mapper.TrainingTypeMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
@@ -27,6 +28,9 @@ import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
+import com.gym.crm.app.rest.TrainingCreateRequest;
+import com.gym.crm.app.rest.TrainingTypeGetResponse;
+import com.gym.crm.app.rest.TrainingTypeRestDto;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
@@ -41,6 +45,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.gym.crm.app.security.UserRole.ADMIN;
@@ -58,6 +63,7 @@ public class GymFacade {
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
+    private final TrainingTypeMapper trainingTypeMapper;
 
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
@@ -69,7 +75,7 @@ public class GymFacade {
                      UserProfileService userProfileService,
                      AuthenticationService authService,
                      TraineeMapper traineeMapper,
-                     TrainerMapper trainerMapper, TrainingMapper trainingMapper,
+                     TrainerMapper trainerMapper, TrainingMapper trainingMapper, TrainingTypeMapper trainingTypeMapper,
                      UserMapper userMapper, CurrentUserHolder currentUserHolder) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
@@ -79,6 +85,7 @@ public class GymFacade {
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
+        this.trainingTypeMapper = trainingTypeMapper;
         this.userMapper = userMapper;
         this.currentUserHolder = currentUserHolder;
     }
@@ -192,10 +199,27 @@ public class GymFacade {
         return trainingService.getAllTrainings();
     }
 
-    public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+    public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
+        authService.authorisationFilter(getCurrentCredentials(), ADMIN);
 
-        return trainingService.addTraining(createRequest);
+        TrainingSaveRequest saveRequest = new TrainingSaveRequest();
+        saveRequest.setTrainingName(request.getTrainingName());
+        saveRequest.setTrainingDate(request.getTrainingDate());
+        saveRequest.setTrainingDuration(BigDecimal.valueOf(request.getTrainingDuration()));
+        saveRequest.setTrainingTypeName("");
+        saveRequest.setTraineeId(traineeService.getTraineeByUsername(request.getTraineeUsername()).getUserId());
+        saveRequest.setTrainerId(trainerService.getTrainerByUsername(request.getTrainerUsername()).getUserId());
+
+        return trainingService.addTraining(saveRequest);
+    }
+
+    public TrainingTypeGetResponse getAllTrainingsTypes() {
+        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
+
+        List<TrainingTypeRestDto> trainingTypes = trainingService.getTrainingTypes().stream()
+                .map(trainingTypeMapper::toRestTrainingType).toList();
+
+        return new TrainingTypeGetResponse().trainingTypes(trainingTypes);
     }
 
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {
@@ -247,5 +271,4 @@ public class GymFacade {
 
         return trainingWithTraineeName;
     }
-
 }
