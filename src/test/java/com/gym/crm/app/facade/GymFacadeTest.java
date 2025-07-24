@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
-import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
@@ -18,6 +17,7 @@ import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
+import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
 import com.gym.crm.app.rest.TraineeCreateResponse;
 import com.gym.crm.app.rest.TraineeGetResponse;
@@ -31,10 +31,15 @@ import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.security.CurrentUserHolder;
+import com.gym.crm.app.security.UserRole;
+import com.gym.crm.app.security.model.AuthenticatedUser;
+import com.gym.crm.app.security.model.UserCredentialsDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,15 +48,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.gym.crm.app.security.UserRole.ADMIN;
+import static com.gym.crm.app.security.UserRole.TRAINEE;
+import static com.gym.crm.app.security.UserRole.TRAINER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -82,6 +93,8 @@ class GymFacadeTest {
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
 
     @Mock
+    private HttpServletRequest request;
+    @Mock
     private UserProfileService userProfileService;
     @Mock
     private TraineeService traineeService;
@@ -91,6 +104,8 @@ class GymFacadeTest {
     private TrainingService trainingService;
     @Mock
     private AuthenticationService authService;
+    @Mock
+    private HttpSession session;
     @Spy
     private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
     @Spy
@@ -99,16 +114,20 @@ class GymFacadeTest {
     private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-    @Spy
-    private CurrentUserHolder currentUserHolder;
-
     @InjectMocks
     private GymFacade facade;
 
     @BeforeEach
     void setup() {
-        UserCredentialsDto mockUser = new UserCredentialsDto("kevin.jackson", "password123");
-        currentUserHolder.set(SIMPLE_USER);
+        when(request.getSession(true)).thenReturn(session);
+
+        lenient().when(request.getSession(false)).thenReturn(session);
+        lenient().when(session.getAttribute("AUTHENTICATED_USER")).thenReturn(getAuthenticatedUser());
+
+        CurrentUserHolder currentUserHolder = spy(new CurrentUserHolder(request));
+        currentUserHolder.set(getAuthenticatedUser());
+
+        ReflectionTestUtils.setField(facade, "currentUserHolder", currentUserHolder);
     }
 
     @Test
@@ -119,8 +138,9 @@ class GymFacadeTest {
         List<TrainerDto> actual = facade.getAllTrainers(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(trainerService).getAllTrainers();
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -130,8 +150,9 @@ class GymFacadeTest {
         TrainerGetResponse actual = facade.getTrainerByUsername(USERNAME);
 
         assertEquals(TRAINER_GET_RESPONSE, actual);
+
         verify(trainerService).getTrainerByUsername(USERNAME);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
 
     @Test
@@ -142,6 +163,7 @@ class GymFacadeTest {
         TrainerCreateResponse actual = facade.addTrainer(createRequest);
 
         assertEquals(TRAINER_CREATE_RESPONSE, actual);
+
         verify(trainerService).addTrainer(createRequest);
         verifyNoInteractions(authService);
     }
@@ -154,8 +176,9 @@ class GymFacadeTest {
         TrainerUpdateResponse actual = facade.updateTrainerByUsername(USERNAME, updateRequest);
 
         assertEquals(TRAINER_UPDATE_RESPONSE, actual);
+
         verify(trainerService).updateTrainerByUsername(USERNAME, updateRequest);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     @Test
@@ -165,7 +188,7 @@ class GymFacadeTest {
         facade.deleteTrainerByUsername(USERNAME, USER_CREDENTIALS);
 
         verify(trainerService).deleteTrainerByUsername(USERNAME);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     @Test
@@ -176,8 +199,9 @@ class GymFacadeTest {
         List<TraineeDto> actual = facade.getAllTrainees(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(traineeService).getAllTrainees();
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -198,6 +222,7 @@ class GymFacadeTest {
         TraineeCreateResponse actual = facade.addTrainee(createRequest);
 
         assertEquals(TRAINEE_CREATE_RESPONSE, actual);
+
         verify(traineeService).addTrainee(createRequest);
         verifyNoInteractions(authService);
     }
@@ -210,8 +235,9 @@ class GymFacadeTest {
         TraineeUpdateResponse actual = facade.updateTraineeByUsername(USERNAME, updateRequest);
 
         assertEquals(TRAINEE_UPDATE_RESPONSE, actual);
+
         verify(traineeService).updateTraineeByUsername(USERNAME, updateRequest);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -221,7 +247,7 @@ class GymFacadeTest {
         facade.deleteTraineeByUsername(USERNAME);
 
         verify(traineeService).deleteTraineeByUsername(USERNAME);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -233,8 +259,9 @@ class GymFacadeTest {
         List<TrainingDto> actual = facade.getAllTrainings(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(trainingService).getAllTrainings();
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -245,8 +272,9 @@ class GymFacadeTest {
         TrainingDto actual = facade.addTraining(saveRequest, USER_CREDENTIALS);
 
         assertEquals(TRAINING_DTO, actual);
+
         verify(trainingService).addTraining(saveRequest);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -257,8 +285,9 @@ class GymFacadeTest {
         TrainingDto actual = facade.updateTraining(saveRequest, USER_CREDENTIALS);
 
         assertEquals(TRAINING_DTO, actual);
+
         verify(trainingService).updateTraining(saveRequest);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
     @Test
@@ -266,9 +295,9 @@ class GymFacadeTest {
         String username = "username";
         String password = "password";
 
-        facade.changePassword(username, password, USER_CREDENTIALS);
+        facade.changePassword(new ChangePasswordRequest(username, "", password));
 
-        verify(userProfileService).changePassword(username, password);
+        verify(userProfileService).changePassword(username, "", password);
     }
 
     @Test
@@ -282,8 +311,9 @@ class GymFacadeTest {
         AvailableTrainerGetResponse actual = facade.getUnassignedTrainersByTraineeUsername("username");
 
         assertEquals(expected, actual);
+
         verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
 
     @Test
@@ -308,6 +338,7 @@ class GymFacadeTest {
         return UserCredentialsDto.builder()
                 .username("username")
                 .password("password")
+                .role("ADMIN")
                 .build();
     }
 
@@ -316,13 +347,7 @@ class GymFacadeTest {
         TraineeTrainingSearchFilter searchFilter = TraineeTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
-
-        TrainingWithTrainerName expected = new TrainingWithTrainerName();
-        expected.setTrainingName(TRAINING_DTO.getTrainingName());
-        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
-        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
-        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
-        expected.setTrainerName("anna.smith");
+        TrainingWithTrainerName expected = getTrainingWithTrainerName();
 
         when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
         when(trainerService.getTrainerNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
@@ -331,8 +356,9 @@ class GymFacadeTest {
 
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
+
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
 
     @Test
@@ -340,13 +366,7 @@ class GymFacadeTest {
         TrainerTrainingSearchFilter searchFilter = TrainerTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
-
-        TrainingWithTraineeName expected = new TrainingWithTraineeName();
-        expected.setTrainingName(TRAINING_DTO.getTrainingName());
-        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
-        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
-        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
-        expected.setTraineeName("anna.smith");
+        TrainingWithTraineeName expected = getTrainingWithTraineeName();
 
         when(trainingService.getTrainerTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
         when(traineeService.getTraineeNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
@@ -355,8 +375,9 @@ class GymFacadeTest {
 
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
+
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
-        verify(authService).authenticate(USER_CREDENTIALS);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER);
     }
 
     private static TrainerDto buildTrainerDto() {
@@ -443,5 +464,45 @@ class GymFacadeTest {
         List<String> list = List.of("username");
 
         return new TraineeAssignedTrainersUpdateRequest(list);
+    }
+
+    private static AuthenticatedUser buildAuthUser() {
+        return AuthenticatedUser.builder()
+                .userId(GymFacadeTest.SIMPLE_USER.getId())
+                .username(GymFacadeTest.SIMPLE_USER.getUsername())
+                .password(GymFacadeTest.SIMPLE_USER.getPassword())
+                .isActive(GymFacadeTest.SIMPLE_USER.isActive())
+                .role(UserRole.valueOf("ADMIN")).build();
+    }
+
+    private static TrainingWithTrainerName getTrainingWithTrainerName() {
+        TrainingWithTrainerName expected = new TrainingWithTrainerName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTrainerName("anna.smith");
+
+        return expected;
+    }
+
+    private static TrainingWithTraineeName getTrainingWithTraineeName() {
+        TrainingWithTraineeName expected = new TrainingWithTraineeName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTraineeName("anna.smith");
+
+        return expected;
+    }
+
+    private AuthenticatedUser getAuthenticatedUser() {
+        return AuthenticatedUser.builder()
+                .userId(GymFacadeTest.SIMPLE_USER.getId())
+                .username("username")
+                .password("password")
+                .isActive(true)
+                .role(ADMIN).build();
     }
 }

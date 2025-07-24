@@ -1,11 +1,16 @@
 package com.gym.crm.app.service.common;
 
+import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationErrorException;
+import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +22,7 @@ public class UserProfileService {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileService.class);
 
     private final PasswordService passwordService;
-
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
@@ -41,10 +46,18 @@ public class UserProfileService {
         return username;
     }
 
-    public void changePassword(String username, String password) {
-        String encodedPassword = passwordService.encodePassword(password);
+    public void changePassword(String username, String oldPassword, @NotNull String newPassword) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        userRepository.updatePassword(username, encodedPassword);
+        String existingEncodedPassword = user.getPassword();
+
+        if (!passwordEncoder.matches(oldPassword, existingEncodedPassword)) {
+            throw new AuthentificationErrorException("Invalid old password");
+        }
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        userRepository.updatePassword(username, newEncodedPassword);
     }
 
     public void switchActivationStatus(String username) {
