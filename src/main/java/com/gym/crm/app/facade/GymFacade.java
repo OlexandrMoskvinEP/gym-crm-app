@@ -200,7 +200,7 @@ public class GymFacade {
     }
 
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN);
 
         TrainingSaveRequest saveRequest = new TrainingSaveRequest();
         saveRequest.setTrainingName(request.getTrainingName());
@@ -214,14 +214,14 @@ public class GymFacade {
     }
 
     public TrainingTypeGetResponse getAllTrainingsTypes() {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
+
+        return null;
+    }
     public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
         authService.checkUserAuthorisation(userCredentials, ADMIN);
 
-        List<TrainingTypeRestDto> trainingTypes = trainingService.getTrainingTypes().stream()
-                .map(trainingTypeMapper::toRestTrainingType).toList();
-
-        return new TrainingTypeGetResponse().trainingTypes(trainingTypes);
+        return trainingService.addTraining(createRequest);
     }
 
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {

@@ -49,6 +49,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -91,8 +92,9 @@ class GymFacadeTest {
     private static final TrainerGetResponse TRAINER_GET_RESPONSE = buildTrainerGetResponse();
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
-
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
+    private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = getTrainingCreateRequest();
+    private static final TrainingSaveRequest TRAINING_SAVE_REQUEST = getTrainingSaveRequest();
 
     @Mock
     private HttpServletRequest request;
@@ -268,36 +270,34 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTraining() {
-        TrainingCreateRequest request = new TrainingCreateRequest();
-        request.setTrainingName("Cardio");
-        request.setTrainingDate(LocalDate.of(2025, 7, 22));
-        request.setTrainingDuration(60);
-        request.setTrainingName("Stretching");
-        request.setTraineeUsername("kevin.jackson");
-        request.setTrainerUsername("chris.tenet");
-
         TraineeDto trainee = new TraineeDto();
         trainee.setUserId(1L);
 
         TrainerDto trainer = new TrainerDto();
         trainer.setUserId(2L);
 
-        assertEquals(TRAINING_DTO, actual);
-
-        verify(trainingService).addTraining(saveRequest);
-        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
         TrainingDto expected = new TrainingDto();
-        expected.setTrainingName("Cardio");
+        expected.setTrainingName("Yoga");
+        expected.setTrainerId(trainer.getUserId());
+        expected.setTraineeId(trainee.getUserId());
+        expected.setTrainingDuration(BigDecimal.valueOf(1));
+        expected.setTrainingType(TrainingType.builder().build());
+        expected.setTrainingDate(LocalDate.now());
+
 
         when(traineeService.getTraineeByUsername("kevin.jackson")).thenReturn(trainee);
         when(trainerService.getTrainerByUsername("chris.tenet")).thenReturn(trainer);
         when(trainingService.addTraining(any())).thenReturn(expected);
 
-        TrainingDto actual = facade.addTraining(request);
+        TrainingDto actual = facade.addTraining(TRAINING_CREATE_REQUEST);
 
+        assertEquals(TRAINING_DTO, actual);
         assertEquals(expected, actual);
-        verify(authService).authorisationFilter(any(), eq(UserRole.ADMIN));
+
+        verify(authService).checkUserAuthorisation(any(), eq(UserRole.ADMIN));
         verify(trainingService).addTraining(any(TrainingSaveRequest.class));
+        verify(trainingService).addTraining(TRAINING_SAVE_REQUEST);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
 
 
@@ -528,5 +528,29 @@ class GymFacadeTest {
                 .password("password")
                 .isActive(true)
                 .role(ADMIN).build();
+    }
+
+    private static TrainingSaveRequest getTrainingSaveRequest() {
+        TrainingSaveRequest saveRequest = new TrainingSaveRequest();
+        saveRequest.setTrainingName(TRAINING_CREATE_REQUEST.getTrainingName());
+        saveRequest.setTrainingDate(TRAINING_CREATE_REQUEST.getTrainingDate());
+        saveRequest.setTrainingDuration(BigDecimal.valueOf(TRAINING_CREATE_REQUEST.getTrainingDuration()));
+        saveRequest.setTrainingTypeName("");
+        saveRequest.setTraineeId(1L);
+        saveRequest.setTrainerId(2L);
+
+        return saveRequest;
+    }
+
+    private static TrainingCreateRequest getTrainingCreateRequest() {
+        TrainingCreateRequest request = new TrainingCreateRequest();
+        request.setTrainingName("Cardio");
+        request.setTrainingDate(LocalDate.of(2025, 7, 22));
+        request.setTrainingDuration(60);
+        request.setTrainingName("Stretching");
+        request.setTraineeUsername("kevin.jackson");
+        request.setTrainerUsername("chris.tenet");
+
+        return request;
     }
 }
