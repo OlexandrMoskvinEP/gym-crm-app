@@ -39,9 +39,9 @@ class TrainingControllerTest {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private static final TrainingTypeGetResponse TRAINING_TYPE_GET_RESPONSE = buildTrainingTypeGetResponse();
-    private static TrainingCreateRequest TRAINING_CREATE_REQUEST;
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
 
+    private static TrainingCreateRequest TRAINING_CREATE_REQUEST;
     private MockMvc mockMvc;
 
     @Mock

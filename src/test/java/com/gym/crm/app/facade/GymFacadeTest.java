@@ -419,7 +419,6 @@ class GymFacadeTest {
         var actual = facade.getAllTrainingsTypes();
 
         assertEquals(response.getTrainingTypes(), actual.getTrainingTypes());
-
         verify(trainingService).getTrainingTypes();
     }
 
