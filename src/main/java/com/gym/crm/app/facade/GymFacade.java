@@ -94,32 +94,32 @@ public class GymFacade {
     }
 
     public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+        authService.checkUserAuthorisation(userCredentials, ADMIN);
 
         return trainerService.getAllTrainers();
     }
 
     public List<TraineeDto> getAllTrainees(UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+        authService.checkUserAuthorisation(userCredentials, ADMIN);
 
         return traineeService.getAllTrainees();
     }
 
     public TrainerGetResponse getTrainerByUsername(String username) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         return trainerMapper.toGetResponse(trainerService.getTrainerByUsername(username));
     }
 
     public TraineeGetResponse getTraineeByUsername(String username) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         return traineeMapper.dtoToGetResponse(traineeService.getTraineeByUsername(username));
     }
 
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainersList(String username,
                                                                            TraineeAssignedTrainersUpdateRequest request) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         List<Trainer> trainers = traineeService.updateTraineeTrainersByUsername(username, request.getTrainerUsernames()).stream()
                 .map(trainerMapper::entityToRestTrainer).toList();
@@ -129,32 +129,32 @@ public class GymFacade {
 
     public TraineeUpdateResponse updateTraineeByUsername(String username,
                                                          @Valid TraineeUpdateRequest updateRequest) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
 
         return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
     public TrainerUpdateResponse updateTrainerByUsername(String username,
                                                          @Valid TrainerUpdateRequest updateRequest) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER);
 
         return trainerMapper.toUpdateResponse(trainerService.updateTrainerByUsername(username, updateRequest));
     }
 
     public void deleteTrainerByUsername(String username, UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN, TRAINER);
+        authService.checkUserAuthorisation(userCredentials, ADMIN, TRAINER);
 
         trainerService.deleteTrainerByUsername(username);
     }
 
     public void deleteTraineeByUsername(String username) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
 
         traineeService.deleteTraineeByUsername(username);
     }
 
     public TrainerTrainingGetResponse getTrainerTrainingsByFilter(@Valid TrainerTrainingSearchFilter criteria) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER);
 
         List<TrainingDto> trainings = trainingService.getTrainerTrainingsByFilter(criteria);
 
@@ -166,7 +166,7 @@ public class GymFacade {
     }
 
     public TraineeTrainingGetResponse getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
 
@@ -178,7 +178,7 @@ public class GymFacade {
     }
 
     public AvailableTrainerGetResponse getUnassignedTrainersByTraineeUsername(String username) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
 
         List<Trainer> trainers = traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
                 .map(trainerMapper::toEntity).toList();
@@ -187,31 +187,31 @@ public class GymFacade {
     }
 
     public List<TrainingDto> getAllTrainings(UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+        authService.checkUserAuthorisation(userCredentials, ADMIN);
 
         return trainingService.getAllTrainings();
     }
 
     public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+        authService.checkUserAuthorisation(userCredentials, ADMIN);
 
         return trainingService.addTraining(createRequest);
     }
 
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {
-        authService.authorisationFilter(userCredentials, ADMIN);
+        authService.checkUserAuthorisation(userCredentials, ADMIN);
 
         return trainingService.updateTraining(updateRequest);
     }
 
     public void switchActivationStatus(String username) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         userProfileService.switchActivationStatus(username);
     }
 
     public void changePassword(ChangePasswordRequest request) {
-        authService.authorisationFilter(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
 
         userProfileService.changePassword(request.getUsername(), request.getOldPassword(), request.getNewPassword());
     }

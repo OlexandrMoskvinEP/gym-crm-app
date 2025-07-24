@@ -71,7 +71,7 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertDoesNotThrow(() -> authenticationService.authorisationFilter(correctCredentials, TRAINEE));
+        assertDoesNotThrow(() -> authenticationService.checkUserAuthorisation(correctCredentials, TRAINEE));
 
         verify(currentUserHolder).get();
     }
@@ -87,7 +87,7 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
         RuntimeException exception = assertThrows(AuthorizationErrorException.class,
-                () -> authenticationService.authorisationFilter(wrongCredentials, ADMIN));
+                () -> authenticationService.checkUserAuthorisation(wrongCredentials, ADMIN));
 
         assertEquals("User cannot be authenticated - invalid password", exception.getMessage());
 
@@ -100,7 +100,7 @@ class AuthenticationServiceTest {
         UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
         RuntimeException exception = assertThrows(UnacceptableOperationException.class,
-                () -> authenticationService.authorisationFilter(userCredentials, ADMIN));
+                () -> authenticationService.checkUserAuthorisation(userCredentials, ADMIN));
 
         assertEquals("User cannot perform this operation on behalf of another user", exception.getMessage());
 
@@ -119,7 +119,7 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(correctCredentials, ADMIN));
+        assertThrows(AuthorizationErrorException.class, () -> authenticationService.checkUserAuthorisation(correctCredentials, ADMIN));
 
         verify(currentUserHolder).get();
     }

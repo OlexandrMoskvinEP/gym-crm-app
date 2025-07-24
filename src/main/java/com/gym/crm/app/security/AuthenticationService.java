@@ -46,7 +46,7 @@ public class AuthenticationService {
         currentUserHolder.set(authenticatedUser);
     }
 
-    public void authorisationFilter(UserCredentialsDto credentials, UserRole... allowedRoles) {
+    public void checkUserAuthorisation(UserCredentialsDto credentials, UserRole... allowedRoles) {
         AuthenticatedUser currentUser = currentUserHolder.get();
 
         if (currentUser == null || !currentUser.getUsername().equals(credentials.getUsername())) {
