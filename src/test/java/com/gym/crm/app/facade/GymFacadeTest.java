@@ -13,6 +13,7 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.TrainingMapper;
+import com.gym.crm.app.mapper.TrainingTypeMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
@@ -27,6 +28,9 @@ import com.gym.crm.app.rest.TrainerCreateResponse;
 import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
+import com.gym.crm.app.rest.TrainingCreateRequest;
+import com.gym.crm.app.rest.TrainingTypeGetResponse;
+import com.gym.crm.app.rest.TrainingTypeRestDto;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
@@ -58,8 +62,10 @@ import static com.gym.crm.app.security.UserRole.ADMIN;
 import static com.gym.crm.app.security.UserRole.TRAINEE;
 import static com.gym.crm.app.security.UserRole.TRAINER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
@@ -89,8 +95,9 @@ class GymFacadeTest {
     private static final TrainerGetResponse TRAINER_GET_RESPONSE = buildTrainerGetResponse();
     private static final TraineeUpdateResponse TRAINEE_UPDATE_RESPONSE = buildTraineeUpdateResponse();
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
-
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
+    private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = getTrainingCreateRequest();
+    private static final TrainingSaveRequest TRAINING_SAVE_REQUEST = getTrainingSaveRequest();
 
     @Mock
     private HttpServletRequest request;
@@ -112,6 +119,8 @@ class GymFacadeTest {
     private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
     @Spy
     private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
+    @Spy
+    private TrainingTypeMapper trainingTypeMapper = Mappers.getMapper(TrainingTypeMapper.class);
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     @InjectMocks
@@ -266,16 +275,37 @@ class GymFacadeTest {
 
     @Test
     void shouldAddTraining() {
-        TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
-        when(trainingService.addTraining(saveRequest)).thenReturn(TRAINING_DTO);
+        TraineeDto trainee = new TraineeDto();
+        trainee.setUserId(1L);
 
-        TrainingDto actual = facade.addTraining(saveRequest, USER_CREDENTIALS);
+        TrainerDto trainer = new TrainerDto();
+        trainer.setUserId(2L);
+        trainer.setSpecialization(TrainingType.builder().trainingTypeName("windsurfing").build());
+
+        TrainingDto expected = new TrainingDto();
+        expected.setTrainingName("Yoga");
+        expected.setTrainerId(trainer.getUserId());
+        expected.setTraineeId(trainee.getUserId());
+        expected.setTrainingDuration(BigDecimal.valueOf(1));
+        expected.setTrainingType(TrainingType.builder().build());
+        expected.setTrainingDate(LocalDate.now());
+
+
+        when(traineeService.getTraineeByUsername("kevin.jackson")).thenReturn(trainee);
+        when(trainerService.getTrainerByUsername("chris.tenet")).thenReturn(trainer);
+        when(trainingService.addTraining(any())).thenReturn(expected);
+
+        TrainingDto actual = facade.addTraining(TRAINING_CREATE_REQUEST);
 
         assertEquals(TRAINING_DTO, actual);
+        assertEquals(expected, actual);
 
-        verify(trainingService).addTraining(saveRequest);
+        verify(authService).checkUserAuthorisation(any(), eq(UserRole.ADMIN));
+        verify(trainingService).addTraining(any(TrainingSaveRequest.class));
+        verify(trainingService).addTraining(TRAINING_SAVE_REQUEST);
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
+
 
     @Test
     void shouldUpdateTraining() {
@@ -378,6 +408,18 @@ class GymFacadeTest {
 
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER);
+    }
+
+    @Test
+    void ShouldReturnAllTrainingsTypes() {
+        TrainingTypeGetResponse response = new TrainingTypeGetResponse().trainingTypes(List.of(new TrainingTypeRestDto()));
+
+        when(trainingService.getTrainingTypes()).thenReturn(List.of(TrainingType.builder().build()));
+
+        var actual = facade.getAllTrainingsTypes();
+
+        assertEquals(response.getTrainingTypes(), actual.getTrainingTypes());
+        verify(trainingService).getTrainingTypes();
     }
 
     private static TrainerDto buildTrainerDto() {
@@ -504,5 +546,29 @@ class GymFacadeTest {
                 .password("password")
                 .isActive(true)
                 .role(ADMIN).build();
+    }
+
+    private static TrainingSaveRequest getTrainingSaveRequest() {
+        TrainingSaveRequest saveRequest = new TrainingSaveRequest();
+        saveRequest.setTrainingName(TRAINING_CREATE_REQUEST.getTrainingName());
+        saveRequest.setTrainingDate(TRAINING_CREATE_REQUEST.getTrainingDate());
+        saveRequest.setTrainingDuration(BigDecimal.valueOf(TRAINING_CREATE_REQUEST.getTrainingDuration()));
+        saveRequest.setTrainingTypeName("windsurfing");
+        saveRequest.setTraineeId(1L);
+        saveRequest.setTrainerId(2L);
+
+        return saveRequest;
+    }
+
+    private static TrainingCreateRequest getTrainingCreateRequest() {
+        TrainingCreateRequest request = new TrainingCreateRequest();
+        request.setTrainingName("Cardio");
+        request.setTrainingDate(LocalDate.of(2025, 7, 22));
+        request.setTrainingDuration(60);
+        request.setTrainingName("Stretching");
+        request.setTraineeUsername("kevin.jackson");
+        request.setTrainerUsername("chris.tenet");
+
+        return request;
     }
 }

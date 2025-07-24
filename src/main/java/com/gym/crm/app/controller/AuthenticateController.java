@@ -18,7 +18,7 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(ROOT_PATH)
-public class AuthenticateController{
+public class AuthenticateController {
     private final GymFacade facade;
     private final AuthenticationService authenticationService;
 
