@@ -85,7 +85,7 @@ class AuthenticateControllerTest {
     void shouldChangePasswordSuccessfully() throws Exception {
         ChangePasswordRequest request = getChangePasswordRequest();
 
-        mockMvc.perform(put("/api/v1/login/change-password")
+        mockMvc.perform(put("/api/v1/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
