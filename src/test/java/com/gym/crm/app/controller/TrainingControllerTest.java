@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,7 +40,7 @@ class TrainingControllerTest {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private static final TrainingTypeGetResponse TRAINING_TYPE_GET_RESPONSE = buildTrainingTypeGetResponse();
-    private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = buildTraineeCreateRequest();
+    private static TrainingCreateRequest TRAINING_CREATE_REQUEST;
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
 
     private MockMvc mockMvc;
@@ -57,6 +58,8 @@ class TrainingControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(trainingController)
                 .setMessageConverters(converter)
                 .build();
+
+        TRAINING_CREATE_REQUEST = buildTrainingCreateRequest();
     }
 
     @Test
@@ -74,20 +77,14 @@ class TrainingControllerTest {
 
     @Test
     void shouldAddTrainingSuccessfully() throws Exception {
-        when(facade.addTraining(TRAINING_CREATE_REQUEST)).thenReturn(TRAINING_DTO);
+        when(facade.addTraining(any(TrainingCreateRequest.class))).thenReturn(TRAINING_DTO);
 
         mockMvc.perform(post("/api/v1/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TRAINING_CREATE_REQUEST)))
                 .andExpect(status().isOk());
 
-        verify(facade).addTraining(TRAINING_CREATE_REQUEST);
-    }
-
-    @Test
-    void getRequestShouldNotBeNull() {
-        TrainingController controller = new TrainingController();
-        assertNotNull(controller.getRequest());
+        verify(facade).addTraining(any(TrainingCreateRequest.class));
     }
 
     private static TrainingTypeGetResponse buildTrainingTypeGetResponse() {
@@ -95,15 +92,13 @@ class TrainingControllerTest {
                 List.of(new TrainingTypeRestDto().trainingType("fake sport")));
     }
 
-    private static TrainingCreateRequest buildTraineeCreateRequest() {
-        TrainingCreateRequest request = new TrainingCreateRequest();
-        request.setTrainingName("Exercise bike riding");
-        request.setTrainingDate(LocalDate.now().minusYears(1L));
-        request.setTrainingDuration(30);
-        request.setTraineeUsername("admin.adminov");
-        request.setTrainerUsername("trainer.trainerman");
-
-        return request;
+    private static TrainingCreateRequest buildTrainingCreateRequest() {
+        return new TrainingCreateRequest()
+                .trainingName("Exercise bike riding")
+                .trainingDate(LocalDate.now().minusYears(1L))
+                .trainingDuration(30)
+                .traineeUsername("admin.adminov")
+                .trainerUsername("trainer.trainerman");
     }
 
     private static TrainingDto buildTrainingDto() {

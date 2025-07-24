@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.TrainingMapper;
@@ -216,8 +217,12 @@ public class GymFacade {
     public TrainingTypeGetResponse getAllTrainingsTypes() {
         authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
 
-        return null;
+        List<TrainingType>trainingTypes = trainingService.getTrainingTypes();
+        var trainingTypesRest = trainingTypes.stream().map(trainingTypeMapper::toRestTrainingType).toList();
+
+        return new TrainingTypeGetResponse().trainingTypes(trainingTypesRest);
     }
+
     public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
         authService.checkUserAuthorisation(userCredentials, ADMIN);
 

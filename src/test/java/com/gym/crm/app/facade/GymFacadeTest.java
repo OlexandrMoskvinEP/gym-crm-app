@@ -13,6 +13,7 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.mapper.TrainingMapper;
+import com.gym.crm.app.mapper.TrainingTypeMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
@@ -28,6 +29,8 @@ import com.gym.crm.app.rest.TrainerGetResponse;
 import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
 import com.gym.crm.app.rest.TrainingCreateRequest;
+import com.gym.crm.app.rest.TrainingTypeGetResponse;
+import com.gym.crm.app.rest.TrainingTypeRestDto;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
@@ -116,6 +119,8 @@ class GymFacadeTest {
     private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
     @Spy
     private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
+    @Spy
+    private TrainingTypeMapper trainingTypeMapper = Mappers.getMapper(TrainingTypeMapper.class);
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     @InjectMocks
@@ -402,6 +407,19 @@ class GymFacadeTest {
 
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN, TRAINER);
+    }
+
+    @Test
+    void ShouldReturnAllTrainingsTypes() {
+        TrainingTypeGetResponse response = new TrainingTypeGetResponse().trainingTypes(List.of(new TrainingTypeRestDto()));
+
+        when(trainingService.getTrainingTypes()).thenReturn(List.of(TrainingType.builder().build()));
+
+        var actual = facade.getAllTrainingsTypes();
+
+        assertEquals(response.getTrainingTypes(), actual.getTrainingTypes());
+
+        verify(trainingService).getTrainingTypes();
     }
 
     private static TrainerDto buildTrainerDto() {
