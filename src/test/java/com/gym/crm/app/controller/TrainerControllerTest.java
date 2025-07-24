@@ -184,6 +184,7 @@ class TrainerControllerTest {
         training.setTrainingType("Cardio");
         training.setTrainingDuration(60);
         training.setTraineeName("Mark Freedman");
+
         return training;
     }
 }

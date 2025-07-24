@@ -72,6 +72,7 @@ class AuthenticationServiceTest {
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> authenticationService.authorisationFilter(correctCredentials, TRAINEE));
+
         verify(currentUserHolder).get();
     }
 
@@ -85,9 +86,11 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(wrongCredentials, ADMIN));
+        RuntimeException exception = assertThrows(AuthorizationErrorException.class,
+                () -> authenticationService.authorisationFilter(wrongCredentials, ADMIN));
 
         assertEquals("User cannot be authenticated - invalid password", exception.getMessage());
+
         verify(currentUserHolder).get();
     }
 
@@ -96,9 +99,11 @@ class AuthenticationServiceTest {
     void shouldThrowExceptionIfUserIsNotFoundForProvidedUsername() {
         UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
-        RuntimeException exception = assertThrows(UnacceptableOperationException.class, () -> authenticationService.authorisationFilter(userCredentials, ADMIN));
+        RuntimeException exception = assertThrows(UnacceptableOperationException.class,
+                () -> authenticationService.authorisationFilter(userCredentials, ADMIN));
 
         assertEquals("User cannot perform this operation on behalf of another user", exception.getMessage());
+
         verify(currentUserHolder).get();
     }
 
@@ -115,6 +120,7 @@ class AuthenticationServiceTest {
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(correctCredentials, ADMIN));
+
         verify(currentUserHolder).get();
     }
 
@@ -126,6 +132,7 @@ class AuthenticationServiceTest {
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
         assertDoesNotThrow(() -> authenticationService.login(LOGIN_REQUEST), "Invalid username or password");
+
         verify(currentUserHolder).set(any(AuthenticatedUser.class));
     }
 

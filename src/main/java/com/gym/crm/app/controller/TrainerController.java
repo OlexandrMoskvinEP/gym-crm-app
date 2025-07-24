@@ -1,6 +1,5 @@
 package com.gym.crm.app.controller;
 
-import com.gym.crm.app.api.TrainersApi;
 import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.facade.GymFacade;
@@ -30,7 +29,7 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 @RestController
 @RequestMapping(ROOT_PATH + "/trainers")
 @RequiredArgsConstructor
-public class TrainerController implements TrainersApi {
+public class TrainerController {
     private final GymFacade facade;
 
     @PostMapping("/register")

@@ -126,6 +126,7 @@ class GymFacadeTest {
         List<TrainerDto> actual = facade.getAllTrainers(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(trainerService).getAllTrainers();
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
@@ -137,6 +138,7 @@ class GymFacadeTest {
         TrainerGetResponse actual = facade.getTrainerByUsername(USERNAME);
 
         assertEquals(TRAINER_GET_RESPONSE, actual);
+
         verify(trainerService).getTrainerByUsername(USERNAME);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
@@ -149,6 +151,7 @@ class GymFacadeTest {
         TrainerCreateResponse actual = facade.addTrainer(createRequest);
 
         assertEquals(TRAINER_CREATE_RESPONSE, actual);
+
         verify(trainerService).addTrainer(createRequest);
         verifyNoInteractions(authService);
     }
@@ -161,6 +164,7 @@ class GymFacadeTest {
         TrainerUpdateResponse actual = facade.updateTrainerByUsername(USERNAME, updateRequest);
 
         assertEquals(TRAINER_UPDATE_RESPONSE, actual);
+
         verify(trainerService).updateTrainerByUsername(USERNAME, updateRequest);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER);
     }
@@ -183,6 +187,7 @@ class GymFacadeTest {
         List<TraineeDto> actual = facade.getAllTrainees(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(traineeService).getAllTrainees();
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
@@ -205,6 +210,7 @@ class GymFacadeTest {
         TraineeCreateResponse actual = facade.addTrainee(createRequest);
 
         assertEquals(TRAINEE_CREATE_RESPONSE, actual);
+
         verify(traineeService).addTrainee(createRequest);
         verifyNoInteractions(authService);
     }
@@ -217,6 +223,7 @@ class GymFacadeTest {
         TraineeUpdateResponse actual = facade.updateTraineeByUsername(USERNAME, updateRequest);
 
         assertEquals(TRAINEE_UPDATE_RESPONSE, actual);
+
         verify(traineeService).updateTraineeByUsername(USERNAME, updateRequest);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
@@ -240,6 +247,7 @@ class GymFacadeTest {
         List<TrainingDto> actual = facade.getAllTrainings(USER_CREDENTIALS);
 
         assertEquals(expected, actual);
+
         verify(trainingService).getAllTrainings();
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
@@ -252,6 +260,7 @@ class GymFacadeTest {
         TrainingDto actual = facade.addTraining(saveRequest, USER_CREDENTIALS);
 
         assertEquals(TRAINING_DTO, actual);
+
         verify(trainingService).addTraining(saveRequest);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
@@ -264,6 +273,7 @@ class GymFacadeTest {
         TrainingDto actual = facade.updateTraining(saveRequest, USER_CREDENTIALS);
 
         assertEquals(TRAINING_DTO, actual);
+
         verify(trainingService).updateTraining(saveRequest);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN);
     }
@@ -289,6 +299,7 @@ class GymFacadeTest {
         AvailableTrainerGetResponse actual = facade.getUnassignedTrainersByTraineeUsername("username");
 
         assertEquals(expected, actual);
+
         verify(traineeService).getUnassignedTrainersByTraineeUsername("username");
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINEE);
     }
@@ -324,13 +335,7 @@ class GymFacadeTest {
         TraineeTrainingSearchFilter searchFilter = TraineeTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
-
-        TrainingWithTrainerName expected = new TrainingWithTrainerName();
-        expected.setTrainingName(TRAINING_DTO.getTrainingName());
-        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
-        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
-        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
-        expected.setTrainerName("anna.smith");
+        TrainingWithTrainerName expected = getTrainingWithTrainerName();
 
         when(trainingService.getTraineeTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
         when(trainerService.getTrainerNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
@@ -339,6 +344,7 @@ class GymFacadeTest {
 
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
+
         verify(trainingService).getTraineeTrainingsByFilter(searchFilter);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER, TRAINEE);
     }
@@ -348,13 +354,7 @@ class GymFacadeTest {
         TrainerTrainingSearchFilter searchFilter = TrainerTrainingSearchFilter.builder()
                 .username(USERNAME)
                 .build();
-
-        TrainingWithTraineeName expected = new TrainingWithTraineeName();
-        expected.setTrainingName(TRAINING_DTO.getTrainingName());
-        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
-        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
-        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
-        expected.setTraineeName("anna.smith");
+        TrainingWithTraineeName expected = getTrainingWithTraineeName();
 
         when(trainingService.getTrainerTrainingsByFilter(searchFilter)).thenReturn(List.of(TRAINING_DTO));
         when(traineeService.getTraineeNameById(TRAINING_DTO.getTrainerId())).thenReturn("anna.smith");
@@ -363,6 +363,7 @@ class GymFacadeTest {
 
         assertEquals(1, actual.getTrainings().size());
         assertEquals(expected, actual.getTrainings().get(0));
+
         verify(trainingService).getTrainerTrainingsByFilter(searchFilter);
         verify(authService).authorisationFilter(USER_CREDENTIALS, ADMIN, TRAINER);
     }
@@ -460,5 +461,27 @@ class GymFacadeTest {
                 .password(GymFacadeTest.SIMPLE_USER.getPassword())
                 .isActive(GymFacadeTest.SIMPLE_USER.isActive())
                 .role(UserRole.valueOf("ADMIN")).build();
+    }
+
+    private static TrainingWithTrainerName getTrainingWithTrainerName() {
+        TrainingWithTrainerName expected = new TrainingWithTrainerName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTrainerName("anna.smith");
+
+        return expected;
+    }
+
+    private static TrainingWithTraineeName getTrainingWithTraineeName() {
+        TrainingWithTraineeName expected = new TrainingWithTraineeName();
+        expected.setTrainingName(TRAINING_DTO.getTrainingName());
+        expected.setTrainingDate(TRAINING_DTO.getTrainingDate());
+        expected.setTrainingDuration(TRAINING_DTO.getTrainingDuration().intValue());
+        expected.setTrainingType(TRAINING_DTO.getTrainingType().getTrainingTypeName());
+        expected.setTraineeName("anna.smith");
+
+        return expected;
     }
 }
