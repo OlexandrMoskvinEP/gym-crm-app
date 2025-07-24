@@ -20,7 +20,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,12 +53,6 @@ class AuthenticateControllerTest {
     }
 
     @Test
-    void getRequestShouldNotBeNull() {
-        AuthenticateController controller = new AuthenticateController(gymFacade, authenticationService);
-        assertNotNull(controller.getRequest());
-    }
-
-    @Test
     void shouldReturn2xxOnSuccessfulLogin() throws Exception {
         LoginRequest request = getCorrectLoginRequest();
 
@@ -69,13 +62,6 @@ class AuthenticateControllerTest {
                 .andExpect(status().isOk());
 
         verify(authenticationService).login(request);
-    }
-
-    private static LoginRequest getCorrectLoginRequest() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("john.smith");
-        request.setPassword("password123");
-        return request;
     }
 
     @Disabled("Will be enabled after global exception handler is added")
@@ -98,7 +84,7 @@ class AuthenticateControllerTest {
     void shouldChangePasswordSuccessfully() throws Exception {
         ChangePasswordRequest request = getChangePasswordRequest();
 
-        mockMvc.perform(put("/api/v1/login/change-password")
+        mockMvc.perform(put("/api/v1/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
@@ -111,6 +97,7 @@ class AuthenticateControllerTest {
         request.setUsername("john.smith");
         request.setOldPassword("oldPass123");
         request.setNewPassword("newPass456");
+
         return request;
     }
 
@@ -118,6 +105,15 @@ class AuthenticateControllerTest {
         LoginRequest request = new LoginRequest();
         request.setUsername("john.smith");
         request.setPassword("wrong");
+
+        return request;
+    }
+
+    private static LoginRequest getCorrectLoginRequest() {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("john.smith");
+        request.setPassword("password123");
+
         return request;
     }
 }

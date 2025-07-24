@@ -45,12 +45,10 @@ class UserProfileServiceTest {
         when(trainerRepository.findAll()).thenReturn(List.of(constructTrainer()));
 
         String traineeUsernameGenerated = service.createUsername("Alice", "Smith");
+        String trainerUsernameGenerated = service.createUsername("Sophie", "Taylor");
 
         assertNotNull(traineeUsernameGenerated);
         assertNotEquals(traineeUsernameExisting, traineeUsernameGenerated);
-
-        String trainerUsernameGenerated = service.createUsername("Sophie", "Taylor");
-
         assertNotNull(trainerUsernameGenerated);
         assertNotEquals(trainerUsernameExisting, trainerUsernameGenerated);
     }

@@ -71,7 +71,8 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertDoesNotThrow(() -> authenticationService.authorisationFilter(correctCredentials, TRAINEE));
+        assertDoesNotThrow(() -> authenticationService.checkUserAuthorisation(correctCredentials, TRAINEE));
+
         verify(currentUserHolder).get();
     }
 
@@ -85,20 +86,24 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(wrongCredentials, ADMIN));
+        RuntimeException exception = assertThrows(AuthorizationErrorException.class,
+                () -> authenticationService.checkUserAuthorisation(wrongCredentials, ADMIN));
 
         assertEquals("User cannot be authenticated - invalid password", exception.getMessage());
+
         verify(currentUserHolder).get();
     }
 
     @Test
-    @DisplayName("should throw exception if user is not found for provided username")
-    void shouldThrowExceptionIfUserIsNotFoundForProvidedUsername() {
+    @DisplayName("should throw exception if user is not logged in")
+    void shouldThrowExceptionIfUserIsNotLoggedIn() {
         UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
-        RuntimeException exception = assertThrows(UnacceptableOperationException.class, () -> authenticationService.authorisationFilter(userCredentials, ADMIN));
+        RuntimeException exception = assertThrows(UnacceptableOperationException.class,
+                () -> authenticationService.checkUserAuthorisation(userCredentials, ADMIN));
 
-        assertEquals("User cannot perform this operation on behalf of another user", exception.getMessage());
+        assertEquals("User is not logged in", exception.getMessage());
+
         verify(currentUserHolder).get();
     }
 
@@ -114,7 +119,8 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
-        assertThrows(AuthorizationErrorException.class, () -> authenticationService.authorisationFilter(correctCredentials, ADMIN));
+        assertThrows(AuthorizationErrorException.class, () -> authenticationService.checkUserAuthorisation(correctCredentials, ADMIN));
+
         verify(currentUserHolder).get();
     }
 
@@ -126,6 +132,7 @@ class AuthenticationServiceTest {
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
         assertDoesNotThrow(() -> authenticationService.login(LOGIN_REQUEST), "Invalid username or password");
+
         verify(currentUserHolder).set(any(AuthenticatedUser.class));
     }
 
