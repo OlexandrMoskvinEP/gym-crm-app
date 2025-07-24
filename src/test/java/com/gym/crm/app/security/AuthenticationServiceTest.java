@@ -95,14 +95,14 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    @DisplayName("should throw exception if user is not found for provided username")
-    void shouldThrowExceptionIfUserIsNotFoundForProvidedUsername() {
+    @DisplayName("should throw exception if user is not logged in")
+    void shouldThrowExceptionIfUserIsNotLoggedIn() {
         UserCredentialsDto userCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
         RuntimeException exception = assertThrows(UnacceptableOperationException.class,
                 () -> authenticationService.checkUserAuthorisation(userCredentials, ADMIN));
 
-        assertEquals("User cannot perform this operation on behalf of another user", exception.getMessage());
+        assertEquals("User is not logged in", exception.getMessage());
 
         verify(currentUserHolder).get();
     }

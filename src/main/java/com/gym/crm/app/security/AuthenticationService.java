@@ -49,7 +49,11 @@ public class AuthenticationService {
     public void checkUserAuthorisation(UserCredentialsDto credentials, UserRole... allowedRoles) {
         AuthenticatedUser currentUser = currentUserHolder.get();
 
-        if (currentUser == null || !currentUser.getUsername().equals(credentials.getUsername())) {
+        if(currentUser == null){
+            throw new UnacceptableOperationException("User is not logged in");
+        }
+
+        if (!currentUser.getUsername().equals(credentials.getUsername())) {
             throw new UnacceptableOperationException("User cannot perform this operation on behalf of another user");
         }
 

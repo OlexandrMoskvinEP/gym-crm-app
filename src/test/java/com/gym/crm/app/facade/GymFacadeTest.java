@@ -82,7 +82,6 @@ class GymFacadeTest {
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
     private static final UserCredentialsDto USER_CREDENTIALS = buildCredentials();
     private static final User SIMPLE_USER = buildSimpleUser();
-    private static final AuthenticatedUser SIMPLE_AUTH_USER = buildAuthUser();
 
     private static final TraineeCreateResponse TRAINEE_CREATE_RESPONSE = buildTraineeCreateResponse();
     private static final TrainerCreateResponse TRAINER_CREATE_RESPONSE = buildTrainerCreateResponse();
@@ -92,8 +91,6 @@ class GymFacadeTest {
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
 
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
-
-    private CurrentUserHolder currentUserHolder;
 
     @Mock
     private HttpServletRequest request;
@@ -127,7 +124,7 @@ class GymFacadeTest {
         lenient().when(request.getSession(false)).thenReturn(session);
         lenient().when(session.getAttribute("AUTHENTICATED_USER")).thenReturn(getAuthenticatedUser());
 
-        currentUserHolder = spy(new CurrentUserHolder(request));
+        CurrentUserHolder currentUserHolder = spy(new CurrentUserHolder(request));
         currentUserHolder.set(getAuthenticatedUser());
 
         ReflectionTestUtils.setField(facade, "currentUserHolder", currentUserHolder);
