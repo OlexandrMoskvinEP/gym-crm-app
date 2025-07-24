@@ -31,7 +31,6 @@ import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
 import com.gym.crm.app.rest.TrainingCreateRequest;
 import com.gym.crm.app.rest.TrainingTypeGetResponse;
-import com.gym.crm.app.rest.TrainingTypeRestDto;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
 import com.gym.crm.app.security.AuthenticationService;
@@ -42,6 +41,7 @@ import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -203,13 +203,15 @@ public class GymFacade {
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
         authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN);
 
+        TrainerDto trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
+
         TrainingSaveRequest saveRequest = new TrainingSaveRequest();
         saveRequest.setTrainingName(request.getTrainingName());
         saveRequest.setTrainingDate(request.getTrainingDate());
         saveRequest.setTrainingDuration(BigDecimal.valueOf(request.getTrainingDuration()));
-        saveRequest.setTrainingTypeName("");
+        saveRequest.setTrainingTypeName(trainer.getSpecialization().getTrainingTypeName());
         saveRequest.setTraineeId(traineeService.getTraineeByUsername(request.getTraineeUsername()).getUserId());
-        saveRequest.setTrainerId(trainerService.getTrainerByUsername(request.getTrainerUsername()).getUserId());
+        saveRequest.setTrainerId(trainer.getUserId());
 
         return trainingService.addTraining(saveRequest);
     }
@@ -217,16 +219,10 @@ public class GymFacade {
     public TrainingTypeGetResponse getAllTrainingsTypes() {
         authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
 
-        List<TrainingType>trainingTypes = trainingService.getTrainingTypes();
+        List<TrainingType> trainingTypes = trainingService.getTrainingTypes();
         var trainingTypesRest = trainingTypes.stream().map(trainingTypeMapper::toRestTrainingType).toList();
 
         return new TrainingTypeGetResponse().trainingTypes(trainingTypesRest);
-    }
-
-    public TrainingDto addTraining(@Valid TrainingSaveRequest createRequest, UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN);
-
-        return trainingService.addTraining(createRequest);
     }
 
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {

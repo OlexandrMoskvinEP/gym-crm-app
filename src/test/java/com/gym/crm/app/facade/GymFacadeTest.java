@@ -280,6 +280,7 @@ class GymFacadeTest {
 
         TrainerDto trainer = new TrainerDto();
         trainer.setUserId(2L);
+        trainer.setSpecialization(TrainingType.builder().trainingTypeName("windsurfing").build());
 
         TrainingDto expected = new TrainingDto();
         expected.setTrainingName("Yoga");
@@ -553,7 +554,7 @@ class GymFacadeTest {
         saveRequest.setTrainingName(TRAINING_CREATE_REQUEST.getTrainingName());
         saveRequest.setTrainingDate(TRAINING_CREATE_REQUEST.getTrainingDate());
         saveRequest.setTrainingDuration(BigDecimal.valueOf(TRAINING_CREATE_REQUEST.getTrainingDuration()));
-        saveRequest.setTrainingTypeName("");
+        saveRequest.setTrainingTypeName("windsurfing");
         saveRequest.setTraineeId(1L);
         saveRequest.setTrainerId(2L);
 
