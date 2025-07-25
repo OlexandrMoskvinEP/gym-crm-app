@@ -6,7 +6,7 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainingMapper;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
@@ -58,7 +58,7 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public TrainingDto addTraining(TrainingSaveRequest training) {
         TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingName())
-                .orElseThrow(() -> new EntityNotFoundException(format("Training type: %s not found", training.getTrainingTypeName())));
+                .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
         Training trainingToSave = mapDtoToEntity(training, trainingType);
 
         logger.info("Adding training for trainer {} and trainee {} on {}",
@@ -68,15 +68,16 @@ public class TrainingServiceImpl implements TrainingService {
 
         logger.info("Training successfully added for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
+
         return getTrainingDtoFromEntity(persistedTraining);
     }
 
     @Override
     public TrainingDto updateTraining(TrainingSaveRequest training) {
         Training existing = repository.findAll().stream()
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("Training not found"));
+                .findFirst().orElseThrow(() -> new DataBaseErrorException("Training not found"));
         TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingName())
-                .orElseThrow(() -> new EntityNotFoundException(format("Training type: %s not found", training.getTrainingTypeName())));
+                .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
 
         Training updated = Training.builder()
                 .trainingDate(existing.getTrainingDate())

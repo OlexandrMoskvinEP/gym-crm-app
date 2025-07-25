@@ -2,7 +2,7 @@ package com.gym.crm.app.repository.impl;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Training;
-import com.gym.crm.app.exception.DuplicateEntityException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
@@ -60,7 +60,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                     .isEmpty();
 
             if (isExist) {
-                throw new DuplicateEntityException("Such training already exists");
+                throw new DataBaseErrorException("Such training already exists");
             }
 
             entityManager.persist(training);

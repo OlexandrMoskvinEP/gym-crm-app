@@ -8,7 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.EntityNotFoundException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
@@ -79,7 +79,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeDto getTraineeByUsername(String username) {
         Trainee trainee = repository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer not found!"));
+                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
 
         return modelMapper.map(trainee, TraineeDto.class);
     }
@@ -106,7 +106,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest updateRequest) {
         Trainee existTrainee = repository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee not found!"));
+                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
 
         Trainee entityToUpdate = mapUpdatedTraineeWithUser(updateRequest, existTrainee);
 
@@ -119,7 +119,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void deleteTraineeByUsername(String username) {
         if (repository.findByUsername(username).isEmpty()) {
-            throw new EntityNotFoundException("Trainee not found!");
+            throw new DataBaseErrorException(String.format("Trainee with username %s not found", username));
         }
 
         repository.deleteByUsername(username);
@@ -146,7 +146,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public String getTraineeNameById(Long id) {
-        Trainee trainee = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trainee not found"));
+        Trainee trainee = repository.findById(id).orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with id %s not found", id)));
 
         return trainee.getUser().getFirstName() + " " + trainee.getUser().getLastName();
     }

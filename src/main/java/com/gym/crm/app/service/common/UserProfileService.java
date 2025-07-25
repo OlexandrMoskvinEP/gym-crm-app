@@ -2,10 +2,10 @@ package com.gym.crm.app.service.common;
 
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.AuthentificationErrorException;
-import com.gym.crm.app.exception.EntityNotFoundException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
