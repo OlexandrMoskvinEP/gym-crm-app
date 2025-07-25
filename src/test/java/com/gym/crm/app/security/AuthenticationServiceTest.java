@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import com.gym.crm.app.domain.dto.user.UserCredentialsDto;
 import com.gym.crm.app.domain.model.User;
+import com.gym.crm.app.exception.AuthentificationException;
 import com.gym.crm.app.repository.UserRepository;
 import lombok.Getter;
 import org.junit.jupiter.api.DisplayName;
@@ -71,7 +72,7 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        SecurityException ex = assertThrows(SecurityException.class, () -> service.authenticate(wrongCredentials));
+        RuntimeException ex = assertThrows(AuthentificationException.class, () -> service.authenticate(wrongCredentials));
 
         assertEquals("User cannot be authenticated - invalid credentials", ex.getMessage());
         verifyNoInteractions(currentUserHolder);
@@ -85,7 +86,7 @@ class AuthenticationServiceTest {
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 
-        SecurityException ex = assertThrows(SecurityException.class, () -> service.authenticate(userCredentials));
+        RuntimeException ex = assertThrows(AuthentificationException.class, () -> service.authenticate(userCredentials));
 
         assertEquals("User with such username does not exist", ex.getMessage());
         verifyNoInteractions(currentUserHolder);
