@@ -15,13 +15,13 @@ public enum ErrorCode {
     UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted", HttpStatus.CONFLICT),
     REGISTRATION_CONFLICT(2911, "Username already exists", HttpStatus.CONFLICT);
 
-    private final int code;
-    private final String message;
+    private final int errorCode;
+    private final String errorMessage;
     private final HttpStatus httpStatus;
 
-    ErrorCode(int code, String message, HttpStatus httpStatus) {
-        this.code = code;
-        this.message = message;
+    ErrorCode(int errorCode, String errorMessage, HttpStatus httpStatus) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
         this.httpStatus = httpStatus;
     }
 }

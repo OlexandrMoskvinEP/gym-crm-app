@@ -2,13 +2,14 @@ package com.gym.crm.app.exception.handling;
 
 import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
-import com.gym.crm.app.exception.DataBaseException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
+import com.gym.crm.app.mapper.ErrorResponseMapper;
+import com.gym.crm.app.rest.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,14 +22,15 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger("com.gym.crm.app");
+    private ErrorResponseMapper mapper;
 
-    @ExceptionHandler(DataBaseException.class)
-    public ResponseEntity<ErrorResponse> handleDataBaseException(DataBaseException exception) {
+    @ExceptionHandler(DataBaseErrorException.class)
+    public ResponseEntity<ErrorResponse> handleDataBaseException(DataBaseErrorException exception) {
         log.error("DataBase exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.DATABASE_ERROR;
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -41,7 +43,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(UnacceptableOperationException.class)
@@ -65,7 +67,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.UNACCEPTABLE_OPERATION;
 
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(RegistrationConflictException.class)
@@ -74,7 +76,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.REGISTRATION_CONFLICT;
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -83,7 +85,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.SERVER_ERROR;
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -92,19 +94,22 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
-        String message = String.format("Invalid value for parameter '%s': expected %s",
-                exception.getName(), exception.getRequiredType().getSimpleName());
+        String message = exception.getMessage();
 
-        log.warn("Type mismatch: {}", message, exception);
+        if (exception.getRequiredType() != null) {
+            message = String.format("Invalid value for parameter '%s': expected %s",
+                    exception.getName(), exception.getRequiredType().getSimpleName());
+        }
 
+        log.error("Type mismatch: {}", message, exception);
         ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(AuthentificationErrorException.class)
@@ -113,7 +118,7 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.AUTHENTICATION_ERROR;
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 
     @ExceptionHandler(AuthorizationErrorException.class)
@@ -122,6 +127,6 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.AUTHORIZATION_ERROR;
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
     }
 }

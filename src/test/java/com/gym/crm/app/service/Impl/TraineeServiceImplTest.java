@@ -9,7 +9,7 @@ import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.DataBaseException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.service.TrainerService;
@@ -177,7 +177,7 @@ class TraineeServiceImplTest {
     void shouldThrowExceptionWhetCantDeleteTraineeByUsername() {
         when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
 
-        assertThrows(DataBaseException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
+        assertThrows(DataBaseErrorException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
     }
 
     @Test

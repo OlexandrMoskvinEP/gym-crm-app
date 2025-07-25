@@ -3,7 +3,7 @@ package com.gym.crm.app.repository.impl;
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
-import com.gym.crm.app.exception.DataBaseException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TraineeRepository;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -77,7 +77,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .setParameter("id", id)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new DataBaseException("Cant deleteById trainee with id - " + id));
+                            () -> new DataBaseErrorException("Cant deleteById trainee with id - " + id));
 
             Trainee managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
 
@@ -106,7 +106,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .setParameter("username", username)
                     .getResultStream()
                     .findFirst().orElseThrow(
-                            () -> new DataBaseException("Cant deleteById trainee with username - " + username));
+                            () -> new DataBaseErrorException("Cant deleteById trainee with username - " + username));
 
             Trainee managed = entityManager.contains(existing) ? existing : entityManager.merge(existing);
 
@@ -154,7 +154,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .getResultList();
 
             if (trainers.size() != trainerIds.size()) {
-                throw new DataBaseException("Some trainer IDs not found");
+                throw new DataBaseErrorException("Some trainer IDs not found");
             }
 
             Set<Trainer> updated = new HashSet<>(trainers);
@@ -182,7 +182,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .getResultList();
 
             if (trainers.size() != trainerUsernames.size()) {
-                throw new DataBaseException("Some trainer usernames not found");
+                throw new DataBaseErrorException("Some trainer usernames not found");
             }
 
             Set<Trainer> updated = new HashSet<>(trainers);
