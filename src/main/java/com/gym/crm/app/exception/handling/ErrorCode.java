@@ -1,4 +1,4 @@
-package com.gym.crm.app.exception;
+package com.gym.crm.app.exception.handling;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

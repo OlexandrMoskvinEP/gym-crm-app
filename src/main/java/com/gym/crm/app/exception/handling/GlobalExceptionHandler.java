@@ -1,5 +1,10 @@
-package com.gym.crm.app.exception;
+package com.gym.crm.app.exception.handling;
 
+import com.gym.crm.app.exception.AuthentificationErrorException;
+import com.gym.crm.app.exception.AuthorizationErrorException;
+import com.gym.crm.app.exception.DataBaseException;
+import com.gym.crm.app.exception.RegistrationConflictException;
+import com.gym.crm.app.exception.UnacceptableOperationException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +107,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode));
     }
 
-    @ExceptionHandler(AuthentificationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthentificationException(AuthentificationException exception) {
+    @ExceptionHandler(AuthentificationErrorException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentificationException(AuthentificationErrorException exception) {
         log.error("Authentification exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.AUTHENTICATION_ERROR;
@@ -111,8 +116,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(errorCode));
     }
 
-    @ExceptionHandler(AuthorisationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthorisationException(AuthorisationException exception) {
+    @ExceptionHandler(AuthorizationErrorException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorisationException(AuthorizationErrorException exception) {
         log.error("Authorisation exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.AUTHORIZATION_ERROR;
