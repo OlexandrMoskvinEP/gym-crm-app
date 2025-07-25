@@ -2,6 +2,8 @@ package com.gym.crm.app.service;
 
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.model.TrainingType;
+import com.gym.crm.app.repository.TrainingTypeRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 
@@ -17,5 +19,7 @@ public interface TrainingService {
     List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter);
 
     List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter);
+
+    List<TrainingType> getTrainingTypes();
 
 }

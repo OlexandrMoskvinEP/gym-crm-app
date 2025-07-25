@@ -1,26 +1,39 @@
 package com.gym.crm.app.security;
 
-import com.gym.crm.app.domain.model.User;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import com.gym.crm.app.exception.AuthentificationErrorException;
+import com.gym.crm.app.security.model.AuthenticatedUser;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CurrentUserHolder {
-    private User currentUser;
+    private static final String SESSION_USER_KEY = "AUTHENTICATED_USER";
+    private static final int AUTH_EXPIRATION_TIME = 3600;
 
-    public void set(User user) {
-        this.currentUser = user;
+    private final HttpServletRequest request;
+
+    public void set(AuthenticatedUser user) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SESSION_USER_KEY, user);
+        session.setMaxInactiveInterval(AUTH_EXPIRATION_TIME);
     }
 
-    public User get() {
-        if (currentUser == null) {
-            throw new AuthenticationServiceException("No user is currently authenticated");
+    public AuthenticatedUser get() {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute(SESSION_USER_KEY) == null) {
+            throw new AuthentificationErrorException("No user is currently authenticated");
         }
-        return currentUser;
+        return (AuthenticatedUser) session.getAttribute(SESSION_USER_KEY);
     }
 
     public void clear() {
-        this.currentUser = null;
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(SESSION_USER_KEY);
+        }
     }
 }

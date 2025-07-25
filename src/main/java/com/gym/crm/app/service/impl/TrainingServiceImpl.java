@@ -112,6 +112,11 @@ public class TrainingServiceImpl implements TrainingService {
                 .toList();
     }
 
+    @Override
+    public List<TrainingType> getTrainingTypes() {
+        return trainingTypeRepository.findAll();
+    }
+
     private TrainingDto getTrainingDtoFromEntity(Training training) {
         return new TrainingDto(training.getTrainer().getId(),
                 training.getTrainee().getId(),
