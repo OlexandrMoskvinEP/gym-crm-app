@@ -48,8 +48,8 @@ class TrainerControllerTest {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    private static final TrainerCreateRequest TRAINER_CREATE_REQUEST = buildTrainerCreateRequest();
     private static final UserCreateRequest USER_CREATE_REQUEST = buildUserCreateRequest();
+    private static final TrainerCreateRequest TRAINER_CREATE_REQUEST = buildTrainerCreateRequest();
     private static final String TRAINER_USERNAME = "arnold.schwarzenegger";
     private static final TrainerUpdateRequest TRAINER_UPDATE_REQUEST = buildTrainerUpdateRequest();
     private static final TrainingWithTraineeName TRAINING_WITH_TRAINEE_NAME = buildTrainingWithTraineeName();
@@ -155,11 +155,14 @@ class TrainerControllerTest {
     }
 
     private static UserCreateRequest buildUserCreateRequest() {
-        return new UserCreateRequest("John", "Smith", true);
+        return UserCreateRequest.builder()
+                .firstName("John")
+                .lastName("Smith")
+                .isActive(true).build();
     }
 
     private static TrainerCreateRequest buildTrainerCreateRequest() {
-        return new TrainerCreateRequest().toBuilder()
+        return TrainerCreateRequest.builder()
                 .user(USER_CREATE_REQUEST)
                 .specialization(TrainingType.builder().trainingTypeName("running").build())
                 .build();
