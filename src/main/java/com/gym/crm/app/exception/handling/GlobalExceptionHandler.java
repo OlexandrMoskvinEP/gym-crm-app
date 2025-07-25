@@ -5,7 +5,6 @@ import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
-import com.gym.crm.app.mapper.ErrorResponseMapper;
 import com.gym.crm.app.rest.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -22,15 +21,15 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger("com.gym.crm.app");
-    private ErrorResponseMapper mapper;
 
     @ExceptionHandler(DataBaseErrorException.class)
     public ResponseEntity<ErrorResponse> handleDataBaseException(DataBaseErrorException exception) {
         log.error("DataBase exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.DATABASE_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -42,8 +41,9 @@ public class GlobalExceptionHandler {
         log.error("Validation failed: {}", message, exception);
 
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), message);
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -57,8 +57,9 @@ public class GlobalExceptionHandler {
         log.error("Constraint violation: {}", message, exception);
 
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), message);
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(UnacceptableOperationException.class)
@@ -66,8 +67,9 @@ public class GlobalExceptionHandler {
         log.error("Unacceptable exception occurred - {} ", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.UNACCEPTABLE_OPERATION;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(RegistrationConflictException.class)
@@ -75,8 +77,9 @@ public class GlobalExceptionHandler {
         log.error("Registration conflict exception occurred - {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.REGISTRATION_CONFLICT;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -84,8 +87,9 @@ public class GlobalExceptionHandler {
         log.error("Unhandled Exception: {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.SERVER_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -93,8 +97,9 @@ public class GlobalExceptionHandler {
         log.warn("Invalid JSON: {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -108,8 +113,9 @@ public class GlobalExceptionHandler {
 
         log.error("Type mismatch: {}", message, exception);
         ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), message);
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(AuthentificationErrorException.class)
@@ -117,8 +123,9 @@ public class GlobalExceptionHandler {
         log.error("Authentification exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.AUTHENTICATION_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(AuthorizationErrorException.class)
@@ -126,7 +133,8 @@ public class GlobalExceptionHandler {
         log.error("Authorisation exception occurred : {}", exception.getMessage(), exception);
 
         ErrorCode errorCode = ErrorCode.AUTHORIZATION_ERROR;
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(mapper.toErrorResponse(errorCode));
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 }
