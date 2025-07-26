@@ -78,9 +78,4 @@ public class AppConfig {
                         .version("1.0")
                         .description("API documentation"));
     }
-
-    @PostConstruct
-    public void traceInit() {
-        System.out.println("✅ AppConfig initialized by: " + Thread.currentThread().getStackTrace()[2]);
-    }
 }
