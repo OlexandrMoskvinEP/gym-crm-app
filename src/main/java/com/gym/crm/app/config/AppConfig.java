@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.info.Info;
 import jakarta.annotation.PostConstruct;
 import liquibase.integration.spring.SpringLiquibase;
 import org.modelmapper.ModelMapper;
-import org.springdoc.webmvc.api.OpenApiWebMvcResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

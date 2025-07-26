@@ -32,7 +32,7 @@ public class TrainingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Operation successful"
+                    description = "List of training types retrieved successfully"
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -60,7 +60,7 @@ public class TrainingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Operation successful"
+                    description = "Training added successfully"
             ),
             @ApiResponse(
                     responseCode = "400",
