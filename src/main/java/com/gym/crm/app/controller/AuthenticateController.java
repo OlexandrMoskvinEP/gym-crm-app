@@ -63,6 +63,34 @@ public class AuthenticateController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+            summary = "Change user password",
+            description = "Changes user password with old password verification",
+            tags = {"Profile services"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Password changed successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid old password",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ), @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+    ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    description = "Unexpected error"
+            )
+    })
     @PutMapping("/change-password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         log.info("Change password attempt: username={}", changePasswordRequest.getUsername());
