@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gym.crm.app.config.hibernate.HibernateConfig;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import jakarta.annotation.PostConstruct;
 import liquibase.integration.spring.SpringLiquibase;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +24,7 @@ import javax.sql.DataSource;
 import java.security.SecureRandom;
 
 @Configuration
-@ComponentScan(basePackages = "com.gym.crm.app")
+@ComponentScan(basePackages = {"com.gym.crm.app", "org.springdoc"})
 @Import(HibernateConfig.class)
 @EnableAspectJAutoProxy
 @EnableWebMvc
@@ -65,5 +68,14 @@ public class AppConfig {
     @Bean
     public RequestContextListener requestContextListener() {
         return new RequestContextListener();
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Gym CRM API")
+                        .version("1.0")
+                        .description("API documentation"));
     }
 }

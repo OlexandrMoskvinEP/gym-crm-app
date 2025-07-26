@@ -2,8 +2,14 @@ package com.gym.crm.app.controller;
 
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ChangePasswordRequest;
+import com.gym.crm.app.rest.ErrorResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +30,30 @@ public class AuthenticateController {
     private final GymFacade facade;
     private final AuthenticationService authenticationService;
 
+    @Operation(
+            summary = "User login",
+            description = "Authenticates user with username and password",
+            tags = {"Authentication"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Login successful"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid credentials",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    description = "Unexpected error"
+            )
+    })
     @PostMapping("/login")
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
@@ -33,6 +63,34 @@ public class AuthenticateController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+            summary = "Change user password",
+            description = "Changes user password with old password verification",
+            tags = {"Profile services"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Password changed successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid old password",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ), @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+    ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    description = "Unexpected error"
+            )
+    })
     @PutMapping("/change-password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         log.info("Change password attempt: username={}", changePasswordRequest.getUsername());
