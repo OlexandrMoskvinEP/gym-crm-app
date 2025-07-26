@@ -11,6 +11,7 @@ import com.gym.crm.app.rest.TrainerTrainingGetResponse;
 import com.gym.crm.app.rest.TrainerUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 
 import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 
+@Slf4j
 @RestController
 @RequestMapping(ROOT_PATH + "/trainers")
 @RequiredArgsConstructor
@@ -34,14 +36,20 @@ public class TrainerController {
 
     @PostMapping("/register")
     public ResponseEntity<TrainerCreateResponse> registerTrainer(@Valid @RequestBody TrainerCreateRequest trainerCreateRequest) {
+        log.info("Trainer registration attempt: firstName={} lastName={}",
+                trainerCreateRequest.getUser().getFirstName(),
+                trainerCreateRequest.getUser().getLastName());
         TrainerCreateResponse response = facade.addTrainer(trainerCreateRequest);
+        log.info("Trainer registered successfully: username={}", response.getUsername());
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{username}")
     public ResponseEntity<TrainerGetResponse> getTrainerProfile(@PathVariable("username") String username) {
+        log.info("Trainer profile request: username={}", username);
         TrainerGetResponse response = facade.getTrainerByUsername(username);
+        log.info("Trainer profile retrieved: username={}", username);
 
         return ResponseEntity.ok(response);
     }
@@ -49,7 +57,9 @@ public class TrainerController {
     @PutMapping("/{username}")
     public ResponseEntity<TrainerUpdateResponse> updateTrainerProfile(@PathVariable("username") String username,
                                                                       @RequestBody @Valid TrainerUpdateRequest trainerUpdateRequest) {
+        log.info("Update trainer profile attempt: username={}", username);
         TrainerUpdateResponse response = facade.updateTrainerByUsername(username, trainerUpdateRequest);
+        log.info("Trainer profile updated: username={}", username);
 
         return ResponseEntity.ok(response);
     }
@@ -59,9 +69,13 @@ public class TrainerController {
                                                                           @RequestParam(name = "fromDate", required = false) LocalDate fromDate,
                                                                           @RequestParam(name = "toDate", required = false) LocalDate toDate,
                                                                           @RequestParam(name = "traineeName", required = false) String traineeName) {
-        TrainerTrainingSearchFilter filter = buildTrainerTrainingSearchFilter(fromDate, toDate, traineeName, username);
+        log.info("Get trainer trainings request: username={}, fromDate={}, toDate={}, traineeName={}",
+                username, fromDate, toDate, traineeName);
 
+        TrainerTrainingSearchFilter filter = buildTrainerTrainingSearchFilter(fromDate, toDate, traineeName, username);
         TrainerTrainingGetResponse response = facade.getTrainerTrainingsByFilter(filter);
+
+        log.info("Trainer trainings retrieved: username={}", username);
 
         return ResponseEntity.ok(response);
     }
@@ -69,7 +83,9 @@ public class TrainerController {
     @PatchMapping("/{username}/change-activation-status")
     public ResponseEntity<Void> changeTrainerActivationStatus(@PathVariable("username") String username,
                                                               @RequestBody ActivationStatusRequest activationStatusRequest) {
+        log.info("Change trainer activation status attempt: username={}, newStatus={}", username, activationStatusRequest.getIsActive());
         facade.switchActivationStatus(username);
+        log.info("Trainer activation status changed: username={}", username);
 
         return ResponseEntity.ok().build();
     }
