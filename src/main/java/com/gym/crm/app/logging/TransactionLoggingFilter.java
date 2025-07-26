@@ -28,9 +28,7 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
 
         try {
             log.info("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
-
             filterChain.doFilter(request, response);
-
             log.info("Response status: {}", response.getStatus());
 
             response.setHeader("X-Transaction-Id", transactionId);
