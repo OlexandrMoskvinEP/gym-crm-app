@@ -49,7 +49,7 @@ public class AuthenticationService {
     public void checkUserAuthorisation(UserCredentialsDto credentials, UserRole... allowedRoles) {
         AuthenticatedUser currentUser = currentUserHolder.get();
 
-        if(currentUser == null){
+        if (currentUser == null) {
             throw new UnacceptableOperationException("User is not logged in");
         }
 
