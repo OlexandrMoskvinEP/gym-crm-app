@@ -26,7 +26,6 @@ class TransactionLoggingFilterTest {
     void shouldGenerateTransactionIdAndAddHeader() throws ServletException, IOException {
         TransactionLoggingFilter filter = new TransactionLoggingFilter();
         FilterChain chain = mock(FilterChain.class);
-
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -38,11 +37,11 @@ class TransactionLoggingFilterTest {
 
         filter.doFilterInternal(request, response, chain);
 
-        verify(chain, times(1)).doFilter(request, response);
         verify(response).setHeader(headerNameCaptor.capture(), headerValueCaptor.capture());
 
         assertThat(headerNameCaptor.getValue()).isEqualTo("X-Transaction-Id");
         assertThat(UUID.fromString(headerValueCaptor.getValue())).isInstanceOf(UUID.class);
         assertThat(MDC.get("transactionId")).isNull();
+        verify(chain, times(1)).doFilter(request, response);
     }
 }
