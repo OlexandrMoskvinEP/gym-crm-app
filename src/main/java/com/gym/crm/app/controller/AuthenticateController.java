@@ -27,9 +27,7 @@ public class AuthenticateController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
-
         authenticationService.login(loginRequest);
-
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
 
         return ResponseEntity.ok().build();
@@ -38,9 +36,7 @@ public class AuthenticateController {
     @PutMapping("/change-password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         log.info("Change password attempt: username={}", changePasswordRequest.getUsername());
-
         facade.changePassword(changePasswordRequest);
-
         log.info("Password successfully changed: username={}", changePasswordRequest.getUsername());
 
         return ResponseEntity.ok().build();
