@@ -112,7 +112,10 @@ public class TraineeServiceImpl implements TraineeService {
         logger.info("Trainee {} successfully added", username);
         authenticationService.login(new LoginRequest(username, password));
 
-        return getTraineeDtoFromEntity(persistedTrainee);
+        TraineeDto traineeDto = getTraineeDtoFromEntity(persistedTrainee);
+        traineeDto.setPassword(password);
+
+        return traineeDto;
     }
 
     @Override
