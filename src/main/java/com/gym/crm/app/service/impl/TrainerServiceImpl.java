@@ -7,6 +7,7 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
@@ -34,6 +35,12 @@ public class TrainerServiceImpl implements TrainerService {
     private UserProfileService userProfileService;
     private TraineeService traineeService;
     private AuthenticationService authenticationService;
+    private TrainerMapper trainerMapper;
+
+    @Autowired
+    public void setTrainerMapper(TrainerMapper trainerMapper) {
+        this.trainerMapper = trainerMapper;
+    }
 
     @Autowired
     public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -78,7 +85,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = repository.findByUsername(username)
                 .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
 
-        return modelMapper.map(trainer, TrainerDto.class);
+        return trainerMapper.toDto(trainer);
     }
 
     @Override

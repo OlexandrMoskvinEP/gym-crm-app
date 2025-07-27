@@ -10,6 +10,7 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
@@ -27,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
@@ -64,6 +66,8 @@ class TrainerServiceImplTest {
     private TraineeService traineeService;
     @Mock
     private AuthenticationService authenticationService;
+    @Spy
+    private TrainerMapper trainerMapper;
 
     @InjectMocks
     private TrainerServiceImpl trainerService;
@@ -89,7 +93,7 @@ class TrainerServiceImplTest {
     @ValueSource(strings = {"Sophie.Taylor", "James.Wilson", "Olivia.Brown"})
     void shouldReturnTrainerByUsername(String username) {
         Optional<Trainer> entity = trainers.stream().filter(trainer -> trainer.getUser().getUsername().equals(username)).findFirst();
-        TrainerDto expected = modelMapper.map(entity, TrainerDto.class);
+        TrainerDto expected = trainerMapper.toDto(entity.get());
 
         when(repository.findByUsername(username)).thenReturn(entity);
 
