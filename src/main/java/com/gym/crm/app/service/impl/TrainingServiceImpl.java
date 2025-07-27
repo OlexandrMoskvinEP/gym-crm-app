@@ -33,6 +33,11 @@ public class TrainingServiceImpl implements TrainingService {
     private TrainingMapper trainingMapper;
 
     @Autowired
+    public void setTrainingTypeRepository(TrainingTypeRepository trainingTypeRepository) {
+        this.trainingTypeRepository = trainingTypeRepository;
+    }
+
+    @Autowired
     public void setRepository(TrainingRepository repository) {
         this.repository = repository;
     }

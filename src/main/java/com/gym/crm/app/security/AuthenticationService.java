@@ -63,7 +63,7 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthorizationErrorException(("User with such username does not exist")));
 
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (!rawPassword.equals(user.getPassword())) {
             throw new AuthorizationErrorException("User cannot be authenticated - invalid password");
         }
 
