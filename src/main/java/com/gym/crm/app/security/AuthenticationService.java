@@ -58,12 +58,12 @@ public class AuthenticationService {
         }
 
         String username = credentials.getUsername();
-        String rawPassword = credentials.getPassword();
+        String encodedPassword = credentials.getPassword();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthorizationErrorException(("User with such username does not exist")));
 
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (!encodedPassword.equals(user.getPassword())) {
             throw new AuthorizationErrorException("User cannot be authenticated - invalid password");
         }
 

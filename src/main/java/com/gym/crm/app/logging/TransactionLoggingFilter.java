@@ -33,10 +33,11 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(wrappedRequest, wrappedResponse);
-            log.info("Incoming request: {} {}", wrappedRequest, wrappedResponse);
+            log.info("Incoming request: {} {}", wrappedRequest.getContentAsString(),
+                    wrappedResponse.getCharacterEncoding());
 
             byte[] requestContent = wrappedRequest.getContentAsByteArray();
-            if (requestContent.length > 0) {
+            if (requestContent.length > 1000) {
                 log.info("Request body: {}", new String(requestContent, request.getCharacterEncoding()));
             }
 
