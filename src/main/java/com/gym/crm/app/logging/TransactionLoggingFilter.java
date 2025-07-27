@@ -33,24 +33,30 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(wrappedRequest, wrappedResponse);
-            log.info("Incoming request: {} {}", wrappedRequest, wrappedResponse);
-
-            byte[] requestContent = wrappedRequest.getContentAsByteArray();
-            if (requestContent.length > 0) {
-                log.info("Request body: {}", new String(requestContent, request.getCharacterEncoding()));
-            }
-
-            log.info("Response status: {}", wrappedResponse.getStatus());
-
-            byte[] responseContent = wrappedResponse.getContentAsByteArray();
-            if (responseContent.length > 0) {
-                log.info("Response body: {}", new String(responseContent, response.getCharacterEncoding()));
-            }
-
-            response.setHeader("X-Transaction-Id", transactionId);
+            logRequestAndResponse(wrappedRequest, wrappedResponse);
+        } catch (Exception ex) {
+            log.error("Exception during filter chain: {}", ex.getMessage(), ex);
+            throw ex;
         } finally {
             wrappedResponse.copyBodyToResponse();
+            response.setHeader("X-Transaction-Id", transactionId);
+
             MDC.remove(TRANSACTION_ID);
+        }
+    }
+
+    private void logRequestAndResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
+        String requestBody = new String(request.getContentAsByteArray(), request.getCharacterEncoding());
+
+        log.info("Request body: {}", requestBody);
+        int status = response.getStatus();
+        log.info("Response status: {}", status);
+
+        byte[] responseContent = response.getContentAsByteArray();
+
+        if (responseContent.length > 0) {
+            String responseBody = new String(responseContent, response.getCharacterEncoding());
+            log.info("Response body: {}", responseBody);
         }
     }
 
