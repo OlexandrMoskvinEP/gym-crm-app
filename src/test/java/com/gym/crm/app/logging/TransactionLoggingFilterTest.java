@@ -1,5 +1,6 @@
 package com.gym.crm.app.logging;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -63,7 +64,7 @@ class TransactionLoggingFilterTest {
 
         ILoggingEvent loggingEvent = logs.iterator().next();
         assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
-        assertThat(loggingEvent.getLevel().toString()).isEqualTo("INFO");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
     }
 
     @Test
@@ -89,7 +90,7 @@ class TransactionLoggingFilterTest {
 
         ILoggingEvent loggingEvent = logs.iterator().next();
         assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
-        assertThat(loggingEvent.getLevel().toString()).isEqualTo("INFO");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
     }
 
     @Test
@@ -109,7 +110,7 @@ class TransactionLoggingFilterTest {
         assertThatThrownBy(() -> filter.doFilter(request, response, mockChain)).isInstanceOf(RuntimeException.class).hasMessage("Simulated error");
 
         ILoggingEvent loggingEvent = logs.iterator().next();
-        assertThat(loggingEvent.getLevel().toString()).isEqualTo("ERROR");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
         assertThat(loggingEvent.getFormattedMessage()).contains("Exception during filter chain: Simulated error");
     }
 }
