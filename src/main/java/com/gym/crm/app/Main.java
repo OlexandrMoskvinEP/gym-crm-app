@@ -1,18 +1,21 @@
 package com.gym.crm.app;
 
 import com.gym.crm.app.config.AppConfig;
+import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.logging.TransactionLoggingFilter;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.io.File;
 
 public class Main {
+    private GymFacade facade;
     public static void main(String[] args) throws LifecycleException {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);

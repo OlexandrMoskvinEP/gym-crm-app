@@ -10,6 +10,8 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
+import com.gym.crm.app.mapper.TraineeMapper;
+import com.gym.crm.app.mapper.TraineeMapperImpl;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.security.AuthenticationService;
@@ -28,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
@@ -68,6 +71,8 @@ class TraineeServiceImplTest {
     private TrainerService trainerService;
     @Mock
     private AuthenticationService authenticationService;
+    @Spy
+    private TraineeMapper traineeMapper;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -93,7 +98,7 @@ class TraineeServiceImplTest {
     @ValueSource(strings = {"Bob.Williams", "Eva.Davis", "Alice.Smith"})
     void shouldGetTraineeByUsername(String username) {
         Optional<Trainee> entity = trainees.stream().filter(trainee -> trainee.getUser().getUsername().equals(username)).findFirst();
-        TraineeDto expected = modelMapper.map(entity, TraineeDto.class);
+        TraineeDto expected = traineeMapper.toDto(entity.get());
 
         when(repository.findByUsername(username)).thenReturn(entity);
 

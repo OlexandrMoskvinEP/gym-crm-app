@@ -10,6 +10,7 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
+import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.rest.LoginRequest;
@@ -37,10 +38,16 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeRepository repository;
     private ModelMapper modelMapper;
     private TrainerMapper trainerMapper;
+    private TraineeMapper traineeMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
     private TrainerService trainerService;
     private AuthenticationService authenticationService;
+
+    @Autowired
+    public void setTraineeMapper(TraineeMapper traineeMapper) {
+        this.traineeMapper = traineeMapper;
+    }
 
     @Autowired
     public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -88,9 +95,9 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeDto getTraineeByUsername(String username) {
         Trainee trainee = repository.findByUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
 
-        return modelMapper.map(trainee, TraineeDto.class);
+        return traineeMapper.toDto(trainee);
     }
 
     @Override
