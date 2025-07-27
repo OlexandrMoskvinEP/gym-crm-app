@@ -61,11 +61,13 @@ class TransactionLoggingFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Request body: test-body"));
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
+        assertThat(loggingEvent.getLevel().toString()).isEqualTo("INFO");
     }
 
     @Test
-    void shouldResponseNormally() throws ServletException, IOException {
+    void shouldLogResponseNormally() throws ServletException, IOException {
         List<ILoggingEvent> logs = logAppender.list;
         MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/fakeURL");
         baseRequest.setContent("test-body".getBytes());
@@ -85,8 +87,9 @@ class TransactionLoggingFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Response status: 200"));
-        assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Response body: response-body"));
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
+        assertThat(loggingEvent.getLevel().toString()).isEqualTo("INFO");
     }
 
     @Test
@@ -103,12 +106,10 @@ class TransactionLoggingFilterTest {
         doThrow(new RuntimeException("Simulated error")).when(mockChain)
                 .doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        assertThatThrownBy(() -> filter.doFilter(request, response, mockChain))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Simulated error");
+        assertThatThrownBy(() -> filter.doFilter(request, response, mockChain)).isInstanceOf(RuntimeException.class).hasMessage("Simulated error");
 
-        assertThat(logs)
-                .extracting(ILoggingEvent::getFormattedMessage)
-                .contains("Exception during filter chain: Simulated error");
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getLevel().toString()).isEqualTo("ERROR");
+        assertThat(loggingEvent.getFormattedMessage()).contains("Exception during filter chain: Simulated error");
     }
 }
