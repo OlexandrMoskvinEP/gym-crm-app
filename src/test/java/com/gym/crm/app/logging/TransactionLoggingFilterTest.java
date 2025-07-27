@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -43,16 +43,14 @@ class TransactionLoggingFilterTest {
     }
 
     @Test
-    void shouldLogRequestAndResponseNormally() throws ServletException, IOException {
+    void shouldLogRequestNormally() throws ServletException, IOException {
         List<ILoggingEvent> logs = logAppender.list;
-        MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/dummy");
+        MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/fakeURL");
         baseRequest.setContent("test-body".getBytes());
         baseRequest.setCharacterEncoding("UTF-8");
 
-        MockHttpServletResponse baseResponse = new MockHttpServletResponse();
-
         ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(baseRequest);
-        ContentCachingResponseWrapper response = new ContentCachingResponseWrapper(baseResponse);
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         FilterChain chain = (req, res) -> {
             req.getReader().lines().forEach(line -> {
@@ -65,12 +63,35 @@ class TransactionLoggingFilterTest {
         filter.doFilter(request, response, chain);
 
         assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Request body: test-body"));
+    }
+
+    @Test
+    void shouldResponseNormally() throws ServletException, IOException {
+        List<ILoggingEvent> logs = logAppender.list;
+        MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/fakeURL");
+        baseRequest.setContent("test-body".getBytes());
+        baseRequest.setCharacterEncoding("UTF-8");
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(baseRequest);
+
+        FilterChain chain = (req, res) -> {
+            req.getReader().lines().forEach(line -> {
+            });
+
+            ((HttpServletResponse) res).setStatus(200);
+            res.getWriter().write("response-body");
+        };
+
+        filter.doFilter(request, response, chain);
+
         assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Response status: 200"));
         assertThat(logs).anyMatch(log -> log.getFormattedMessage().contains("Response body: response-body"));
     }
 
     @Test
-    void shouldLogErrorWhenExceptionOccurs() {
+    void shouldLogErrorWhenExceptionOccurs() throws ServletException, IOException {
         FilterChain mockChain = mock(FilterChain.class);
         List<ILoggingEvent> logs = logAppender.list;
 
@@ -80,15 +101,17 @@ class TransactionLoggingFilterTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        try {
-            doThrow(new RuntimeException("Simulated error")).when(mockChain)
-                    .doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
+        doThrow(new RuntimeException("Simulated error")).when(mockChain)
+                .doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-            filter.doFilter(request, response, mockChain);
-        } catch (Exception ignored) {
-        }
-        assertThat(logs).anyMatch(log ->
-                log.getLevel() == Level.ERROR &&
-                        log.getFormattedMessage().contains("Exception during filter chain"));
+        assertThatThrownBy(() -> filter.doFilter(request, response, mockChain))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Simulated error");
+
+        assertThat(logs)
+                .anySatisfy(log -> {
+                    assertThat(log.getLevel()).isEqualTo(Level.ERROR);
+                    assertThat(log.getFormattedMessage()).contains("Exception during filter chain:");
+                });
     }
 }
