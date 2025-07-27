@@ -12,6 +12,8 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,12 @@ public class TraineeServiceImpl implements TraineeService {
     private PasswordService passwordService;
     private UserProfileService userProfileService;
     private TrainerService trainerService;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @Autowired
     public void setUserProfileService(UserProfileService userProfileService) {
@@ -89,18 +98,24 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.createUsername(createRequest.getUser().getFirstName(),
                 createRequest.getUser().getLastName());
         String password = passwordService.generatePassword();
+        String encodedPassword = passwordService.encodePassword(password);
 
         if (isDuplicateUsername(username)) {
             throw new RegistrationConflictException("Registration as both trainee and trainer is not allowed");
         }
 
         logger.info("Adding trainee with username {}", username);
-        Trainee entityToAdd = mapTraineeWithUser(createRequest, username, password);
+        Trainee entityToAdd = mapTraineeWithUser(createRequest, username, encodedPassword);
 
         Trainee persistedTrainee = repository.save(entityToAdd);
 
         logger.info("Trainee {} successfully added", username);
-        return getTraineeDtoFromEntity(persistedTrainee);
+        authenticationService.login(new LoginRequest(username, password));
+
+        TraineeDto traineeDto = getTraineeDtoFromEntity(persistedTrainee);
+        traineeDto.setPassword(password);
+
+        return traineeDto;
     }
 
     @Override
@@ -199,6 +214,8 @@ public class TraineeServiceImpl implements TraineeService {
 
     private boolean isDuplicateUsername(String username) {
         return trainerService.getAllTrainers().stream()
-                .anyMatch(trainer -> trainer.getUsername().equals(username));
+                .filter(Objects::nonNull)
+                .anyMatch(trainer -> username.equals(trainer.getUsername()));
+
     }
 }
