@@ -8,6 +8,8 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,12 @@ public class TrainerServiceImpl implements TrainerService {
     private PasswordService passwordService;
     private UserProfileService userProfileService;
     private TraineeService traineeService;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @Autowired
     public void setUserProfileService(UserProfileService userProfileService) {
@@ -74,8 +83,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto addTrainer(TrainerCreateRequest trainerCreateRequest) {
-        String username = userProfileService.createUsername(trainerCreateRequest.getUser().getFirstName(), trainerCreateRequest.getUser().getFirstName());
+        String username = userProfileService.createUsername(trainerCreateRequest.getUser().getFirstName(), trainerCreateRequest.getUser().getLastName());
         String password = passwordService.generatePassword();
+        String encodedPassword = passwordService.encodePassword(password);
 
         if (isDuplicateUsername(username)) {
             throw new RegistrationConflictException("Registration as both trainer and trainee is not allowed");
@@ -83,12 +93,16 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Adding trainer with username {}", username);
 
-        Trainer entityToAdd = mapTrainerWithUser(trainerCreateRequest, username, password);
-        Trainer returned = repository.save(entityToAdd);
+        Trainer entityToAdd = mapTrainerWithUser(trainerCreateRequest, username, encodedPassword);
+        Trainer persistedTrainer = repository.save(entityToAdd);
 
         logger.info("Trainer {} successfully added", username);
+        authenticationService.login(new LoginRequest(username, password));
 
-        return getTrainerDtoFromEntity(returned);
+        TrainerDto trainerDto = getTrainerDtoFromEntity(persistedTrainer);
+        trainerDto.setPassword(password);
+
+        return trainerDto;
     }
 
     @Override
@@ -166,6 +180,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     private boolean isDuplicateUsername(String username) {
         return traineeService.getAllTrainees().stream()
-                .anyMatch(trainer -> trainer.getUsername().equals(username));
+                .filter(Objects::nonNull)
+                .anyMatch(trainer -> username.equals(trainer.getUsername()));
     }
 }

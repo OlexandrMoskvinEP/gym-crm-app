@@ -12,10 +12,12 @@ import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TraineeServiceImpl;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +66,8 @@ class TraineeServiceImplTest {
     private UserProfileService userProfileService;
     @Mock
     private TrainerService trainerService;
+    @Mock
+    private AuthenticationService authenticationService;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -115,6 +119,7 @@ class TraineeServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
+        doNothing().when(authenticationService).login(any());
 
         TraineeDto actual = traineeService.addTrainee(createRequest);
 

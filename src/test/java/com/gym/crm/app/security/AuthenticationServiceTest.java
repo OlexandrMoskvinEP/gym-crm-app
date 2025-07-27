@@ -62,13 +62,12 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("should successfully allow user if credentials are correct")
     void shouldSuccessfullyAllowUserIfCredentialsAreCorrect() {
-        User user = buildUserWithPassword();
+        User user = buildUserWithPassword().toBuilder().password(PLAIN_PASSWORD).build();
         UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
         AuthenticatedUser authenticatedUser = buildAuthenticatedUser(user);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
         when(traineeRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainee()));
-        when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> authenticationService.checkUserAuthorisation(correctCredentials, TRAINEE));
@@ -84,7 +83,6 @@ class AuthenticationServiceTest {
 
         when(currentUserHolder.get()).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(INVALID_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
         RuntimeException exception = assertThrows(AuthorizationErrorException.class,
                 () -> authenticationService.checkUserAuthorisation(wrongCredentials, ADMIN));
@@ -115,8 +113,6 @@ class AuthenticationServiceTest {
         UserCredentialsDto correctCredentials = new UserCredentialsDto(USERNAME, PLAIN_PASSWORD, USER_ROLE);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
-        when(trainerRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
-        when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertThrows(AuthorizationErrorException.class, () -> authenticationService.checkUserAuthorisation(correctCredentials, ADMIN));
