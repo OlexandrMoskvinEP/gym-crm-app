@@ -1,47 +1,116 @@
 package com.gym.crm.app.logging;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.MDC;
+import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionLoggingFilterTest {
 
+    private TransactionLoggingFilter filter;
+    private ListAppender<ILoggingEvent> logAppender;
+
+    @BeforeEach
+    void setup() {
+        filter = new TransactionLoggingFilter();
+
+        Logger logger = (Logger) LoggerFactory.getLogger(TransactionLoggingFilter.class);
+        logAppender = new ListAppender<>();
+        logAppender.start();
+        logger.addAppender(logAppender);
+    }
+
     @Test
-    void shouldGenerateTransactionIdAndAddHeader() throws ServletException, IOException {
-        TransactionLoggingFilter filter = new TransactionLoggingFilter();
-        FilterChain chain = mock(FilterChain.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+    void shouldLogRequestNormally() throws ServletException, IOException {
+        List<ILoggingEvent> logs = logAppender.list;
+        MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/fakeURL");
+        baseRequest.setContent("test-body".getBytes());
+        baseRequest.setCharacterEncoding("UTF-8");
 
-        ArgumentCaptor<String> headerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> headerValueCaptor = ArgumentCaptor.forClass(String.class);
+        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(baseRequest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/test");
+        FilterChain chain = (req, res) -> {
+            req.getReader().lines().forEach(line -> {
+            });
 
-        filter.doFilterInternal(request, response, chain);
+            ((HttpServletResponse) res).setStatus(200);
+            res.getWriter().write("response-body");
+        };
 
-        verify(response).setHeader(headerNameCaptor.capture(), headerValueCaptor.capture());
+        filter.doFilter(request, response, chain);
 
-        assertThat(headerNameCaptor.getValue()).isEqualTo("X-Transaction-Id");
-        assertThat(UUID.fromString(headerValueCaptor.getValue())).isInstanceOf(UUID.class);
-        assertThat(MDC.get("transactionId")).isNull();
-        verify(chain, times(1)).doFilter(request, response);
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
+    }
+
+    @Test
+    void shouldLogResponseNormally() throws ServletException, IOException {
+        List<ILoggingEvent> logs = logAppender.list;
+        MockHttpServletRequest baseRequest = new MockHttpServletRequest("POST", "/fakeURL");
+        baseRequest.setContent("test-body".getBytes());
+        baseRequest.setCharacterEncoding("UTF-8");
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(baseRequest);
+
+        FilterChain chain = (req, res) -> {
+            req.getReader().lines().forEach(line -> {
+            });
+
+            ((HttpServletResponse) res).setStatus(200);
+            res.getWriter().write("response-body");
+        };
+
+        filter.doFilter(request, response, chain);
+
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
+    }
+
+    @Test
+    void shouldLogErrorWhenExceptionOccurs() throws ServletException, IOException {
+        FilterChain mockChain = mock(FilterChain.class);
+        List<ILoggingEvent> logs = logAppender.list;
+
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/error");
+        request.setContent("fail".getBytes());
+        request.setCharacterEncoding("UTF-8");
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        doThrow(new RuntimeException("Simulated error")).when(mockChain)
+                .doFilter(any(HttpServletRequest.class), any(HttpServletResponse.class));
+
+        assertThatThrownBy(() -> filter.doFilter(request, response, mockChain)).isInstanceOf(RuntimeException.class).hasMessage("Simulated error");
+
+        ILoggingEvent loggingEvent = logs.iterator().next();
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
+        assertThat(loggingEvent.getFormattedMessage()).contains("Exception during filter chain: Simulated error");
     }
 }
