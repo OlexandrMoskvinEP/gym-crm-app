@@ -13,13 +13,18 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TransactionLoggingFilter extends OncePerRequestFilter {
+    private static final Set<String> SENSITIVE_FIELDS = Set.of("password", "oldPassword", "newPassword");
+    private static final Pattern SENSITIVE_PATTERN = Pattern.compile("(?i)(\"(%s)\"\\s*:\\s*\")([^\"]+)(\")"
+            .formatted(String.join("|", SENSITIVE_FIELDS)));
+
     private static final String TRANSACTION_ID = "transactionId";
 
     @Override
@@ -48,7 +53,8 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
     private void logRequestAndResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
         String requestBody = new String(request.getContentAsByteArray(), request.getCharacterEncoding());
         requestBody = maskSensitiveFields(requestBody);
-        log.info("Request body: {}", requestBody);
+        String endpoint = String.format("%s %s", request.getMethod(), request.getRequestURI());
+        log.info("Endpoint: {}, Request body: {}", endpoint, requestBody);
 
         int status = response.getStatus();
         log.info("Response status: {}", status);
@@ -65,10 +71,7 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
         return UUID.randomUUID().toString();
     }
 
-    String maskSensitiveFields(String body) {
-        for (String field : List.of("password", "oldPassword", "newPassword")) {
-            body = body.replaceAll("(?i)(\"" + field + "\"\\s*:\\s*\")([^\"]+)(\")", "$1*****$3");
-        }
-        return body;
+    private String maskSensitiveFields(String body) {
+        return SENSITIVE_PATTERN.matcher(body).replaceAll("$1*****$4");
     }
 }
