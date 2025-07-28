@@ -10,7 +10,10 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
+import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
+import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -25,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
@@ -38,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,6 +64,10 @@ class TrainerServiceImplTest {
     private UserProfileService userProfileService;
     @Mock
     private TraineeService traineeService;
+    @Mock
+    private AuthenticationService authenticationService;
+    @Spy
+    private TrainerMapper trainerMapper;
 
     @InjectMocks
     private TrainerServiceImpl trainerService;
@@ -84,7 +93,7 @@ class TrainerServiceImplTest {
     @ValueSource(strings = {"Sophie.Taylor", "James.Wilson", "Olivia.Brown"})
     void shouldReturnTrainerByUsername(String username) {
         Optional<Trainer> entity = trainers.stream().filter(trainer -> trainer.getUser().getUsername().equals(username)).findFirst();
-        TrainerDto expected = modelMapper.map(entity, TrainerDto.class);
+        TrainerDto expected = trainerMapper.toDto(entity.get());
 
         when(repository.findByUsername(username)).thenReturn(entity);
 
@@ -110,6 +119,8 @@ class TrainerServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainer.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
         when(repository.save(any(Trainer.class))).thenReturn(entityToReturn);
+
+        doNothing().when(authenticationService).login(any());
 
         TrainerDto actual = trainerService.addTrainer(createRequest);
 

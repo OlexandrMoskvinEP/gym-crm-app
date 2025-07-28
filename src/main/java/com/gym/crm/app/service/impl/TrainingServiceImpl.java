@@ -8,6 +8,8 @@ import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainingMapper;
+import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
@@ -31,6 +33,18 @@ public class TrainingServiceImpl implements TrainingService {
     private TrainingRepository repository;
     private ModelMapper modelMapper;
     private TrainingMapper trainingMapper;
+    private TrainerRepository trainerRepository;
+    private TraineeRepository traineeRepository;
+
+    @Autowired
+    public void setTrainerRepository(TrainerRepository trainerRepository) {
+        this.trainerRepository = trainerRepository;
+    }
+
+    @Autowired
+    public void setTraineeRepository(TraineeRepository traineeRepository) {
+        this.traineeRepository = traineeRepository;
+    }
 
     @Autowired
     public void setTrainingTypeRepository(TrainingTypeRepository trainingTypeRepository) {
@@ -62,9 +76,19 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingSaveRequest training) {
-        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingName())
+        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingTypeName())
                 .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
-        Training trainingToSave = mapDtoToEntity(training, trainingType);
+        Trainer trainer = trainerRepository.findById(training.getTrainerId()).get();
+        Trainee trainee = traineeRepository.findById(training.getTraineeId()).get();
+
+        Training trainingToSave = Training.builder()
+                .trainingName(training.getTrainingName())
+                .trainingDate(training.getTrainingDate())
+                .trainingDuration(training.getTrainingDuration())
+                .trainingType(trainingType)
+                .trainer(trainer)
+                .trainee(trainee)
+                .build();
 
         logger.info("Adding training for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
@@ -129,18 +153,5 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingType(),
                 training.getTrainingDate(),
                 training.getTrainingDuration());
-    }
-
-    private static Training mapDtoToEntity(TrainingSaveRequest source, TrainingType trainingType) {
-        return Training.builder()
-                .trainingName(source.getTrainingName())
-                .trainingDate(source.getTrainingDate())
-                .trainingDuration(source.getTrainingDuration())
-
-                .trainer(Trainer.builder().id(source.getTrainerId()).build())
-                .trainee(Trainee.builder().id(source.getTraineeId()).build())
-                .trainingType(trainingType)
-                .trainingName(source.getTrainingName())
-                .build();
     }
 }

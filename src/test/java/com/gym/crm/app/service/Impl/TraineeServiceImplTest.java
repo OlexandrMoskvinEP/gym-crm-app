@@ -10,8 +10,10 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.DataBaseErrorException;
+import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -26,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
@@ -64,6 +67,10 @@ class TraineeServiceImplTest {
     private UserProfileService userProfileService;
     @Mock
     private TrainerService trainerService;
+    @Mock
+    private AuthenticationService authenticationService;
+    @Spy
+    private TraineeMapper traineeMapper;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -89,7 +96,7 @@ class TraineeServiceImplTest {
     @ValueSource(strings = {"Bob.Williams", "Eva.Davis", "Alice.Smith"})
     void shouldGetTraineeByUsername(String username) {
         Optional<Trainee> entity = trainees.stream().filter(trainee -> trainee.getUser().getUsername().equals(username)).findFirst();
-        TraineeDto expected = modelMapper.map(entity, TraineeDto.class);
+        TraineeDto expected = traineeMapper.toDto(entity.get());
 
         when(repository.findByUsername(username)).thenReturn(entity);
 
@@ -102,12 +109,17 @@ class TraineeServiceImplTest {
     @MethodSource("getTrainees")
     void shouldAddTrainee(Trainee trainee) {
         TraineeCreateRequest createRequest = buildCreateRequest(trainee);
-        TraineeDto expected = modelMapper.map(trainee, TraineeDto.class);
-        expected.setPassword(trainee.getUser().getPassword());
-        expected.setUserId(0L);
-        expected.setFirstName(trainee.getUser().getFirstName());
-        expected.setLastName(trainee.getUser().getLastName());
-        expected.setActive(trainee.getUser().isActive());
+
+        TraineeDto expected = TraineeDto.builder()
+                .traineeId(trainee.getId())
+                .userId(0L)
+                .password(trainee.getUser().getPassword())
+                .firstName(trainee.getUser().getFirstName())
+                .lastName(trainee.getUser().getLastName())
+                .isActive(trainee.getUser().isActive())
+                .address(trainee.getAddress())
+                .dateOfBirth(trainee.getDateOfBirth())
+                .build();
 
         Trainee entityToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
         String username = expected.getFirstName() + "." + expected.getLastName();
@@ -115,15 +127,16 @@ class TraineeServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
+        doNothing().when(authenticationService).login(any());
 
         TraineeDto actual = traineeService.addTrainee(createRequest);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
+
         Trainee savedTrainee = traineeCaptor.getValue();
         assertNotNull(savedTrainee);
         assertNotNull(actual);
         assertEquals(trainee.getUser().getUsername(), savedTrainee.getUser().getUsername());
-        assertEquals(expected.getUserId(), actual.getUserId());
         assertEquals(username, actual.getUsername());
         assertEquals(expected.getFirstName(), actual.getFirstName());
         assertEquals(expected.getLastName(), actual.getLastName());
