@@ -55,5 +55,4 @@ public class Trainer {
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Training> trainings = new ArrayList<>();
-
 }
