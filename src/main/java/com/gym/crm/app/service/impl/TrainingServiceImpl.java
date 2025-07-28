@@ -170,14 +170,4 @@ public class TrainingServiceImpl implements TrainingService {
                 .trainingName(source.getTrainingName())
                 .build();
     }
-
-    @Autowired
-    public void setTrainerRepository(TrainerRepositoryImpl trainerRepository) {
-        this.trainerRepository = trainerRepository;
-    }
-
-    @Autowired
-    public void setTraineeRepository(TraineeRepositoryImpl traineeRepository) {
-        this.traineeRepository = traineeRepository;
-    }
 }
