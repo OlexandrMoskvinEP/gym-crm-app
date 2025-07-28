@@ -64,7 +64,6 @@ public class GymFacade {
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
     private final TrainingTypeMapper trainingTypeMapper;
-
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
 

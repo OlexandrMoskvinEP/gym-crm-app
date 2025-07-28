@@ -133,8 +133,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee entityToUpdate = mapUpdatedTraineeWithUser(updateRequest, existTrainee);
 
         Trainee persistedTrainee = repository.save(entityToUpdate);
-
         logger.info("Trainee {} updated", username);
+
         return modelMapper.map(persistedTrainee, TraineeDto.class);
     }
 
@@ -145,7 +145,6 @@ public class TraineeServiceImpl implements TraineeService {
         }
 
         repository.deleteByUsername(username);
-
         logger.info("Trainee {} deleted", username);
     }
 
@@ -181,7 +180,6 @@ public class TraineeServiceImpl implements TraineeService {
                 .lastName(createRequest.getUser().getLastName())
                 .isActive(createRequest.getUser().getIsActive())
                 .build();
-
 
         return Trainee.builder()
                 .address(createRequest.getAddress())

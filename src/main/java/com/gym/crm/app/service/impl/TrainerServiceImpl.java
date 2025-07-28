@@ -139,7 +139,6 @@ public class TrainerServiceImpl implements TrainerService {
         }
 
         repository.deleteByUsername(username);
-
         logger.info("Trainer {} deleted", username);
     }
 

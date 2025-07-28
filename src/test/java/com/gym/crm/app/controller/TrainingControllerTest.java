@@ -42,6 +42,7 @@ class TrainingControllerTest {
     private static final TrainingDto TRAINING_DTO = buildTrainingDto();
 
     private static TrainingCreateRequest TRAINING_CREATE_REQUEST;
+
     private MockMvc mockMvc;
 
     @Mock

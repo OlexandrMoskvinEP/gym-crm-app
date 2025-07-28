@@ -27,7 +27,6 @@ public class UserProfileService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
 
-
     public String createUsername(String firstName, String lastName) {
         String rawUsername = firstName + "." + lastName;
         String username = rawUsername.toLowerCase();
