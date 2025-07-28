@@ -90,7 +90,6 @@ public class TrainingServiceImpl implements TrainingService {
                 .trainee(trainee)
                 .build();
 
-
         logger.info("Adding training for trainer {} and trainee {} on {}",
                 training.getTrainerId(), training.getTraineeId(), training.getTrainingDate());
 
@@ -154,18 +153,5 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingType(),
                 training.getTrainingDate(),
                 training.getTrainingDuration());
-    }
-
-    private static Training mapDtoToEntity(TrainingSaveRequest source, TrainingType trainingType) {
-        return Training.builder()
-                .trainingName(source.getTrainingName())
-                .trainingDate(source.getTrainingDate())
-                .trainingDuration(source.getTrainingDuration())
-
-                .trainer(Trainer.builder().id(source.getTrainerId()).build())
-                .trainee(Trainee.builder().id(source.getTraineeId()).build())
-                .trainingType(trainingType)
-                .trainingName(source.getTrainingName())
-                .build();
     }
 }

@@ -121,7 +121,6 @@ class TraineeServiceImplTest {
                 .dateOfBirth(trainee.getDateOfBirth())
                 .build();
 
-
         Trainee entityToReturn = mapToEntityWithUserId(trainee, expected.getUserId());
         String username = expected.getFirstName() + "." + expected.getLastName();
 
@@ -133,6 +132,7 @@ class TraineeServiceImplTest {
         TraineeDto actual = traineeService.addTrainee(createRequest);
 
         verify(repository, atLeastOnce()).save(traineeCaptor.capture());
+
         Trainee savedTrainee = traineeCaptor.getValue();
         assertNotNull(savedTrainee);
         assertNotNull(actual);

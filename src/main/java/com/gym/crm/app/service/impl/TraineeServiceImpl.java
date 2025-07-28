@@ -224,6 +224,5 @@ public class TraineeServiceImpl implements TraineeService {
         return trainerService.getAllTrainers().stream()
                 .filter(Objects::nonNull)
                 .anyMatch(trainer -> username.equals(trainer.getUsername()));
-
     }
 }

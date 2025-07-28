@@ -290,7 +290,6 @@ class GymFacadeTest {
         expected.setTrainingType(TrainingType.builder().build());
         expected.setTrainingDate(LocalDate.now());
 
-
         when(traineeService.getTraineeByUsername("kevin.jackson")).thenReturn(trainee);
         when(trainerService.getTrainerByUsername("chris.tenet")).thenReturn(trainer);
         when(trainingService.addTraining(any())).thenReturn(expected);
@@ -305,7 +304,6 @@ class GymFacadeTest {
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, TRAINER, ADMIN);
     }
 
-
     @Test
     void shouldUpdateTraining() {
         TrainingSaveRequest saveRequest = TrainingSaveRequest.builder().build();
@@ -314,7 +312,6 @@ class GymFacadeTest {
         TrainingDto actual = facade.updateTraining(saveRequest, USER_CREDENTIALS);
 
         assertEquals(TRAINING_DTO, actual);
-
         verify(trainingService).updateTraining(saveRequest);
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
     }
