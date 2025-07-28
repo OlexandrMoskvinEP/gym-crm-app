@@ -97,7 +97,6 @@ class GymFacadeTest {
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
     private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = getTrainingCreateRequest();
-    private static final TrainingSaveRequest TRAINING_SAVE_REQUEST = getTrainingSaveRequest();
 
     @Mock
     private HttpServletRequest request;

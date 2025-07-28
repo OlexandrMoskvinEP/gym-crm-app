@@ -38,5 +38,4 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
                 entityManager.createQuery("SELECT t FROM TrainingType t ", TrainingType.class)
                         .getResultStream().toList());
     }
-
 }

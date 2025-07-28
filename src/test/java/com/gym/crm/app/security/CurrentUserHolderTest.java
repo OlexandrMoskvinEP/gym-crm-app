@@ -12,9 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CurrentUserHolderTest {
+    private final HttpServletRequest request = new MockHttpServletRequest();
+
     private CurrentUserHolder holder;
     private AuthenticatedUser testUser;
-    private final HttpServletRequest request = new MockHttpServletRequest();
 
     @BeforeEach
     void setUp() {

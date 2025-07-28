@@ -16,10 +16,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = TestConfig.class)
 @DBUnit(schema = "PUBLIC")
 public abstract class AbstractRepositoryTest<T> {
-
     @Autowired
     protected T repository;
-
     @Autowired
     protected EntityManagerFactory entityManagerFactory;
 

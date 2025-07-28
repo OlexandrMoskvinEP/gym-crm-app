@@ -137,7 +137,6 @@ class TraineeControllerTest {
         verify(facade).deleteTraineeByUsername(TRAINEE_USERNAME);
     }
 
-
     @Test
     void shouldReturnAvailableTrainers() throws Exception {
         when(facade.getUnassignedTrainersByTraineeUsername(TRAINEE_USERNAME)).thenReturn(AVAILABLE_TRAINERS_GET_RESPONSE);

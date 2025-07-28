@@ -68,9 +68,9 @@ class TrainingServiceImplTest {
     TraineeRepository traineeRepository;
     @Mock
     private TrainingMapper trainingMapper;
+
     @InjectMocks
     private TrainingServiceImpl trainingService;
-
 
     @BeforeEach
     void setUp() {

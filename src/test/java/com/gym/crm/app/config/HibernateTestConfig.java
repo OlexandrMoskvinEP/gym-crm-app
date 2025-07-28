@@ -1,7 +1,7 @@
 package com.gym.crm.app.config;
 
-import com.gym.crm.app.util.YamlPropertySourceFactory;
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
+import com.gym.crm.app.util.YamlPropertySourceFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;

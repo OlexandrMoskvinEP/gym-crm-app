@@ -111,8 +111,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
 
             Query<?> query = (Query<?>) session.createQuery("""
-                        UPDATE User u SET u.isActive = :status WHERE u.username = :username
-                    """);
+                    UPDATE User u SET u.isActive = :status WHERE u.username = :username""");
             query.setParameter("status", !isActive);
             query.setParameter("username", username);
 
