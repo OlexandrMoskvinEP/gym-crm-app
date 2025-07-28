@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -112,5 +116,56 @@ class TransactionLoggingFilterTest {
         ILoggingEvent loggingEvent = logs.iterator().next();
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
         assertThat(loggingEvent.getFormattedMessage()).contains("Exception during filter chain: Simulated error");
+    }
+
+    @Test
+    void shouldMaskPasswordInRequestBody() {
+        String body = """
+                {
+                    "username": "john.doe",
+                    "password": "secret123"
+                }
+                """;
+
+        TransactionLoggingFilter filter = new TransactionLoggingFilter();
+        String masked = filter.maskSensitiveFields(body);
+
+        assertThat(masked).contains("\"password\": \"*****\"");
+        assertFalse(masked.contains("secret123"));
+    }
+
+    @Test
+    void shouldMaskPasswordFieldsInChangePasswordRequest() throws Exception {
+        String body = """
+                {
+                    "username": "john.doe",
+                    "oldPassword": "qwerty1234",
+                    "newPassword": "qwerty9999"
+                }
+                """;
+
+        MockHttpServletRequest request = new MockHttpServletRequest("PUT", "/api/v1/change-password");
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
+        request.setCharacterEncoding("UTF-8");
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        FilterChain chain = (req, res) -> {
+        };
+
+        TransactionLoggingFilter filter = new TransactionLoggingFilter();
+        filter.doFilterInternal(request, response, chain);
+
+        Assertions.assertNotNull(request.getContentAsByteArray());
+        Assertions.assertNotNull(request.getCharacterEncoding());
+
+        String logged = new String(request.getContentAsByteArray(), request.getCharacterEncoding());
+
+        String masked = filter.maskSensitiveFields(logged);
+
+        assertTrue(masked.contains("\"oldPassword\": \"*****\""));
+        assertTrue(masked.contains("\"newPassword\": \"*****\""));
+        assertFalse(masked.contains("qwerty1234"));
+        assertFalse(masked.contains("qwerty9999"));
     }
 }

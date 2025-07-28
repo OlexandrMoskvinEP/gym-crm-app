@@ -65,7 +65,7 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
         return UUID.randomUUID().toString();
     }
 
-    private String maskSensitiveFields(String body) {
+    String maskSensitiveFields(String body) {
         for (String field : List.of("password", "oldPassword", "newPassword")) {
             body = body.replaceAll("(?i)(\"" + field + "\"\\s*:\\s*\")([^\"]+)(\")", "$1*****$3");
         }
