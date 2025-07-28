@@ -13,12 +13,18 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TransactionLoggingFilter extends OncePerRequestFilter {
+    private static final Set<String> SENSITIVE_FIELDS = Set.of("password", "oldPassword", "newPassword");
+    private static final Pattern SENSITIVE_PATTERN = Pattern.compile("(?i)(\"(%s)\"\\s*:\\s*\")([^\"]+)(\")"
+            .formatted(String.join("|", SENSITIVE_FIELDS)));
+
     private static final String TRANSACTION_ID = "transactionId";
 
     @Override
@@ -40,27 +46,32 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
         } finally {
             wrappedResponse.copyBodyToResponse();
             response.setHeader("X-Transaction-Id", transactionId);
-
             MDC.remove(TRANSACTION_ID);
         }
     }
 
     private void logRequestAndResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
         String requestBody = new String(request.getContentAsByteArray(), request.getCharacterEncoding());
+        requestBody = maskSensitiveFields(requestBody);
+        String endpoint = String.format("%s %s", request.getMethod(), request.getRequestURI());
+        log.info("Endpoint: {}, Request body: {}", endpoint, requestBody);
 
-        log.info("Request body: {}", requestBody);
         int status = response.getStatus();
         log.info("Response status: {}", status);
 
         byte[] responseContent = response.getContentAsByteArray();
-
         if (responseContent.length > 0) {
             String responseBody = new String(responseContent, response.getCharacterEncoding());
+            responseBody = maskSensitiveFields(responseBody);
             log.info("Response body: {}", responseBody);
         }
     }
 
     private String generateTransactionId() {
         return UUID.randomUUID().toString();
+    }
+
+    private String maskSensitiveFields(String body) {
+        return SENSITIVE_PATTERN.matcher(body).replaceAll("$1*****$4");
     }
 }
