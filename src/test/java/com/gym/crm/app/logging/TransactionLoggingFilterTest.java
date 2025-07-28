@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +17,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -112,5 +118,70 @@ class TransactionLoggingFilterTest {
         ILoggingEvent loggingEvent = logs.iterator().next();
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
         assertThat(loggingEvent.getFormattedMessage()).contains("Exception during filter chain: Simulated error");
+    }
+
+    @Test
+    void shouldMaskPasswordFieldsInRequestBody() throws Exception {
+        String body = """
+                {
+                    "username": "john.doe",
+                    "oldPassword": "qwerty1234",
+                    "newPassword": "qwerty9999"
+                }
+                """;
+
+        MockHttpServletRequest request = new MockHttpServletRequest("PUT", "/api/v1/change-password");
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
+        request.setCharacterEncoding("UTF-8");
+
+        Assertions.assertNotNull(request.getContentAsByteArray());
+        Assertions.assertNotNull(request.getCharacterEncoding());
+
+        String requestBody = new String(request.getContentAsByteArray(), request.getCharacterEncoding());
+        TransactionLoggingFilter filter = new TransactionLoggingFilter();
+        String maskedRequest = filter.maskSensitiveFields(requestBody);
+
+        assertTrue(maskedRequest.contains("\"oldPassword\": \"*****\""));
+        assertTrue(maskedRequest.contains("\"newPassword\": \"*****\""));
+        assertFalse(maskedRequest.contains("qwerty1234"));
+        assertFalse(maskedRequest.contains("qwerty9999"));
+    }
+
+    @Test
+    void shouldMaskPasswordFieldsInResponseBody() throws Exception {
+        String body = """
+                {
+                    "username": "john.doe",
+                    "oldPassword": "qwerty1234",
+                    "newPassword": "qwerty9999"
+                }
+                """;
+
+        MockHttpServletRequest request = new MockHttpServletRequest("PUT", "/api/v1/change-password");
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
+        request.setCharacterEncoding("UTF-8");
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
+
+        FilterChain chain = (req, res) -> {
+            res.setContentType("application/json");
+            PrintWriter writer = res.getWriter();
+            writer.write(body);
+            writer.flush();
+        };
+
+        TransactionLoggingFilter filter = new TransactionLoggingFilter();
+        filter.doFilterInternal(request, wrappedResponse, chain);
+
+        String responseBody = new String(wrappedResponse.getContentAsByteArray(), wrappedResponse.getCharacterEncoding());
+        String maskedResponse = filter.maskSensitiveFields(responseBody);
+
+        wrappedResponse.copyBodyToResponse();
+
+        assertTrue(maskedResponse.contains("\"oldPassword\": \"*****\""));
+        assertTrue(maskedResponse.contains("\"newPassword\": \"*****\""));
+        assertFalse(maskedResponse.contains("qwerty1234"));
+        assertFalse(maskedResponse.contains("qwerty9999"));
     }
 }
