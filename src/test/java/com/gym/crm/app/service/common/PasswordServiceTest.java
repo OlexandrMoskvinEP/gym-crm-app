@@ -8,7 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.security.SecureRandom;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class PasswordServiceTest {
@@ -23,6 +22,7 @@ class PasswordServiceTest {
 
         when(mockRandom.nextInt(Mockito.anyInt())).thenReturn(0);
     }
+
     @Test
     void shouldGeneratePasswordOfFixedLength() {
         String password = passwordService.generatePassword();
