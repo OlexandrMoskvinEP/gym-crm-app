@@ -1,7 +1,6 @@
 package com.gym.crm.app;
 
 import com.gym.crm.app.config.AppConfig;
-import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.logging.TransactionLoggingFilter;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
