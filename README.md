@@ -9,11 +9,53 @@ To run this application, you should have the following installed:
 - **Git** -- 2.49.0.windows.1
 
 ## Setup Instructions
+
 Run the following script to create the database and add a user:
 
 ```sql
-CREATE DATABASE "gym_crm_db";
-CREATE USER gym WITH PASSWORD 'gym';
-GRANT ALL PRIVILEGES ON DATABASE "gym" TO gym;
+CREATE
+DATABASE "gym_crm_db";
+CREATE
+USER gym WITH PASSWORD 'gym';
+GRANT ALL PRIVILEGES ON DATABASE
+"gym" TO gym;
 ```
+
 +
+
+## 📚 API Documentation
+
+Interactive and downloadable documentation for the Gym CRM REST API.
+
+### Swagger UI
+
+Use Swagger UI to explore and test the available API endpoints.
+
+- [Swagger UI](http://localhost:8080/swagger-ui/index.html)
+- [OpenAPI JSON](http://localhost:8080/v3/api-docs)
+- [OpenAPI YAML](http://localhost:8080/v3/api-docs.yaml)
+
+> These URLs assume the application is running locally on port 8080.
+
+---
+
+### OpenAPI Specification (YAML)
+
+This YAML file defines the full REST API contract and is used for client/server code generation.
+
+- [OpenAPI YAML File](src/main/resources/openapi/gym.yaml)
+
+> Used with `openapi-generator-maven-plugin` to generate DTOs and API interfaces.
+
+---
+
+### Postman Collection
+
+You can also test the API using Postman.
+
+- [Download Postman Collection](src/main/resources/postman/gym-crm-api.collection.json)
+
+> To import the collection into Postman, open Postman, click `Import`, then select the `.json` file above.
+
+
+
