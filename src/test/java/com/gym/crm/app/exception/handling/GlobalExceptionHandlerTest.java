@@ -2,6 +2,7 @@ package com.gym.crm.app.exception.handling;
 
 import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
+import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
@@ -61,22 +62,12 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldReturnValidationError() {
-        WrongRequest wrongRequest = new WrongRequest("");
-
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<WrongRequest>> violations = validator.validate(wrongRequest);
-
-        BindingResult bindingResult = new BeanPropertyBindingResult(wrongRequest, "WrongRequest");
-
-        for (ConstraintViolation<WrongRequest> violation : violations) {
-            String field = violation.getPropertyPath().toString();
-            String message = violation.getMessage();
-            bindingResult.addError(new FieldError("WrongRequest", field, message));
-        }
+        BindingResult bindingResult = buildBindingResult();
 
         MethodParameter methodParameter = mock(MethodParameter.class);
-        when(methodParameter.getExecutable()).thenReturn(WrongRequest.class.getDeclaredConstructors()[0]);
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(methodParameter, bindingResult);
+
+        when(methodParameter.getExecutable()).thenReturn(WrongRequest.class.getDeclaredConstructors()[0]);
 
         ResponseEntity<ErrorResponse> entity = exceptionHandler.handleValidationException(exception);
 
@@ -90,12 +81,11 @@ class GlobalExceptionHandlerTest {
     void shouldHandleConstraintViolationException() {
         ConstraintViolation<?> violation = mock(ConstraintViolation.class);
         Path path = mock(Path.class);
+        ConstraintViolationException exception = new ConstraintViolationException(Set.of(violation));
 
         when(path.toString()).thenReturn("field");
         when(violation.getPropertyPath()).thenReturn(path);
         when(violation.getMessage()).thenReturn("must not be null");
-
-        ConstraintViolationException exception = new ConstraintViolationException(Set.of(violation));
 
         ResponseEntity<ErrorResponse> response = exceptionHandler.handleConstraintViolation(exception);
 
@@ -146,7 +136,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleTypeMismatchIhRequestsParams() throws NoSuchMethodException {
+    void shouldHandleTypeMismatchIhRequestsParams() {
         MethodArgumentTypeMismatchException exception = new MethodArgumentTypeMismatchException(
                 "abc", Integer.class, "id", null, new TypeMismatchException("abc", Integer.class));
 
@@ -171,12 +161,26 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldHandleAuthorisationException() {
-        ResponseEntity<ErrorResponse> entity = exceptionHandler.handleAuthorisationException(new AuthorizationErrorException("checkedException"));
+        AuthorizationErrorException authorizationException = new AuthorizationErrorException("checkedException");
+
+        ResponseEntity<ErrorResponse> entity = exceptionHandler.handleAuthorisationException(authorizationException);
 
         assertEquals(AUTHORIZATION_ERROR.getHttpStatus(), entity.getStatusCode());
         assertNotNull(entity.getBody());
         assertSame(AUTHORIZATION_ERROR.getErrorMessage(), entity.getBody().getErrorMessage());
         assertEquals(AUTHORIZATION_ERROR.getErrorCode(), entity.getBody().getErrorCode());
+    }
+
+    @Test
+    void shouldHandleServiceCoreException() {
+        CoreServiceException coreServiceException = new CoreServiceException("core service exception");
+
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleCoreServiceException(coreServiceException);
+
+        assertEquals(INVALID_REQUEST_ERROR.getHttpStatus(), response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(INVALID_REQUEST_ERROR.getErrorCode(), response.getBody().getErrorCode());
+        assertEquals("Invalid request data: core service exception", response.getBody().getErrorMessage());
     }
 
     private static ErrorResponse buildUnacceptableErrorResponse() {
@@ -186,7 +190,7 @@ class GlobalExceptionHandlerTest {
 
     private static ErrorResponse buildInvalidJsonResponse() {
         return new ErrorResponse().errorCode(2400)
-                .errorMessage("Invalid or malformed request data");
+                .errorMessage("Invalid request data: ");
     }
 
     private static ErrorResponse buildUnhandledErrorsResponse() {
@@ -197,6 +201,24 @@ class GlobalExceptionHandlerTest {
     private static ErrorResponse buildValidationResponse() {
         return new ErrorResponse().errorCode(2760)
                 .errorMessage("name: must not be blank");
+    }
+
+    private BindingResult buildBindingResult() {
+        WrongRequest wrongRequest = new WrongRequest("");
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<WrongRequest>> violations = validator.validate(wrongRequest);
+
+        BindingResult bindingResult = new BeanPropertyBindingResult(wrongRequest, "WrongRequest");
+        violations.forEach(violation -> addErrorToBinding(violation, bindingResult));
+
+        return bindingResult;
+    }
+
+    private void addErrorToBinding(ConstraintViolation<WrongRequest> violation, BindingResult bindingResult) {
+        String field = violation.getPropertyPath().toString();
+        String message = violation.getMessage();
+
+        bindingResult.addError(new FieldError("WrongRequest", field, message));
     }
 
     @Getter

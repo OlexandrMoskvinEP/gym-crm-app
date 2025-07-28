@@ -111,10 +111,10 @@ public class TraineeController {
     }
 
     @PatchMapping("/{username}/change-activation-status")
-    public ResponseEntity<Void> changeTraineeActivationStatus(@PathVariable("username") String username, @RequestBody ActivationStatusRequest
-            activationStatusRequest) {
+    public ResponseEntity<Void> changeTraineeActivationStatus(@PathVariable("username") String username,
+                                                              @RequestBody ActivationStatusRequest activationStatusRequest) {
         log.info("Change trainee activation status attempt: username={}, newStatus={}", username, activationStatusRequest.getIsActive());
-        facade.switchActivationStatus(username);
+        facade.switchActivationStatus(username, activationStatusRequest);
         log.info("Trainee activation status changed: username={}", username);
 
         return ResponseEntity.ok().build();

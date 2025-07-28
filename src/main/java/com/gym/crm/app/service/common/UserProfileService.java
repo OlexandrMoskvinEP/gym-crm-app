@@ -1,31 +1,38 @@
 package com.gym.crm.app.service.common;
 
+import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.AuthentificationErrorException;
+import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 @RequiredArgsConstructor
 @Service
+@Validated
 public class UserProfileService {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileService.class);
 
-    private final PasswordService passwordService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
+
 
     public String createUsername(String firstName, String lastName) {
         String rawUsername = firstName + "." + lastName;
@@ -59,8 +66,19 @@ public class UserProfileService {
         userRepository.updatePassword(username, newEncodedPassword);
     }
 
-    public void switchActivationStatus(String username) {
-        userRepository.changeStatus(username);
+    public void switchActivationStatus(@Valid ChangeActivationStatusDto changeActivationStatusDto) {
+        String username = changeActivationStatusDto.getUsername();
+
+        boolean isCurrentlyActivated = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(format("User %s not found", username)))
+                .isActive();
+
+        if (isCurrentlyActivated == changeActivationStatusDto.getIsActive()) {
+            String status = isCurrentlyActivated ? "activate" : "deactivate";
+            throw new CoreServiceException(format("Could not %s user %s: user is already %sed", status, username, status));
+        }
+
+        userRepository.changeStatus(changeActivationStatusDto.getUsername());
     }
 
     private List<String> retrieveAllUsernames() {

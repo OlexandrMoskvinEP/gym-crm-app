@@ -144,14 +144,12 @@ class TrainerControllerTest {
         ActivationStatusRequest request = new ActivationStatusRequest();
         request.setIsActive(true);
 
-        doNothing().when(facade).switchActivationStatus(TRAINER_USERNAME);
-
         mockMvc.perform(patch("/api/v1/trainers/{username}/change-activation-status", TRAINER_USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        verify(facade).switchActivationStatus(eq(TRAINER_USERNAME));
+        verify(facade).switchActivationStatus(eq(TRAINER_USERNAME), any());
     }
 
     private static UserCreateRequest buildUserCreateRequest() {

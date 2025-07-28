@@ -2,6 +2,7 @@ package com.gym.crm.app.exception.handling;
 
 import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
+import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
@@ -18,9 +19,25 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger("com.gym.crm.app");
+
+    @ExceptionHandler(CoreServiceException.class)
+    public ResponseEntity<ErrorResponse> handleCoreServiceException(CoreServiceException exception) {
+        log.error("Core service exception occurred : {}", exception.getMessage(), exception);
+
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST_ERROR;
+        String errorMessage = isBlank(exception.getMessage())
+                ? errorCode.getErrorMessage()
+                : errorCode.getErrorMessage() + exception.getMessage();
+
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorMessage);
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+    }
 
     @ExceptionHandler(DataBaseErrorException.class)
     public ResponseEntity<ErrorResponse> handleDataBaseException(DataBaseErrorException exception) {

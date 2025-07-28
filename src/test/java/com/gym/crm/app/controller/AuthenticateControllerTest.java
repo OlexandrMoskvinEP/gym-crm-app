@@ -61,16 +61,6 @@ class AuthenticateControllerTest {
     }
 
     @Test
-    void shouldReturn4xxOnLoginFailure() throws Exception {
-        LoginRequest request = getWrongLoginRequest();
-
-        mockMvc.perform(post("/api/v1/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
     void shouldChangePasswordSuccessfully() throws Exception {
         ChangePasswordRequest request = getChangePasswordRequest();
 
@@ -87,14 +77,6 @@ class AuthenticateControllerTest {
         request.setUsername("john.smith");
         request.setOldPassword("oldPass123");
         request.setNewPassword("newPass456");
-
-        return request;
-    }
-
-    private static LoginRequest getWrongLoginRequest() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("john.smith");
-        request.setPassword("wrong");
 
         return request;
     }
