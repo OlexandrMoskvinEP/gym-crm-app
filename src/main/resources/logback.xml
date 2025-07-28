@@ -10,23 +10,25 @@
             <level>DEBUG</level>
         </filter>
     </appender>
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/app.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeBasedRollingPolicy">
-            <maxFileSize>50KB</maxFileSize>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>logs/app.%i.log.zip</fileNamePattern>
-            <maxHistory>3</maxHistory>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
         </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50KB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%X{transactionId}] %-5level %logger{20} - %msg%n</pattern>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
     </appender>
     <root level="DEBUG">
-        <appender-ref ref="CONSOLE"/>
+<!--        <appender-ref ref="CONSOLE"/>-->
         <appender-ref ref="FILE"/>
     </root>
 </configuration>
