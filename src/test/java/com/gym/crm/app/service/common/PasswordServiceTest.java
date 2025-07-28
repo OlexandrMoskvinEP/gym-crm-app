@@ -11,12 +11,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 class PasswordServiceTest {
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private PasswordService passwordService;
-    private SecureRandom mockRandom;
-
+    
     @BeforeEach
     void setUp() {
-        mockRandom = Mockito.mock(SecureRandom.class);
+        SecureRandom mockRandom = Mockito.mock(SecureRandom.class);
         passwordService = new PasswordService();
         passwordService.setRandom(mockRandom);
 
@@ -38,8 +38,6 @@ class PasswordServiceTest {
 
         assertThat(encoded).isNotNull();
         assertThat(encoded).isNotEqualTo(rawPassword);
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         assertThat(encoder.matches(rawPassword, encoded)).isTrue();
     }
 }
