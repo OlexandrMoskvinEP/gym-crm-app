@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    INVALID_REQUEST_ERROR(2400, "Invalid or malformed request data", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST_ERROR(2400, "Invalid request data: ", HttpStatus.BAD_REQUEST),
     VALIDATION_ERROR(2760, "Validation error", HttpStatus.BAD_REQUEST),
     AUTHENTICATION_ERROR(2805, "Authentication failed", HttpStatus.UNAUTHORIZED),
     AUTHORIZATION_ERROR(2806, "Access denied", HttpStatus.FORBIDDEN),

@@ -34,7 +34,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -129,13 +128,12 @@ class TraineeControllerTest {
 
     @Test
     void shouldDeleteTraineeProfileSuccessfully() throws Exception {
-        doNothing().when(facade).deleteTraineeByUsername(TRAINEE_USERNAME);
-
         mockMvc.perform(delete("/api/v1/trainees/{username}", TRAINEE_USERNAME))
                 .andExpect(status().isNoContent());
 
         verify(facade).deleteTraineeByUsername(TRAINEE_USERNAME);
     }
+
 
     @Test
     void shouldReturnAvailableTrainers() throws Exception {
@@ -197,14 +195,12 @@ class TraineeControllerTest {
         ActivationStatusRequest request = new ActivationStatusRequest();
         request.setIsActive(true);
 
-        doNothing().when(facade).switchActivationStatus(TRAINEE_USERNAME);
-
         mockMvc.perform(patch("/api/v1/trainees/{username}/change-activation-status", TRAINEE_USERNAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        verify(facade).switchActivationStatus(eq(TRAINEE_USERNAME));
+        verify(facade).switchActivationStatus(eq(TRAINEE_USERNAME), any());
     }
 
     private UserCreateRequest buildUserCreateRequest() {

@@ -84,7 +84,7 @@ public class TrainerController {
     public ResponseEntity<Void> changeTrainerActivationStatus(@PathVariable("username") String username,
                                                               @RequestBody ActivationStatusRequest activationStatusRequest) {
         log.info("Change trainer activation status attempt: username={}, newStatus={}", username, activationStatusRequest.getIsActive());
-        facade.switchActivationStatus(username);
+        facade.switchActivationStatus(username, activationStatusRequest);
         log.info("Trainer activation status changed: username={}", username);
 
         return ResponseEntity.ok().build();

@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
@@ -16,6 +17,7 @@ import com.gym.crm.app.mapper.TrainingTypeMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
@@ -64,6 +66,7 @@ public class GymFacade {
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
     private final TrainingTypeMapper trainingTypeMapper;
+
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
 
@@ -230,10 +233,11 @@ public class GymFacade {
         return trainingService.updateTraining(updateRequest);
     }
 
-    public void switchActivationStatus(String username) {
+    public void switchActivationStatus(String username, ActivationStatusRequest request) {
         authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
+        ChangeActivationStatusDto changeActivation = userMapper.toChangeActivationStatusDto(username, request);
 
-        userProfileService.switchActivationStatus(username);
+        userProfileService.switchActivationStatus(changeActivation);
     }
 
     public void changePassword(ChangePasswordRequest request) {

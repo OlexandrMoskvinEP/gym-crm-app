@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.TraineeMapper;
@@ -17,6 +18,7 @@ import com.gym.crm.app.mapper.TrainingTypeMapper;
 import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.rest.AvailableTrainerGetResponse;
 import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.TraineeAssignedTrainersUpdateRequest;
@@ -47,6 +49,8 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -97,6 +101,7 @@ class GymFacadeTest {
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
     private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = getTrainingCreateRequest();
+    private static final TrainingSaveRequest TRAINING_SAVE_REQUEST = getTrainingSaveRequest();
 
     @Mock
     private HttpServletRequest request;
@@ -237,7 +242,7 @@ class GymFacadeTest {
 
     @Test
     void shouldUpdateTraineeByUsername() {
-        com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
+        TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder().build();
         when(traineeService.updateTraineeByUsername(USERNAME, updateRequest)).thenReturn(TRAINEE_DTO);
 
         TraineeUpdateResponse actual = facade.updateTraineeByUsername(USERNAME, updateRequest);
@@ -298,7 +303,7 @@ class GymFacadeTest {
         assertEquals(TRAINING_DTO, actual);
         assertEquals(expected, actual);
 
-        verify(authService).checkUserAuthorisation(any(),any(), any());
+        verify(authService).checkUserAuthorisation(any(), any(), any());
         verify(trainingService).addTraining(any(TrainingSaveRequest.class));
         verify(authService).checkUserAuthorisation(USER_CREDENTIALS, TRAINER, ADMIN);
     }
@@ -350,13 +355,20 @@ class GymFacadeTest {
         verify(traineeService).updateTraineeTrainersByUsername("username", List.of("username"));
     }
 
-    @Test
-    void shouldSwitchActivationStatus() {
-        doNothing().when(userProfileService).switchActivationStatus(anyString());
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSwitchActivationStatus(boolean isActive) {
+        ActivationStatusRequest restRequest = new ActivationStatusRequest(isActive);
+        ChangeActivationStatusDto activationStatusDto = ChangeActivationStatusDto.builder()
+                .username(USERNAME)
+                .isActive(isActive)
+                .build();
 
-        facade.switchActivationStatus("username");
+        doNothing().when(userProfileService).switchActivationStatus(activationStatusDto);
 
-        verify(userProfileService).switchActivationStatus("username");
+        facade.switchActivationStatus(USERNAME, restRequest);
+
+        verify(userProfileService).switchActivationStatus(activationStatusDto);
     }
 
     private static UserCredentialsDto buildCredentials() {

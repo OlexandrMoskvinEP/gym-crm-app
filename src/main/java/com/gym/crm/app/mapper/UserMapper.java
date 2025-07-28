@@ -1,6 +1,8 @@
 package com.gym.crm.app.mapper;
 
+import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.dto.user.UserCreateRequest;
+import com.gym.crm.app.rest.ActivationStatusRequest;
 import com.gym.crm.app.security.UserRole;
 import com.gym.crm.app.security.model.UserCredentialsDto;
 import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
@@ -32,4 +34,8 @@ public interface UserMapper {
     static String roleToString(UserRole role) {
         return role.name();
     }
+
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "isActive", source = "request.isActive")
+    ChangeActivationStatusDto toChangeActivationStatusDto(String username, ActivationStatusRequest request);
 }
