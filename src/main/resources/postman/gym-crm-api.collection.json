@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "326cdb3b-e67c-478d-b2e6-76b72d06506b",
+		"name": "GYM-СRM-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43128179"
+	},
+	"item": [
+		{
+			"name": "Aux enpoints",
+			"item": [
+				{
+					"name": "localhost:8080/api/v1/change-password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n \"username\": \"alex.moskvin\",\r\n  \"oldPassword\": \"epbhLAblNk\",\r\n  \"newPassword\": \"qwerty1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/change-password",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n \"username\": \"arnold.schwarzenegger\",\r\n  \"password\": \"qwerty1234\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trainer endpoints",
+			"item": [
+				{
+					"name": "http://localhost:8080/api/v1/trainers/{username}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/trainers/arnold.schwarzenegger",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainers",
+								"arnold.schwarzenegger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/api/v1/trainers/{username}",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"firstName\": \"silvester2\",\r\n    \"lastName\": \"stallone\",\r\n    \"username\": \"silvester2.stallone\",\r\n    \"password\": \"IUDIq,S4CQQPITkH/uP]\",\r\n    \"isActive\": true\r\n  },\r\n  \"specialization\": {\r\n    \"id\": 2,\r\n    \"trainingTypeName\": \"Cardio\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/trainers/silvester.stallone",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainers",
+								"silvester.stallone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainers/{username}/trainings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/trainers/arnold.schwarzenegger/trainings",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainers",
+								"arnold.schwarzenegger",
+								"trainings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainers/{username}/change-activation-status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainers/silvester.stallone/change-activation-status",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainers",
+								"silvester.stallone",
+								"change-activation-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trainee endpoints",
+			"item": [
+				{
+					"name": "localhost:8080/api/v1/trainees/register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"firstName\": \"Alex\",\r\n    \"lastName\": \"Moskvin\",\r\n    \"isActive\": true\r\n  },\r\n  \"dateOfBirth\": \"1981-10-06\",\r\n  \"address\": \"Ukraine, Vinnytsia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/api/v1/trainees/{username}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/trainees/alex.moskvin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"alex.moskvin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/{username}",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"firstName\": \"Alex\",\r\n    \"lastName\": \"Moskvin\",\r\n    \"isActive\": true\r\n  },\r\n  \"dateOfBirth\": \"2025-07-28\",\r\n  \"address\": \"Super sity\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/alex.moskvin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"alex.moskvin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/username",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/alex.moskvin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"alex.moskvin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/{username}/trainings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/olga.ivanova/trainings",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"olga.ivanova",
+								"trainings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/{username}/trainers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"trainerUsernames\": [\r\n    \"mykyta.solntcev\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/olga.ivanova/trainers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"olga.ivanova",
+								"trainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/{username}/available-trainers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"trainerUsernames\": [\r\n    \"mykyta.solntcev\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/olga.ivanova/available-trainers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"olga.ivanova",
+								"available-trainers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:8080/api/v1/trainees/{username}/change-activation-status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/trainees/irina.petrova/change-activation-status",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainees",
+								"irina.petrova",
+								"change-activation-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Training endpoints",
+			"item": [
+				{
+					"name": "http://localhost:8080/api/v1/training-types",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/training-types",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"training-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8080/api/v1/trainings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"trainingName\": \"Cycling\",\r\n  \"trainingDate\": \"2025-07-27\",\r\n  \"trainingDuration\": 120,\r\n  \"traineeUsername\": \"john.smith\",\r\n  \"trainerUsername\": \"arnold.schwarzenegger\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/trainings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"trainings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
