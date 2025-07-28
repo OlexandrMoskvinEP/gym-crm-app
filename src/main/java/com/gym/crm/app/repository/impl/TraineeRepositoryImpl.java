@@ -95,6 +95,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                         .getResultStream()
                         .findFirst());
     }
+
     @Override
     public void deleteByUsername(String username) {
         logger.debug("Deleting trainee with username: {}", username);

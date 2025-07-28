@@ -120,7 +120,6 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer entityToUpdate = mapUpdatedTrainerWithUser(updateRequest, existTrainer);
 
         repository.save(entityToUpdate);
-
         logger.info("Trainer {} updated", username);
 
         return modelMapper.map(repository.findByUsername(username), TrainerDto.class);

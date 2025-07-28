@@ -12,8 +12,6 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
-import com.gym.crm.app.repository.impl.TraineeRepositoryImpl;
-import com.gym.crm.app.repository.impl.TrainerRepositoryImpl;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.TrainingService;

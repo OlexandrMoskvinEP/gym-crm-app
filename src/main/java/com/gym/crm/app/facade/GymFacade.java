@@ -41,7 +41,6 @@ import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -201,7 +200,7 @@ public class GymFacade {
     }
 
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(),TRAINER, ADMIN);
+        authService.checkUserAuthorisation(getCurrentCredentials(), TRAINER, ADMIN);
 
         TrainerDto trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
         TraineeDto trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
