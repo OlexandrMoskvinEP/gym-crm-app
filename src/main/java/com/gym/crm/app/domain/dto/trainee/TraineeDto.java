@@ -20,4 +20,5 @@ public class TraineeDto {
     private LocalDate dateOfBirth;
     private String address;
     private Long userId;
+    private Long traineeId;
 }

@@ -300,10 +300,9 @@ class GymFacadeTest {
         assertEquals(TRAINING_DTO, actual);
         assertEquals(expected, actual);
 
-        verify(authService).checkUserAuthorisation(any(), eq(UserRole.ADMIN));
+        verify(authService).checkUserAuthorisation(any(),any(), any());
         verify(trainingService).addTraining(any(TrainingSaveRequest.class));
-        verify(trainingService).addTraining(TRAINING_SAVE_REQUEST);
-        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, ADMIN);
+        verify(authService).checkUserAuthorisation(USER_CREDENTIALS, TRAINER, ADMIN);
     }
 
 

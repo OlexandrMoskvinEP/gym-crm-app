@@ -35,6 +35,7 @@ import java.util.Set;
 public class Trainer {
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,4 +55,5 @@ public class Trainer {
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Training> trainings = new ArrayList<>();
+
 }

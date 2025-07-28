@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
+import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
@@ -201,17 +202,18 @@ public class GymFacade {
     }
 
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN);
+        authService.checkUserAuthorisation(getCurrentCredentials(),TRAINER, ADMIN);
 
         TrainerDto trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
+        TraineeDto trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
 
         TrainingSaveRequest saveRequest = new TrainingSaveRequest();
         saveRequest.setTrainingName(request.getTrainingName());
         saveRequest.setTrainingDate(request.getTrainingDate());
         saveRequest.setTrainingDuration(BigDecimal.valueOf(request.getTrainingDuration()));
         saveRequest.setTrainingTypeName(trainer.getSpecialization().getTrainingTypeName());
-        saveRequest.setTraineeId(traineeService.getTraineeByUsername(request.getTraineeUsername()).getUserId());
-        saveRequest.setTrainerId(trainer.getUserId());
+        saveRequest.setTraineeId(trainee.getTraineeId());
+        saveRequest.setTrainerId(trainer.getTrainerId());
 
         return trainingService.addTraining(saveRequest);
     }

@@ -181,6 +181,7 @@ public class TrainerServiceImpl implements TrainerService {
                 trainer.getUser().getPassword(),
                 trainer.getUser().isActive(),
                 trainer.getSpecialization(),
+                trainer.getUser().getId(),
                 trainer.getId()
         );
     }
