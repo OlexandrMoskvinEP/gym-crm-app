@@ -215,6 +215,7 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getUser().isActive(),
                 trainee.getDateOfBirth(),
                 trainee.getAddress(),
+                trainee.getUser().getId(),
                 trainee.getId()
         );
     }

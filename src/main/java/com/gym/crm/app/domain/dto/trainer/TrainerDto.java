@@ -18,4 +18,5 @@ public class TrainerDto {
     private boolean isActive;
     private TrainingType specialization;
     private Long userId;
+    private Long trainerId;
 }

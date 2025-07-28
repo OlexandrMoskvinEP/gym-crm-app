@@ -26,6 +26,7 @@ public interface TraineeMapper {
     @Mapping(source = "user.password", target = "password")
     @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "id", target = "traineeId")
     TraineeDto toDto(Trainee trainee);
 
     TraineeCreateResponse dtoToCreateResponse(TraineeDto traineeDto);

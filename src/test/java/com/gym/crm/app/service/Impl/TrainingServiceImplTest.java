@@ -7,6 +7,8 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.mapper.TrainingMapper;
+import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
@@ -61,6 +63,10 @@ class TrainingServiceImplTest {
     @Mock
     private TrainingRepository repository;
     @Mock
+    TrainerRepository trainerRepository;
+    @Mock
+    TraineeRepository traineeRepository;
+    @Mock
     private TrainingMapper trainingMapper;
     @InjectMocks
     private TrainingServiceImpl trainingService;
@@ -93,6 +99,8 @@ class TrainingServiceImplTest {
         when(trainingTypeRepository.findByName(any()))
                 .thenReturn(extractTrainingType(training));
         when(repository.save(any(Training.class))).thenReturn(training);
+        when(trainerRepository.findById(any())).thenReturn(Optional.of(TRAINER));
+        when(traineeRepository.findById(any())).thenReturn(Optional.of(TRAINEE));
 
         TrainingDto actual = trainingService.addTraining(saveRequest);
 
