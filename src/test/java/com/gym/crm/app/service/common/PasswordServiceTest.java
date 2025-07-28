@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 class PasswordServiceTest {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     private PasswordService passwordService;
     
     @BeforeEach
@@ -34,6 +35,7 @@ class PasswordServiceTest {
     @Test
     void shouldEncodePasswordCorrectly() {
         String rawPassword = "qwerty123";
+
         String encoded = passwordService.encodePassword(rawPassword);
 
         assertThat(encoded).isNotNull();
