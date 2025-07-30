@@ -1,28 +1,26 @@
 package com.gym.crm.app.service.common;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.security.SecureRandom;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class PasswordServiceTest {
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    @Mock
+    SecureRandom mockRandom;
+    @Spy
+    BCryptPasswordEncoder encoder;
 
+    @InjectMocks
     private PasswordService passwordService;
-    
-    @BeforeEach
-    void setUp() {
-        SecureRandom mockRandom = Mockito.mock(SecureRandom.class);
-        passwordService = new PasswordService();
-        passwordService.setRandom(mockRandom);
-
-        when(mockRandom.nextInt(Mockito.anyInt())).thenReturn(0);
-    }
 
     @Test
     void shouldGeneratePasswordOfFixedLength() {

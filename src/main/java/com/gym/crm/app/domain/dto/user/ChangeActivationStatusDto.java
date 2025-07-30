@@ -15,5 +15,4 @@ public class ChangeActivationStatusDto {
 
     @NotNull(message = "isActive can`t be null")
     private Boolean isActive;
-
 }

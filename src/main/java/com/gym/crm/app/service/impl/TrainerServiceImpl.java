@@ -11,66 +11,32 @@ import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    private TrainerRepository repository;
+    private final TrainerRepository repository;
+    private final PasswordService passwordService;
+    private final UserProfileService userProfileService;
+    private final AuthenticationService authenticationService;
+    private final TrainerMapper trainerMapper;
+
+    @Setter
     private ModelMapper modelMapper;
-    private PasswordService passwordService;
-    private UserProfileService userProfileService;
-    private TraineeService traineeService;
-    private AuthenticationService authenticationService;
-    private TrainerMapper trainerMapper;
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
-    }
-
-    @Autowired
-    public void setAuthenticationService(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
-    @Autowired
-    public void setPasswordService(PasswordService passwordService) {
-        this.passwordService = passwordService;
-    }
-
-    @Autowired
-    public void setTraineeService(TraineeService traineeService) {
-        this.traineeService = traineeService;
-    }
-
-    @Autowired
-    public void setRepository(TrainerRepository repository) {
-        this.repository = repository;
-    }
-
-    @Autowired
-    public void setModelMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public List<TrainerDto> getAllTrainers() {
@@ -94,7 +60,7 @@ public class TrainerServiceImpl implements TrainerService {
         String password = passwordService.generatePassword();
         String encodedPassword = passwordService.encodePassword(password);
 
-        if (isDuplicateUsername(username)) {
+        if (userProfileService.isUsernameAlreadyExists(username)) {
             throw new RegistrationConflictException("Registration as both trainer and trainee is not allowed");
         }
 
@@ -182,11 +148,5 @@ public class TrainerServiceImpl implements TrainerService {
                 trainer.getUser().getId(),
                 trainer.getId()
         );
-    }
-
-    private boolean isDuplicateUsername(String username) {
-        return traineeService.getAllTrainees().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(trainer -> username.equals(trainer.getUsername()));
     }
 }

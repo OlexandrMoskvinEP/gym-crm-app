@@ -215,7 +215,7 @@ public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingR
                 .id(1L)
                 .trainingName("Updated Cardio")
                 .trainingDate(LocalDate.of(2025, 8, 14))
-                .trainingDuration(BigDecimal.valueOf(1.5))
+                .trainingDuration(BigDecimal.valueOf(2))
                 .trainer(Trainer.builder().id(1L).build())
                 .trainee(Trainee.builder().id(1L).build())
                 .trainingType(TrainingType.builder().id(2L).trainingTypeName("Cardio").build())

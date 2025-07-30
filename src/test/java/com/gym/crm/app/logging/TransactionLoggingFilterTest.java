@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.gym.crm.app.GymCrmApplication;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = GymCrmApplication.class)
 class TransactionLoggingFilterTest {
     private ListAppender<ILoggingEvent> logAppender;
     private TransactionLoggingFilter filter;
@@ -51,7 +53,9 @@ class TransactionLoggingFilterTest {
 
         filter.doFilter(wrappedRequest, response, chain);
 
-        ILoggingEvent loggingEvent = logAppender.list.iterator().next();
+        assertThat(logAppender.list).isNotEmpty();
+        ILoggingEvent loggingEvent = logAppender.list.get(0);
+
         assertThat(loggingEvent.getFormattedMessage()).contains("test-body");
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
     }
