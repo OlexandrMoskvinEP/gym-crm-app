@@ -14,55 +14,29 @@ import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    private TrainerRepository repository;
+    private final TrainerRepository repository;
+    private final PasswordService passwordService;
+    private final UserProfileService userProfileService;
+    private final AuthenticationService authenticationService;
+    private final TrainerMapper trainerMapper;
+
+    @Setter
     private ModelMapper modelMapper;
-    private PasswordService passwordService;
-    private UserProfileService userProfileService;
-    private AuthenticationService authenticationService;
-    private TrainerMapper trainerMapper;
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
-    }
-
-    @Autowired
-    public void setAuthenticationService(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
-    @Autowired
-    public void setPasswordService(PasswordService passwordService) {
-        this.passwordService = passwordService;
-    }
-
-    @Autowired
-    public void setRepository(TrainerRepository repository) {
-        this.repository = repository;
-    }
-
-    @Autowired
-    public void setModelMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public List<TrainerDto> getAllTrainers() {

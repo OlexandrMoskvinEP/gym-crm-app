@@ -44,7 +44,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,6 +68,8 @@ class TraineeServiceImplTest {
     private TrainerService trainerService;
     @Mock
     private AuthenticationService authenticationService;
+    @Mock
+    private TrainerMapper trainerMapper;
     @Spy
     private TraineeMapper traineeMapper;
 
@@ -202,12 +203,6 @@ class TraineeServiceImplTest {
         TrainerDto dto2 = getDto2();
         List<TrainerDto> expected = List.of(dto1, dto2);
 
-        TraineeServiceImpl traineeServiceWithMapper = new TraineeServiceImpl();
-        TrainerMapper trainerMapper = mock(TrainerMapper.class);
-        traineeServiceWithMapper.setModelMapper(modelMapper);
-        traineeServiceWithMapper.setTrainerMapper(trainerMapper);
-        traineeServiceWithMapper.setRepository(repository);
-
         when(repository.findUnassignedTrainersByTraineeUsername(username)).thenReturn(unassignedTrainers);
         when(trainerMapper.toDto(any(Trainer.class))).thenAnswer(invocation -> {
             Trainer t = invocation.getArgument(0);
@@ -217,7 +212,7 @@ class TraineeServiceImplTest {
             return null;
         });
 
-        List<TrainerDto> actual = traineeServiceWithMapper.getUnassignedTrainersByTraineeUsername(username);
+        List<TrainerDto> actual = traineeService.getUnassignedTrainersByTraineeUsername(username);
 
         assertEquals(expected.size(), actual.size());
         assertEquals(expected.get(0).getUsername(), actual.get(0).getUsername());

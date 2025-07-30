@@ -20,7 +20,6 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +37,7 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
 
+    @Setter
     private ModelMapper modelMapper;
 
     @Override
@@ -127,9 +127,5 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingType(),
                 training.getTrainingDate(),
                 training.getTrainingDuration());
-    }
-
-    public void setModelMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
     }
 }
