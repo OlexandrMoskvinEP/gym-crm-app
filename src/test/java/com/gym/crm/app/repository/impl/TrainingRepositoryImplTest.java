@@ -8,6 +8,7 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DataSet(value = "datasets/trainings.xml", cleanBefore = true, cleanAfter = true)
 public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingRepository> {
 

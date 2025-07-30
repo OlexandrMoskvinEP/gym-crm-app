@@ -1,7 +1,6 @@
 package com.gym.crm.app.config;
 
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
-import com.gym.crm.app.util.YamlPropertySourceFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
@@ -9,7 +8,6 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class HibernateTestConfig {
     @Bean
     public DataSource dataSource(Environment env) {

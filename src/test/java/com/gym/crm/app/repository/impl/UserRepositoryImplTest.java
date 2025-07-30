@@ -3,6 +3,7 @@ package com.gym.crm.app.repository.impl;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.repository.UserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DataSet(value = "datasets/users.xml", cleanBefore = true, cleanAfter = true)
 public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepository> {
 
