@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Autowired
-    public void setTraineeService(TraineeService traineeService) {
+    public void setTraineeService(@Lazy TraineeService traineeService) {
         this.traineeService = traineeService;
     }
 
