@@ -24,8 +24,12 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 @RestController
 @RequestMapping(ROOT_PATH)
 public class TrainingController {
+    private final GymFacade facade;
+
     @Autowired
-    private GymFacade facade;
+    public TrainingController(GymFacade facade) {
+        this.facade = facade;
+    }
 
     @Operation(
             summary = "Get training types",

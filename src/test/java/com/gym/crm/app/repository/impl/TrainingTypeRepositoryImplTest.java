@@ -3,7 +3,6 @@ package com.gym.crm.app.repository.impl;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingTypeRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -14,7 +13,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
 @DataSet(value = "datasets/training_types.xml", cleanBefore = true, cleanAfter = true)
 class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingTypeRepository> {
 
