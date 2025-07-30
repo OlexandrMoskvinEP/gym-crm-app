@@ -23,9 +23,11 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -34,7 +36,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileServiceTest {
-    private static final String USERNAME = "michael.goodman";
+    private static final String SIMPLE_USERNAME = "michael.goodman";
+    private static final String TRAINEE_EXISTING_USERNAME = "Alice.Smith";
+    private static final String TRAINER_EXISTING_USERNAME = "Sophie.Taylor";
+    private static final String NEW_USERNAME = "Billie.Eilish";
 
     @Mock
     TraineeRepository traineeRepository;
@@ -49,8 +54,7 @@ class UserProfileServiceTest {
 
     @Test
     void shouldCreateCorrectUsername() {
-        String traineeUsernameExisting = "Alice.Smith";
-        String trainerUsernameExisting = "Sophie.Taylor";
+
 
         when(traineeRepository.findAll()).thenReturn(List.of(constructTrainee()));
         when(trainerRepository.findAll()).thenReturn(List.of(constructTrainer()));
@@ -59,9 +63,9 @@ class UserProfileServiceTest {
         String trainerUsernameGenerated = service.createUsername("Sophie", "Taylor");
 
         assertNotNull(traineeUsernameGenerated);
-        assertNotEquals(traineeUsernameExisting, traineeUsernameGenerated);
+        assertNotEquals(TRAINEE_EXISTING_USERNAME, traineeUsernameGenerated);
         assertNotNull(trainerUsernameGenerated);
-        assertNotEquals(trainerUsernameExisting, trainerUsernameGenerated);
+        assertNotEquals(TRAINER_EXISTING_USERNAME, trainerUsernameGenerated);
     }
 
     @Test
@@ -116,7 +120,7 @@ class UserProfileServiceTest {
                 () -> service.switchActivationStatus(activationStatusDto));
 
         assertEquals(expectedMessage, ex.getMessage());
-        verify(userRepository, never()).changeStatus(USERNAME);
+        verify(userRepository, never()).changeStatus(SIMPLE_USERNAME);
     }
 
     @Test
@@ -133,7 +137,34 @@ class UserProfileServiceTest {
                 () -> service.switchActivationStatus(activationStatusDto));
 
         assertEquals("User Ioanne.Vergilis not found", ex.getMessage());
-        verify(userRepository, never()).changeStatus(USERNAME);
+        verify(userRepository, never()).changeStatus(SIMPLE_USERNAME);
+    }
+
+    @ParameterizedTest()
+    @ValueSource(strings = {TRAINEE_EXISTING_USERNAME, TRAINER_EXISTING_USERNAME})
+    void shouldReturnTrueWhenUsernameAlreadyUsed(String username) {
+        when(traineeRepository.findAll()).thenReturn(List.of(constructTrainee()));
+        when(trainerRepository.findAll()).thenReturn(List.of(constructTrainer()));
+
+        boolean actual = service.isUsernameAlreadyExists(username);
+
+        assertTrue(actual);
+        verify(traineeRepository, never()).findByUsername(username);
+        verify(trainerRepository, never()).findByUsername(username);
+        verify(userRepository, never()).findByUsername(username);
+    }
+
+    @Test
+    void shouldReturnFalseWhenUsernameIsFree() {
+        when(traineeRepository.findAll()).thenReturn(List.of(constructTrainee()));
+        when(trainerRepository.findAll()).thenReturn(List.of(constructTrainer()));
+
+        boolean actual = service.isUsernameAlreadyExists(NEW_USERNAME);
+
+        assertFalse(actual);
+        verify(traineeRepository, never()).findByUsername(NEW_USERNAME);
+        verify(trainerRepository, never()).findByUsername(NEW_USERNAME);
+        verify(userRepository, never()).findByUsername(NEW_USERNAME);
     }
 
     private Trainer constructTrainer() {

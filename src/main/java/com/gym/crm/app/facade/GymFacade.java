@@ -70,7 +70,6 @@ public class GymFacade {
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
 
-    @Autowired
     public GymFacade(TraineeService traineeService,
                      TrainerService trainerService,
                      TrainingService trainingService,

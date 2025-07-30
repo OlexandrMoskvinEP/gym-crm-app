@@ -16,19 +16,16 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
-import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,7 +39,6 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeMapper traineeMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
-    private TrainerService trainerService;
     private AuthenticationService authenticationService;
 
     @Autowired
@@ -68,11 +64,6 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     public void setRepository(TraineeRepository repository) {
         this.repository = repository;
-    }
-
-    @Autowired
-    public void setTrainerService(@Lazy TrainerService trainerService) {
-        this.trainerService = trainerService;
     }
 
     @Autowired
@@ -108,7 +99,7 @@ public class TraineeServiceImpl implements TraineeService {
         String password = passwordService.generatePassword();
         String encodedPassword = passwordService.encodePassword(password);
 
-        if (isDuplicateUsername(username)) {
+        if (userProfileService.isUsernameAlreadyExists(username)) {
             throw new RegistrationConflictException("Registration as both trainee and trainer is not allowed");
         }
 
@@ -217,11 +208,5 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getUser().getId(),
                 trainee.getId()
         );
-    }
-
-    private boolean isDuplicateUsername(String username) {
-        return trainerService.getAllTrainers().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(trainer -> username.equals(trainer.getUsername()));
     }
 }

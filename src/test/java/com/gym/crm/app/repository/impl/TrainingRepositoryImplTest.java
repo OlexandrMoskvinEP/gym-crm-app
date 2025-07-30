@@ -63,7 +63,6 @@ public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingR
         repository.update(updatedTraining);
 
         List<Training> persistedTrainings = repository.findAll();
-
         assertFalse(persistedTrainings.contains(oldTraining));
         assertTrue(persistedTrainings.contains(updatedTraining));
     }

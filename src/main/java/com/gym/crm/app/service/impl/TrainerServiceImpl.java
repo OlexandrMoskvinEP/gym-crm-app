@@ -11,7 +11,6 @@ import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -19,11 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +31,6 @@ public class TrainerServiceImpl implements TrainerService {
     private ModelMapper modelMapper;
     private PasswordService passwordService;
     private UserProfileService userProfileService;
-    private TraineeService traineeService;
     private AuthenticationService authenticationService;
     private TrainerMapper trainerMapper;
 
@@ -56,11 +52,6 @@ public class TrainerServiceImpl implements TrainerService {
     @Autowired
     public void setPasswordService(PasswordService passwordService) {
         this.passwordService = passwordService;
-    }
-
-    @Autowired
-    public void setTraineeService(@Lazy TraineeService traineeService) {
-        this.traineeService = traineeService;
     }
 
     @Autowired
@@ -95,7 +86,7 @@ public class TrainerServiceImpl implements TrainerService {
         String password = passwordService.generatePassword();
         String encodedPassword = passwordService.encodePassword(password);
 
-        if (isDuplicateUsername(username)) {
+        if (userProfileService.isUsernameAlreadyExists(username)) {
             throw new RegistrationConflictException("Registration as both trainer and trainee is not allowed");
         }
 
@@ -183,11 +174,5 @@ public class TrainerServiceImpl implements TrainerService {
                 trainer.getUser().getId(),
                 trainer.getId()
         );
-    }
-
-    private boolean isDuplicateUsername(String username) {
-        return traineeService.getAllTrainees().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(trainer -> username.equals(trainer.getUsername()));
     }
 }

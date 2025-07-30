@@ -81,6 +81,10 @@ public class UserProfileService {
         userRepository.changeStatus(changeActivationStatusDto.getUsername());
     }
 
+    public boolean isUsernameAlreadyExists(String username) {
+        return retrieveAllUsernames().stream().anyMatch(existingUsername -> existingUsername.equals(username));
+    }
+
     private List<String> retrieveAllUsernames() {
         Stream<String> traineeUsernames = traineeRepository.findAll().stream()
                 .map(trainee -> trainee.getUser().getUsername());
