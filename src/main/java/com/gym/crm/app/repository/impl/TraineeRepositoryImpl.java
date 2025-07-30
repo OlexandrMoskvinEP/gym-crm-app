@@ -5,8 +5,8 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TraineeRepository;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -17,15 +17,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+@RequiredArgsConstructor
 @Repository
 public class TraineeRepositoryImpl implements TraineeRepository {
     private static final Logger logger = LoggerFactory.getLogger(TraineeRepositoryImpl.class);
 
     private final TransactionExecutor txExecutor;
-
-    public TraineeRepositoryImpl(EntityManagerFactory managerFactory) {
-        this.txExecutor = new TransactionExecutor(managerFactory);
-    }
 
     @Override
     public List<Trainee> findAll() {

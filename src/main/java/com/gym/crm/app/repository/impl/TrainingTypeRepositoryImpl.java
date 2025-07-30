@@ -3,7 +3,7 @@ package com.gym.crm.app.repository.impl;
 import com.gym.crm.app.config.hibernate.TransactionExecutor;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingTypeRepository;
-import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -11,15 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Repository
 public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainingTypeRepositoryImpl.class);
 
     private final TransactionExecutor txExecutor;
-
-    public TrainingTypeRepositoryImpl(EntityManagerFactory managerFactory) {
-        this.txExecutor = new TransactionExecutor(managerFactory);
-    }
 
     @Override
     public Optional<TrainingType> findByName(String trainingTypeName) {

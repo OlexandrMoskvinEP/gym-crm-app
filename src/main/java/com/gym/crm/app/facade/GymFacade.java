@@ -44,7 +44,7 @@ import com.gym.crm.app.service.TrainingService;
 import com.gym.crm.app.service.common.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -55,6 +55,7 @@ import static com.gym.crm.app.security.UserRole.TRAINEE;
 import static com.gym.crm.app.security.UserRole.TRAINER;
 
 @Getter
+@RequiredArgsConstructor
 @Component
 public class GymFacade {
     private final TraineeService traineeService;
@@ -69,27 +70,6 @@ public class GymFacade {
 
     private final UserMapper userMapper;
     private final CurrentUserHolder currentUserHolder;
-
-    public GymFacade(TraineeService traineeService,
-                     TrainerService trainerService,
-                     TrainingService trainingService,
-                     UserProfileService userProfileService,
-                     AuthenticationService authService,
-                     TraineeMapper traineeMapper,
-                     TrainerMapper trainerMapper, TrainingMapper trainingMapper, TrainingTypeMapper trainingTypeMapper,
-                     UserMapper userMapper, CurrentUserHolder currentUserHolder) {
-        this.traineeService = traineeService;
-        this.trainerService = trainerService;
-        this.trainingService = trainingService;
-        this.userProfileService = userProfileService;
-        this.authService = authService;
-        this.traineeMapper = traineeMapper;
-        this.trainerMapper = trainerMapper;
-        this.trainingMapper = trainingMapper;
-        this.trainingTypeMapper = trainingTypeMapper;
-        this.userMapper = userMapper;
-        this.currentUserHolder = currentUserHolder;
-    }
 
     public TrainerCreateResponse addTrainer(@Valid TrainerCreateRequest createRequest) {
 

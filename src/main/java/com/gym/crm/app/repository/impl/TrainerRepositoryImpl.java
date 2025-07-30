@@ -5,6 +5,7 @@ import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TrainerRepository;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -12,15 +13,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger logger = LoggerFactory.getLogger(TrainerRepositoryImpl.class);
 
     private final TransactionExecutor txExecutor;
-
-    public TrainerRepositoryImpl(EntityManagerFactory managerFactory) {
-        this.txExecutor = new TransactionExecutor(managerFactory);
-    }
 
     @Override
     public List<Trainer> findAll() {
