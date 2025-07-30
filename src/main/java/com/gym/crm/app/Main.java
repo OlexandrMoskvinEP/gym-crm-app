@@ -27,6 +27,7 @@ public class Main {
         appContext.getBeanNamesForType(Object.class);
 
         DispatcherServlet servlet = new DispatcherServlet(appContext);
+
         Tomcat.addServlet(webContext, "dispatcher", servlet);
         webContext.addServletMappingDecoded("/", "dispatcher");
 
