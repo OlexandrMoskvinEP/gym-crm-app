@@ -15,6 +15,8 @@ import com.gym.crm.app.repository.TrainingTypeRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.TrainingService;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,46 +27,18 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+@RequiredArgsConstructor
 @Service
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    private TrainingTypeRepository trainingTypeRepository;
-    private TrainingRepository repository;
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainingRepository repository;
+    private final TrainingMapper trainingMapper;
+    private final TrainerRepository trainerRepository;
+    private final TraineeRepository traineeRepository;
+
     private ModelMapper modelMapper;
-    private TrainingMapper trainingMapper;
-    private TrainerRepository trainerRepository;
-    private TraineeRepository traineeRepository;
-
-    @Autowired
-    public void setTrainerRepository(TrainerRepository trainerRepository) {
-        this.trainerRepository = trainerRepository;
-    }
-
-    @Autowired
-    public void setTraineeRepository(TraineeRepository traineeRepository) {
-        this.traineeRepository = traineeRepository;
-    }
-
-    @Autowired
-    public void setTrainingTypeRepository(TrainingTypeRepository trainingTypeRepository) {
-        this.trainingTypeRepository = trainingTypeRepository;
-    }
-
-    @Autowired
-    public void setRepository(TrainingRepository repository) {
-        this.repository = repository;
-    }
-
-    @Autowired
-    public void setModelMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
-    @Autowired
-    public void setTrainingMapper(TrainingMapper trainingMapper) {
-        this.trainingMapper = trainingMapper;
-    }
 
     @Override
     public List<TrainingDto> getAllTrainings() {
@@ -153,5 +127,9 @@ public class TrainingServiceImpl implements TrainingService {
                 training.getTrainingType(),
                 training.getTrainingDate(),
                 training.getTrainingDuration());
+    }
+
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 }
