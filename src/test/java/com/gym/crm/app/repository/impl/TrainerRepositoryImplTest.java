@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
 @DataSet(value = "datasets/trainers.xml", cleanBefore = true, cleanAfter = true)
 public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRepository> {
 

@@ -8,7 +8,6 @@ import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
 @DataSet(value = "datasets/trainings.xml", cleanBefore = true, cleanAfter = true)
 public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingRepository> {
 
@@ -65,6 +63,7 @@ public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingR
         repository.update(updatedTraining);
 
         List<Training> persistedTrainings = repository.findAll();
+
         assertFalse(persistedTrainings.contains(oldTraining));
         assertTrue(persistedTrainings.contains(updatedTraining));
     }
@@ -217,7 +216,7 @@ public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingR
                 .id(1L)
                 .trainingName("Updated Cardio")
                 .trainingDate(LocalDate.of(2025, 8, 14))
-                .trainingDuration(BigDecimal.valueOf(1.5))
+                .trainingDuration(BigDecimal.valueOf(2))
                 .trainer(Trainer.builder().id(1L).build())
                 .trainee(Trainee.builder().id(1L).build())
                 .trainingType(TrainingType.builder().id(2L).trainingTypeName("Cardio").build())
