@@ -145,6 +145,7 @@ class AuthenticationServiceTest {
         return User.builder()
                 .username(USERNAME)
                 .password(ENCODED_PASSWORD)
+                .isActive(true)
                 .build();
     }
 
@@ -153,7 +154,7 @@ class AuthenticationServiceTest {
                 .userId(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .isActive(user.isActive())
+                .isActive(user.getIsActive())
                 .role(UserRole.valueOf(USER_ROLE)).build();
     }
 }

@@ -171,7 +171,7 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getUser().getLastName(),
                 trainee.getUser().getUsername(),
                 trainee.getUser().getPassword(),
-                trainee.getUser().isActive(),
+                trainee.getUser().getIsActive(),
                 trainee.getDateOfBirth(),
                 trainee.getAddress(),
                 trainee.getUser().getId(),

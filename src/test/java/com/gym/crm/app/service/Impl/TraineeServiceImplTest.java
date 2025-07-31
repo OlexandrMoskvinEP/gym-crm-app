@@ -117,7 +117,7 @@ class TraineeServiceImplTest {
                 .password(trainee.getUser().getPassword())
                 .firstName(trainee.getUser().getFirstName())
                 .lastName(trainee.getUser().getLastName())
-                .isActive(trainee.getUser().isActive())
+                .isActive(trainee.getUser().getIsActive())
                 .address(trainee.getAddress())
                 .dateOfBirth(trainee.getDateOfBirth())
                 .build();
@@ -251,7 +251,7 @@ class TraineeServiceImplTest {
         UserCreateRequest user = UserCreateRequest.builder()
                 .firstName(trainee.getUser().getFirstName())
                 .lastName(trainee.getUser().getLastName())
-                .isActive(trainee.getUser().isActive())
+                .isActive(trainee.getUser().getIsActive())
                 .build();
 
         return TraineeCreateRequest.builder()
@@ -265,7 +265,7 @@ class TraineeServiceImplTest {
         UserCreateRequest user = UserCreateRequest.builder()
                 .firstName(trainee.getUser().getFirstName())
                 .lastName(trainee.getUser().getLastName())
-                .isActive(trainee.getUser().isActive())
+                .isActive(trainee.getUser().getIsActive())
                 .build();
 
         return TraineeUpdateRequest.builder()

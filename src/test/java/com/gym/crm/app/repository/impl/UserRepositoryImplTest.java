@@ -43,7 +43,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
         assertEquals(password, user.getPassword());
-        assertEquals(isActive, user.isActive());
+        assertEquals(isActive, user.getIsActive());
     }
 
     @Test
@@ -68,13 +68,13 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
                 .isActive(false)
                 .build();
 
-        repository.update(toUpdate);
+        repository.save(toUpdate);
 
         User updatedUser = repository.findByUsername("john.smith").orElseThrow();
         assertEquals("Updated", updatedUser.getFirstName());
         assertEquals("Name", updatedUser.getLastName());
         assertEquals("newpwd123", updatedUser.getPassword());
-        assertFalse(updatedUser.isActive());
+        assertFalse(updatedUser.getIsActive());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
 
         Optional<User> updatedUser = repository.findByUsername(username);
         assertTrue(updatedUser.isPresent());
-        assertFalse(updatedUser.get().isActive());
+        assertFalse(updatedUser.get().getIsActive());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
 
         Optional<User> updatedUser = repository.findByUsername(username);
         assertTrue(updatedUser.isPresent());
-        assertTrue(updatedUser.get().isActive());
+        assertTrue(updatedUser.get().getIsActive());
     }
 
     private static List<User> constructExpectedUsers() {

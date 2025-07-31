@@ -24,7 +24,6 @@ public interface TrainerMapper {
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "user.password", target = "password")
-    @Mapping(source = "user.active", target = "isActive")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "specialization", target = "specialization")
     @Mapping(source = "id", target = "trainerId")

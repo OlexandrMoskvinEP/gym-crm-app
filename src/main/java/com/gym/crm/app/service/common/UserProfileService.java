@@ -71,7 +71,7 @@ public class UserProfileService {
 
         boolean isCurrentlyActivated = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(format("User %s not found", username)))
-                .isActive();
+                .getIsActive();
 
         if (isCurrentlyActivated == changeActivationStatusDto.getIsActive()) {
             String status = isCurrentlyActivated ? "activate" : "deactivate";

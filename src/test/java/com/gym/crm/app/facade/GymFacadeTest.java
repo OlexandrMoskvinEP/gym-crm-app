@@ -447,6 +447,7 @@ class GymFacadeTest {
                 .userId(USER_ID)
                 .address(ADDRESS)
                 .dateOfBirth(DATE_OF_BIRTH)
+                .isActive(true)
                 .build();
     }
 
@@ -520,7 +521,7 @@ class GymFacadeTest {
                 .userId(GymFacadeTest.SIMPLE_USER.getId())
                 .username(GymFacadeTest.SIMPLE_USER.getUsername())
                 .password(GymFacadeTest.SIMPLE_USER.getPassword())
-                .isActive(GymFacadeTest.SIMPLE_USER.isActive())
+                .isActive(GymFacadeTest.SIMPLE_USER.getIsActive())
                 .role(UserRole.valueOf("ADMIN")).build();
     }
 

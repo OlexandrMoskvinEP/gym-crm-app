@@ -89,7 +89,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
         assertEquals("Test", found.getUser().getLastName());
         assertEquals("trainer.test", found.getUser().getUsername());
         assertEquals("Pwd123!@#", found.getUser().getPassword());
-        assertTrue(found.getUser().isActive());
+        assertTrue(found.getUser().getIsActive());
 
         assertNotNull(found.getSpecialization());
         assertEquals("Yoga", found.getSpecialization().getTrainingTypeName());

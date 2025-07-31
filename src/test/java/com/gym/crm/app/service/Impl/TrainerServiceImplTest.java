@@ -110,7 +110,7 @@ class TrainerServiceImplTest {
         expected.setUserId(0L);
         expected.setFirstName(trainer.getUser().getFirstName());
         expected.setLastName(trainer.getUser().getLastName());
-        expected.setActive(trainer.getUser().isActive());
+        expected.setActive(trainer.getUser().getIsActive());
 
         Trainer entityToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
         String username = expected.getFirstName() + "." + expected.getLastName();
@@ -180,7 +180,7 @@ class TrainerServiceImplTest {
         UserCreateRequest user = UserCreateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
-                .isActive(trainer.getUser().isActive())
+                .isActive(trainer.getUser().getIsActive())
                 .build();
 
         return TrainerCreateRequest.builder()
@@ -193,7 +193,7 @@ class TrainerServiceImplTest {
         UserUpdateRequest user = UserUpdateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
-                .isActive(trainer.getUser().isActive())
+                .isActive(trainer.getUser().getIsActive())
                 .build();
 
         return TrainerUpdateRequest.builder()
