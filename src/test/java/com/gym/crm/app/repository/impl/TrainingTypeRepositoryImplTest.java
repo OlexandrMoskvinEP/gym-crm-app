@@ -26,7 +26,7 @@ class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingType
             "Bodybuilding, 6"
     })
     void shouldFindByName(String typeName, Long expectedId) {
-        Optional<TrainingType> actual = repository.findByName(typeName);
+        Optional<TrainingType> actual = repository.findByTrainingTypeName(typeName);
 
         assertTrue(actual.isPresent());
         assertEquals(expectedId, actual.get().getId());
@@ -55,7 +55,7 @@ class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingType
 
     @Test
     void shouldReturnEmptyIfNotFound() {
-        Optional<TrainingType> result = repository.findByName("NonExistingType");
+        Optional<TrainingType> result = repository.findByTrainingTypeName("NonExistingType");
 
         assertTrue(result.isEmpty());
     }

@@ -50,7 +50,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingSaveRequest training) {
-        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingTypeName())
+        TrainingType trainingType = trainingTypeRepository.findByTrainingTypeName(training.getTrainingTypeName())
                 .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
         Trainer trainer = trainerRepository.findById(training.getTrainerId()).get();
         Trainee trainee = traineeRepository.findById(training.getTraineeId()).get();
@@ -79,7 +79,7 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingDto updateTraining(TrainingSaveRequest training) {
         Training existing = repository.findAll().stream()
                 .findFirst().orElseThrow(() -> new DataBaseErrorException("Training not found"));
-        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingName())
+        TrainingType trainingType = trainingTypeRepository.findByTrainingTypeName(training.getTrainingName())
                 .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
 
         Training updated = Training.builder()

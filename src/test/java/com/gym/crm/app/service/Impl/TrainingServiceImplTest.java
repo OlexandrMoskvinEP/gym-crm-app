@@ -75,7 +75,7 @@ class TrainingServiceImplTest {
     @BeforeEach
     void setUp() {
         trainingService.setModelMapper(modelMapper);
-        lenient().when(trainingTypeRepository.findByName(any()))
+        lenient().when(trainingTypeRepository.findByTrainingTypeName(any()))
                 .thenReturn(Optional.of(new TrainingType(1L, "Yoga")));
     }
 
@@ -96,7 +96,7 @@ class TrainingServiceImplTest {
         Training training = buildTraining();
         TrainingSaveRequest saveRequest = getTrainingDtoFromEntity(training);
 
-        when(trainingTypeRepository.findByName(any()))
+        when(trainingTypeRepository.findByTrainingTypeName(any()))
                 .thenReturn(extractTrainingType(training));
         when(repository.save(any(Training.class))).thenReturn(training);
         when(trainerRepository.findById(any())).thenReturn(Optional.of(TRAINER));
@@ -122,7 +122,7 @@ class TrainingServiceImplTest {
         expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
         expected.setTrainingDuration(BigDecimal.valueOf(240));
 
-        when(trainingTypeRepository.findByName(any()))
+        when(trainingTypeRepository.findByTrainingTypeName(any()))
                 .thenReturn(extractTrainingType(expected));
         when(repository.findAll()).thenReturn(List.of(buildTraining()));
         when(repository.save(any(Training.class)))
