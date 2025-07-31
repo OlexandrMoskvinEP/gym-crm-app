@@ -188,10 +188,6 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
         return trainers;
     }
 
-    private Trainer buildArnoldTrainer() {
-        return buildTrainer(6L, "Arnold", "Schwarzenegger", "arnold.schwarzenegger", 6L, "Bodybuilding");
-    }
-
     private Trainer buildTrainer(Long trainerId,
                                  String firstName,
                                  String lastName,

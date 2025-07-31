@@ -13,7 +13,6 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TrainerServiceImpl;

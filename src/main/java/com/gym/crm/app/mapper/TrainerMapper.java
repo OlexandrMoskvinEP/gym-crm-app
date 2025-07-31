@@ -1,6 +1,5 @@
 package com.gym.crm.app.mapper;
 
-import com.gym.crm.app.domain.dto.trainer.TrainerCreateRequest;
 import com.gym.crm.app.domain.dto.trainer.TrainerDto;
 import com.gym.crm.app.domain.dto.trainer.TrainerUpdateRequest;
 import com.gym.crm.app.domain.model.Trainer;

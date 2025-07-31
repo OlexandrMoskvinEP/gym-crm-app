@@ -119,7 +119,7 @@ class TrainingServiceImplTest {
     void shouldUpdateTraining() {
         TrainingDto expected = buildTrainingDto();
         expected.setTrainingName("fakeTrainingName");
-        expected.setTrainingType(new TrainingType(1l, "fakeTrainingType"));
+        expected.setTrainingType(new TrainingType(1L, "fakeTrainingType"));
         expected.setTrainingDuration(BigDecimal.valueOf(240));
 
         when(trainingTypeRepository.findByTrainingTypeName(any()))
