@@ -112,7 +112,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username) {
         return repository.findUnassignedTrainersByTraineeUsername(username)
-                .stream().map(trainer -> trainerMapper.toDto(trainer)).toList();
+                .stream().map(trainerMapper::toDto).toList();
     }
 
     @Override

@@ -15,8 +15,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface TrainerMapper {
-    Trainer toEntity(TrainerCreateRequest dto);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(@MappingTarget Trainer trainer, TrainerUpdateRequest dto);
 

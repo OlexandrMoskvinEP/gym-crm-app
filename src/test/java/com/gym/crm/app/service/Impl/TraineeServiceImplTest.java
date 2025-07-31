@@ -65,8 +65,6 @@ class TraineeServiceImplTest {
     @Mock
     private UserProfileService userProfileService;
     @Mock
-    private TrainerService trainerService;
-    @Mock
     private AuthenticationService authenticationService;
     @Mock
     private TrainerMapper trainerMapper;
