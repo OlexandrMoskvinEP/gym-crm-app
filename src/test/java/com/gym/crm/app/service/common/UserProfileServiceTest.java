@@ -149,7 +149,7 @@ class UserProfileServiceTest {
         boolean actual = service.isUsernameAlreadyExists(username);
 
         assertTrue(actual);
-        verify(traineeRepository, never()).findByUsername(username);
+        verify(traineeRepository, never()).findByUserUsername(username);
         verify(trainerRepository, never()).findByUsername(username);
         verify(userRepository, never()).findByUsername(username);
     }
@@ -162,7 +162,7 @@ class UserProfileServiceTest {
         boolean actual = service.isUsernameAlreadyExists(NEW_USERNAME);
 
         assertFalse(actual);
-        verify(traineeRepository, never()).findByUsername(NEW_USERNAME);
+        verify(traineeRepository, never()).findByUserUsername(NEW_USERNAME);
         verify(trainerRepository, never()).findByUsername(NEW_USERNAME);
         verify(userRepository, never()).findByUsername(NEW_USERNAME);
     }

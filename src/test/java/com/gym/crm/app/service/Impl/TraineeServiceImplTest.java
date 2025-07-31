@@ -13,8 +13,8 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TraineeServiceImpl;
@@ -61,6 +61,8 @@ class TraineeServiceImplTest {
     @Mock
     private TraineeRepository repository;
     @Mock
+    private TrainerRepository trainerRepository;
+    @Mock
     private PasswordService passwordService;
     @Mock
     private UserProfileService userProfileService;
@@ -97,7 +99,7 @@ class TraineeServiceImplTest {
         Optional<Trainee> entity = trainees.stream().filter(trainee -> trainee.getUser().getUsername().equals(username)).findFirst();
         TraineeDto expected = traineeMapper.toDto(entity.get());
 
-        when(repository.findByUsername(username)).thenReturn(entity);
+        when(repository.findByUserUsername(username)).thenReturn(entity);
 
         TraineeDto actual = traineeService.getTraineeByUsername(username);
 
@@ -166,7 +168,7 @@ class TraineeServiceImplTest {
                 .build();
         String username = trainee.getUser().getFirstName() + "." + trainee.getUser().getLastName();
 
-        when(repository.findByUsername(username)).thenReturn(Optional.of(traineeToReturn));
+        when(repository.findByUserUsername(username)).thenReturn(Optional.of(traineeToReturn));
         when(repository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
         TraineeDto actual = traineeService.updateTraineeByUsername(username, updateRequest);
@@ -187,7 +189,7 @@ class TraineeServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhetCantDeleteTraineeByUsername() {
-        when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
+        when(repository.findByUserUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(DataBaseErrorException.class, () -> traineeService.deleteTraineeByUsername("fakeUsername"));
     }
@@ -222,27 +224,19 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void updateTraineeTrainersById() {
-        String username = "Eva.Davis";
-        List<Long> trainerIds = List.of(1L, 3L, 5L);
-
-        doNothing().when(repository).updateTraineeTrainersById(username, trainerIds);
-
-        traineeService.updateTraineeTrainersById(username, trainerIds);
-
-        verify(repository).updateTraineeTrainersById(username, trainerIds);
-    }
-
-    @Test
     void shouldUpdateTraineeByUsername() {
         String username = "Eva.Davis";
-        List<String> usernames = List.of("qqqqq", "lllll", "pppppp");
+        List<String> usernames = List.of("username.number1", "username.number2");
 
-        when(repository.updateTraineeTrainersByUsername(username, usernames)).thenReturn(List.of());
+        when(trainerRepository.findByUserUsernameIn(any())).thenReturn(getUnassignedTrainers());
+        when(repository.findByUserUsername(username)).thenReturn(Optional.of(new Trainee()));
 
-        traineeService.updateTraineeTrainersByUsername(username, usernames);
+        List<Trainer> actual = traineeService.updateTraineeTrainersByUsername(username, usernames);
 
-        verify(repository).updateTraineeTrainersByUsername(username, usernames);
+        assertNotNull(actual);
+        assertEquals(getUnassignedTrainers().size(), actual.size());
+        verify(repository, atLeastOnce()).save(any(Trainee.class));
+        verify(repository, atLeastOnce()).findByUserUsername(username);
     }
 
     private TraineeCreateRequest buildCreateRequest(Trainee trainee) {

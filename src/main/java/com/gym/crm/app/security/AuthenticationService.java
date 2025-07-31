@@ -80,7 +80,7 @@ public class AuthenticationService {
     private UserRole defineUserRole(User user) {
         if (trainerRepository.findByUsername(user.getUsername()).isPresent()) {
             return UserRole.TRAINER;
-        } else if (traineeRepository.findByUsername(user.getUsername()).isPresent()) {
+        } else if (traineeRepository.findByUserUsername(user.getUsername()).isPresent()) {
             return UserRole.TRAINEE;
         } else {
             throw new AuthentificationErrorException("User does not belong to trainer or trainee roles");

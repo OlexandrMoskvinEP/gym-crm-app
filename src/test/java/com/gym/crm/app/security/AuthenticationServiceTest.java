@@ -67,7 +67,7 @@ class AuthenticationServiceTest {
         AuthenticatedUser authenticatedUser = buildAuthenticatedUser(user);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
-        when(traineeRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainee()));
+        when(traineeRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainee()));
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> authenticationService.checkUserAuthorisation(correctCredentials, TRAINEE));

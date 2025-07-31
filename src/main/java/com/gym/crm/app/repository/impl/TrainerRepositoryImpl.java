@@ -110,4 +110,9 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             logger.debug("Trainer deleted: {}", username);
         });
     }
+
+    @Override
+    public List<Trainer> findByUserUsernameIn(List<String> usernames) {
+        return List.of();
+    }
 }

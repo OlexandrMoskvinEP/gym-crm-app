@@ -19,4 +19,6 @@ public interface TrainerRepository {
     Optional<Trainer> findByUsername(String username);
 
     void deleteByUsername(String username);
+
+    List<Trainer> findByUserUsernameIn(List<String> usernames);
 }
