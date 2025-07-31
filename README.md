@@ -21,7 +21,20 @@ GRANT ALL PRIVILEGES ON DATABASE
 "gym" TO gym;
 ```
 
-+
+### ⚙️ Running the application
+
+After building the project you can start the server using Spring Boot:
+
+```bash
+  mvn spring-boot:run
+```
+
+Alternatively, run the packaged jar located in the `target` directory:
+
+```bash
+   java -jar target/gym-crm-app-1.0-SNAPSHOT.jar
+```
+
 
 ## 📚 API Documentation
 
