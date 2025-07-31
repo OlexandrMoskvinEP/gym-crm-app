@@ -15,6 +15,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface TraineeMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "trainers", ignore = true)
+    @Mapping(target = "trainings", ignore = true)
     void update(@MappingTarget Trainee trainee, TraineeUpdateRequest dto);
 
     @Mapping(source = "user.firstName", target = "firstName")
@@ -22,6 +24,7 @@ public interface TraineeMapper {
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "user.password", target = "password")
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.isActive", target = "isActive")
     @Mapping(source = "id", target = "traineeId")
     TraineeDto toDto(Trainee trainee);
 

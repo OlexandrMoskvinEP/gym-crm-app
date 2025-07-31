@@ -15,6 +15,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface TrainerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "trainees", ignore = true)
+    @Mapping(target = "trainings", ignore = true)
     void update(@MappingTarget Trainer trainer, TrainerUpdateRequest dto);
 
     @Mapping(source = "user.firstName", target = "firstName")
@@ -24,6 +26,7 @@ public interface TrainerMapper {
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "specialization", target = "specialization")
     @Mapping(source = "id", target = "trainerId")
+    @Mapping(source = "user.isActive", target = "isActive")
     TrainerDto toDto(Trainer trainer);
 
     @Mapping(source = "specialization.trainingTypeName", target = "specialization")
@@ -39,9 +42,11 @@ public interface TrainerMapper {
 
     @Mapping(source = "active", target = "isActive")
     @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    @Mapping(target = "trainees", ignore = true)
     TrainerGetResponse toGetResponse(TrainerDto trainer);
 
     @Mapping(source = "active", target = "isActive")
     @Mapping(source = "specialization.trainingTypeName", target = "specialization")
+    @Mapping(target = "trainees", ignore = true)
     TrainerUpdateResponse toUpdateResponse(TrainerDto trainerDto);
 }
