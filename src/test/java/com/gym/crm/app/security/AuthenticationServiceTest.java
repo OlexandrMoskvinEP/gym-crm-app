@@ -123,7 +123,7 @@ class AuthenticationServiceTest {
     @Test
     void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
-        when(trainerRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
+        when(trainerRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 

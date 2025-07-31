@@ -92,7 +92,7 @@ class TrainerServiceImplTest {
         Optional<Trainer> entity = trainers.stream().filter(trainer -> trainer.getUser().getUsername().equals(username)).findFirst();
         TrainerDto expected = trainerMapper.toDto(entity.get());
 
-        when(repository.findByUsername(username)).thenReturn(entity);
+        when(repository.findByUserUsername(username)).thenReturn(entity);
 
         TrainerDto actual = trainerService.getTrainerByUsername(username);
 
@@ -150,7 +150,7 @@ class TrainerServiceImplTest {
                 .build();
         String username = trainer.getUser().getFirstName() + "." + trainer.getUser().getLastName();
 
-        when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
+        when(repository.findByUserUsername(username)).thenReturn(Optional.of(trainerToReturn));
         when(repository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
         TrainerDto actual = trainerService.updateTrainerByUsername(username, updateRequest);
@@ -169,7 +169,7 @@ class TrainerServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhenCantDeleteTrainerByUsername() {
-        when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
+        when(repository.findByUserUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(DataBaseErrorException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
     }

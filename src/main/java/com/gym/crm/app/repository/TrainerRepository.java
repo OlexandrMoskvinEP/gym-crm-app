@@ -1,24 +1,17 @@
 package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Trainer;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TrainerRepository {
-    List<Trainer> findAll();
+public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
+    Optional<Trainer> findByUserUsername(String username);
 
-    Trainer save(Trainer trainer);
-
-    void update(Trainer trainer);
-
-    Optional<Trainer> findById(Long id);
-
-    void deleteById(Long id);
-
-    Optional<Trainer> findByUsername(String username);
-
-    void deleteByUsername(String username);
+    @Transactional
+    void deleteByUserUsername(String username);
 
     List<Trainer> findByUserUsernameIn(List<String> usernames);
 }

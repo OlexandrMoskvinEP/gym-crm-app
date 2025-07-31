@@ -150,7 +150,7 @@ class UserProfileServiceTest {
 
         assertTrue(actual);
         verify(traineeRepository, never()).findByUserUsername(username);
-        verify(trainerRepository, never()).findByUsername(username);
+        verify(trainerRepository, never()).findByUserUsername(username);
         verify(userRepository, never()).findByUsername(username);
     }
 
@@ -163,7 +163,7 @@ class UserProfileServiceTest {
 
         assertFalse(actual);
         verify(traineeRepository, never()).findByUserUsername(NEW_USERNAME);
-        verify(trainerRepository, never()).findByUsername(NEW_USERNAME);
+        verify(trainerRepository, never()).findByUserUsername(NEW_USERNAME);
         verify(userRepository, never()).findByUsername(NEW_USERNAME);
     }
 

@@ -78,7 +78,7 @@ public class AuthenticationService {
     }
 
     private UserRole defineUserRole(User user) {
-        if (trainerRepository.findByUsername(user.getUsername()).isPresent()) {
+        if (trainerRepository.findByUserUsername(user.getUsername()).isPresent()) {
             return UserRole.TRAINER;
         } else if (traineeRepository.findByUserUsername(user.getUsername()).isPresent()) {
             return UserRole.TRAINEE;
