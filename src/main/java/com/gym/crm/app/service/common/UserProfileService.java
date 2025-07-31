@@ -4,10 +4,10 @@ import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.CoreServiceException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -52,33 +53,38 @@ public class UserProfileService {
         return username;
     }
 
+    @Transactional
     public void changePassword(String username, String oldPassword, @NotNull String newPassword) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new DataBaseErrorException("User not found"));
 
-        String existingEncodedPassword = user.getPassword();
-
-        if (!passwordEncoder.matches(oldPassword, existingEncodedPassword)) {
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new AuthentificationErrorException("Invalid old password");
         }
 
-        String newEncodedPassword = passwordEncoder.encode(newPassword);
-        userRepository.updatePassword(username, newEncodedPassword);
+        User updatedUser = user.toBuilder()
+                .password(passwordEncoder.encode(newPassword))
+                .build();
+
+        userRepository.save(updatedUser);
     }
 
-    public void switchActivationStatus(@Valid ChangeActivationStatusDto changeActivationStatusDto) {
-        String username = changeActivationStatusDto.getUsername();
+    @Transactional
+    public void switchActivationStatus(@Valid ChangeActivationStatusDto dto) {
+        String username = dto.getUsername();
 
-        boolean isCurrentlyActivated = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(format("User %s not found", username)))
-                .getIsActive();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new DataBaseErrorException(
+                        String.format("User with username %s not found", username)));
 
-        if (isCurrentlyActivated == changeActivationStatusDto.getIsActive()) {
-            String status = isCurrentlyActivated ? "activate" : "deactivate";
-            throw new CoreServiceException(format("Could not %s user %s: user is already %sed", status, username, status));
+        if (user.getIsActive() == dto.getIsActive()) {
+            String status = dto.getIsActive() ? "activate" : "deactivate";
+            throw new CoreServiceException(format(
+                    "Could not %s user %s: user is already %sed", status, username, status));
         }
 
-        userRepository.changeStatus(changeActivationStatusDto.getUsername());
+        User updatedUser = user.toBuilder().isActive(dto.getIsActive()).build();
+        userRepository.save(updatedUser);
     }
 
     public boolean isUsernameAlreadyExists(String username) {
