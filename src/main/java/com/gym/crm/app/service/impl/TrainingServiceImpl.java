@@ -12,6 +12,8 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
+import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
+import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.TrainingService;
@@ -36,6 +38,8 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingMapper trainingMapper;
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
+    private final TraineeTrainingQueryBuilder traineeQueryBuilder;
+    private final TrainerTrainingQueryBuilder trainerQueryBuilder;
 
     @Setter
     private ModelMapper modelMapper;
@@ -50,9 +54,9 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto addTraining(TrainingSaveRequest training) {
-        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingTypeName())
+        TrainingType trainingType = trainingTypeRepository.findByTrainingTypeName(training.getTrainingTypeName())
                 .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
-        Trainer trainer = trainerRepository.findById(training.getTrainerId()).get();
+        Trainer trainer = trainerRepository.findById(Math.toIntExact(training.getTrainerId())).get();
         Trainee trainee = traineeRepository.findById(training.getTraineeId()).get();
 
         Training trainingToSave = Training.builder()
@@ -79,7 +83,7 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingDto updateTraining(TrainingSaveRequest training) {
         Training existing = repository.findAll().stream()
                 .findFirst().orElseThrow(() -> new DataBaseErrorException("Training not found"));
-        TrainingType trainingType = trainingTypeRepository.findByName(training.getTrainingName())
+        TrainingType trainingType = trainingTypeRepository.findByTrainingTypeName(training.getTrainingName())
                 .orElseThrow(() -> new DataBaseErrorException(format("Training type: %s not found", training.getTrainingTypeName())));
 
         Training updated = Training.builder()
@@ -101,7 +105,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter) {
-        return repository.findByTraineeCriteria(filter)
+        return repository.findAll(traineeQueryBuilder.build(filter))
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();
@@ -109,7 +113,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter) {
-        return repository.findByTrainerCriteria(filter)
+        return repository.findAll(trainerQueryBuilder.build(filter))
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();

@@ -48,7 +48,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto getTrainerByUsername(String username) {
-        Trainer trainer = repository.findByUsername(username)
+        Trainer trainer = repository.findByUserUsername(username)
                 .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
 
         return trainerMapper.toDto(trainer);
@@ -80,7 +80,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest) {
-        Trainer existTrainer = repository.findByUsername(username)
+        Trainer existTrainer = repository.findByUserUsername(username)
                 .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
 
         Trainer entityToUpdate = mapUpdatedTrainerWithUser(updateRequest, existTrainer);
@@ -88,23 +88,23 @@ public class TrainerServiceImpl implements TrainerService {
         repository.save(entityToUpdate);
         logger.info("Trainer {} updated", username);
 
-        return modelMapper.map(repository.findByUsername(username), TrainerDto.class);
+        return modelMapper.map(repository.findByUserUsername(username), TrainerDto.class);
     }
 
     @Override
     public String getTrainerNameById(Long id) {
-        Trainer trainer = repository.findById(id).orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with id %s not found", id)));
+        Trainer trainer = repository.findById(Math.toIntExact(id)).orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with id %s not found", id)));
 
         return trainer.getUser().getFirstName() + " " + trainer.getUser().getLastName();
     }
 
     @Override
     public void deleteTrainerByUsername(String username) {
-        if (repository.findByUsername(username).isEmpty()) {
+        if (repository.findByUserUsername(username).isEmpty()) {
             throw new DataBaseErrorException(String.format("Trainer with username %s not found", username));
         }
 
-        repository.deleteByUsername(username);
+        repository.deleteByUserUsername(username);
         logger.info("Trainer {} deleted", username);
     }
 
@@ -143,7 +143,7 @@ public class TrainerServiceImpl implements TrainerService {
                 trainer.getUser().getLastName(),
                 trainer.getUser().getUsername(),
                 trainer.getUser().getPassword(),
-                trainer.getUser().isActive(),
+                trainer.getUser().getIsActive(),
                 trainer.getSpecialization(),
                 trainer.getUser().getId(),
                 trainer.getId()

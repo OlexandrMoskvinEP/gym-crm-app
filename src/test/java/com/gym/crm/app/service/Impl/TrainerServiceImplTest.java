@@ -13,7 +13,6 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import com.gym.crm.app.service.impl.TrainerServiceImpl;
@@ -62,8 +61,6 @@ class TrainerServiceImplTest {
     @Mock
     private UserProfileService userProfileService;
     @Mock
-    private TraineeService traineeService;
-    @Mock
     private AuthenticationService authenticationService;
     @Spy
     private TrainerMapper trainerMapper;
@@ -94,7 +91,7 @@ class TrainerServiceImplTest {
         Optional<Trainer> entity = trainers.stream().filter(trainer -> trainer.getUser().getUsername().equals(username)).findFirst();
         TrainerDto expected = trainerMapper.toDto(entity.get());
 
-        when(repository.findByUsername(username)).thenReturn(entity);
+        when(repository.findByUserUsername(username)).thenReturn(entity);
 
         TrainerDto actual = trainerService.getTrainerByUsername(username);
 
@@ -110,7 +107,7 @@ class TrainerServiceImplTest {
         expected.setUserId(0L);
         expected.setFirstName(trainer.getUser().getFirstName());
         expected.setLastName(trainer.getUser().getLastName());
-        expected.setActive(trainer.getUser().isActive());
+        expected.setActive(trainer.getUser().getIsActive());
 
         Trainer entityToReturn = mapToEntityWithUserId(trainer, expected.getUserId());
         String username = expected.getFirstName() + "." + expected.getLastName();
@@ -152,7 +149,7 @@ class TrainerServiceImplTest {
                 .build();
         String username = trainer.getUser().getFirstName() + "." + trainer.getUser().getLastName();
 
-        when(repository.findByUsername(username)).thenReturn(Optional.of(trainerToReturn));
+        when(repository.findByUserUsername(username)).thenReturn(Optional.of(trainerToReturn));
         when(repository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
         TrainerDto actual = trainerService.updateTrainerByUsername(username, updateRequest);
@@ -171,7 +168,7 @@ class TrainerServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhenCantDeleteTrainerByUsername() {
-        when(repository.findByUsername("fakeUsername")).thenReturn(Optional.empty());
+        when(repository.findByUserUsername("fakeUsername")).thenReturn(Optional.empty());
 
         assertThrows(DataBaseErrorException.class, () -> trainerService.deleteTrainerByUsername("fakeUsername"));
     }
@@ -180,7 +177,7 @@ class TrainerServiceImplTest {
         UserCreateRequest user = UserCreateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
-                .isActive(trainer.getUser().isActive())
+                .isActive(trainer.getUser().getIsActive())
                 .build();
 
         return TrainerCreateRequest.builder()
@@ -193,7 +190,7 @@ class TrainerServiceImplTest {
         UserUpdateRequest user = UserUpdateRequest.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
-                .isActive(trainer.getUser().isActive())
+                .isActive(trainer.getUser().getIsActive())
                 .build();
 
         return TrainerUpdateRequest.builder()

@@ -1,11 +1,9 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.DataBaseErrorException;
-import com.gym.crm.app.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,11 +16,10 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainers.xml", cleanBefore = true, cleanAfter = true)
-public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRepository> {
+public class TrainerRepositoryTest extends AbstractRepositoryTest<TrainerRepository> {
 
     @Test
     void shouldReturnAllTrainers() {
@@ -52,7 +49,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
     @ParameterizedTest
     @MethodSource("provideTrainersForIdTest")
     void shouldFindTrainerById(Long id, String username, String firstName, String lastName) {
-        Optional<Trainer> actual = repository.findById(id);
+        Optional<Trainer> actual = repository.findById(Math.toIntExact(id));
 
         assertTrue(actual.isPresent());
         Trainer trainer = actual.get();
@@ -67,7 +64,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
     @ParameterizedTest
     @MethodSource("provideUsernames")
     void shouldFindByUsername(String username, Long expectedId) {
-        Optional<Trainer> actual = repository.findByUsername(username);
+        Optional<Trainer> actual = repository.findByUserUsername(username);
 
         assertTrue(actual.isPresent());
         assertEquals(expectedId, actual.get().getId());
@@ -80,7 +77,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
 
         Long actual = repository.save(toSave).getId();
 
-        Trainer found = repository.findByUsername("trainer.test").orElse(null);
+        Trainer found = repository.findByUserUsername("trainer.test").orElse(null);
 
         assertNotNull(found);
         assertNotNull(found.getUser());
@@ -89,7 +86,7 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
         assertEquals("Test", found.getUser().getLastName());
         assertEquals("trainer.test", found.getUser().getUsername());
         assertEquals("Pwd123!@#", found.getUser().getPassword());
-        assertTrue(found.getUser().isActive());
+        assertTrue(found.getUser().getIsActive());
 
         assertNotNull(found.getSpecialization());
         assertEquals("Yoga", found.getSpecialization().getTrainingTypeName());
@@ -97,35 +94,26 @@ public class TrainerRepositoryImplTest extends AbstractRepositoryTest<TrainerRep
 
     @Test
     void shouldUpdateTrainer() {
-        Trainer original = repository.findByUsername("boris.krasnov")
+        Trainer original = repository.findByUserUsername("boris.krasnov")
                 .orElseThrow(() -> new IllegalArgumentException("Test user not found"));
 
         Trainer toUpdate = original.toBuilder()
                 .user(original.getUser().toBuilder().firstName("Updated").build())
                 .build();
 
-        repository.update(toUpdate);
+        repository.save(toUpdate);
 
-        Trainer updated = repository.findByUsername("boris.krasnov").orElse(null);
+        Trainer updated = repository.findByUserUsername("boris.krasnov").orElse(null);
 
         assertNotNull(updated);
         assertEquals("Updated", updated.getUser().getFirstName());
     }
 
     @Test
-    void shouldDeleteEntityById() {
-        repository.deleteById(1L);
-
-        Optional<Trainer> found = repository.findById(1L);
-        assertFalse(found.isPresent());
-        assertThrows(DataBaseErrorException.class, () -> repository.deleteById(1L));
-    }
-
-    @Test
     void shouldDeleteEntityByUsername() {
-        repository.deleteByUsername("arnold.schwarzenegger");
+        repository.deleteByUserUsername("arnold.schwarzenegger");
 
-        Optional<Trainer> found = repository.findByUsername("arnold.schwarzenegger");
+        Optional<Trainer> found = repository.findByUserUsername("arnold.schwarzenegger");
         assertFalse(found.isPresent());
     }
 

@@ -1,6 +1,5 @@
 package com.gym.crm.app.service.impl;
 
-import com.gym.crm.app.aspect.tx.CoreTransactional;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
 import com.gym.crm.app.domain.dto.trainee.TraineeDto;
 import com.gym.crm.app.domain.dto.trainee.TraineeUpdateRequest;
@@ -13,6 +12,7 @@ import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
+import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
@@ -24,6 +24,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +42,7 @@ public class TraineeServiceImpl implements TraineeService {
     private final TraineeRepository repository;
     private final TrainerMapper trainerMapper;
     private final TraineeMapper traineeMapper;
+    private final TrainerRepository trainerRepository;
 
     @Setter
     private ModelMapper modelMapper;
@@ -55,7 +57,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto getTraineeByUsername(String username) {
-        Trainee trainee = repository.findByUsername(username)
+        Trainee trainee = repository.findByUserUsername(username)
                 .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
 
         return traineeMapper.toDto(trainee);
@@ -88,7 +90,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest updateRequest) {
-        Trainee existTrainee = repository.findByUsername(username)
+        Trainee existTrainee = repository.findByUserUsername(username)
                 .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
 
         Trainee entityToUpdate = mapUpdatedTraineeWithUser(updateRequest, existTrainee);
@@ -101,29 +103,36 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void deleteTraineeByUsername(String username) {
-        if (repository.findByUsername(username).isEmpty()) {
+        if (repository.findByUserUsername(username).isEmpty()) {
             throw new DataBaseErrorException(String.format("Trainee with username %s not found", username));
         }
 
-        repository.deleteByUsername(username);
+        repository.deleteByUserUsername(username);
         logger.info("Trainee {} deleted", username);
     }
 
     @Override
     public List<TrainerDto> getUnassignedTrainersByTraineeUsername(String username) {
         return repository.findUnassignedTrainersByTraineeUsername(username)
-                .stream().map(trainer -> trainerMapper.toDto(trainer)).toList();
+                .stream().map(trainerMapper::toDto).toList();
     }
 
-    @Override
-    @CoreTransactional
-    public void updateTraineeTrainersById(String username, List<Long> trainerIds) {
-        repository.updateTraineeTrainersById(username, trainerIds);
-    }
-
+    @Transactional
     @Override
     public List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames) {
-        return repository.updateTraineeTrainersByUsername(username, usernames);
+        Trainee trainee = repository.findByUserUsername(username)
+                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
+
+        List<Trainer> trainers = trainerRepository.findByUserUsernameIn(usernames);
+        if (trainers.size() != usernames.size()) {
+            throw new DataBaseErrorException("Some trainer usernames not found");
+        }
+
+        trainee.getTrainers().clear();
+        trainee.getTrainers().addAll(trainers);
+        repository.save(trainee);
+
+        return trainers;
     }
 
     @Override
@@ -171,7 +180,7 @@ public class TraineeServiceImpl implements TraineeService {
                 trainee.getUser().getLastName(),
                 trainee.getUser().getUsername(),
                 trainee.getUser().getPassword(),
-                trainee.getUser().isActive(),
+                trainee.getUser().getIsActive(),
                 trainee.getDateOfBirth(),
                 trainee.getAddress(),
                 trainee.getUser().getId(),

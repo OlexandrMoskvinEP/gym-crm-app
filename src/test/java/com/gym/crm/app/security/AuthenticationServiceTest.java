@@ -67,7 +67,7 @@ class AuthenticationServiceTest {
         AuthenticatedUser authenticatedUser = buildAuthenticatedUser(user);
 
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
-        when(traineeRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainee()));
+        when(traineeRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainee()));
         when(currentUserHolder.get()).thenReturn(authenticatedUser);
 
         assertDoesNotThrow(() -> authenticationService.checkUserAuthorisation(correctCredentials, TRAINEE));
@@ -123,7 +123,7 @@ class AuthenticationServiceTest {
     @Test
     void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
-        when(trainerRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
+        when(trainerRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
@@ -145,6 +145,7 @@ class AuthenticationServiceTest {
         return User.builder()
                 .username(USERNAME)
                 .password(ENCODED_PASSWORD)
+                .isActive(true)
                 .build();
     }
 
@@ -153,7 +154,7 @@ class AuthenticationServiceTest {
                 .userId(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .isActive(user.isActive())
+                .isActive(user.getIsActive())
                 .role(UserRole.valueOf(USER_ROLE)).build();
     }
 }

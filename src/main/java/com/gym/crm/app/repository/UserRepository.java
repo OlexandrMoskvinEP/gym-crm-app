@@ -1,22 +1,15 @@
 package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
-    User save(User user);
-
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
-    void update(User user);
-
+    @Transactional
     void deleteByUsername(String username);
-
-    List<User> findAll();
-
-    void updatePassword(String username, String newPassword);
-
-    void changeStatus(String username);
 }

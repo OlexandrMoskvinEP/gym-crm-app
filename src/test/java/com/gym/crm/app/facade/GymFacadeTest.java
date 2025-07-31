@@ -69,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
@@ -101,7 +100,6 @@ class GymFacadeTest {
     private static final TrainerUpdateResponse TRAINER_UPDATE_RESPONSE = buildTrainerUpdateResponse();
     private static final TraineeAssignedTrainersUpdateRequest TRAINEE_ASSIGNED_TRAINERS_UPDATE_REQUEST = buildAssignedTrainerRequest();
     private static final TrainingCreateRequest TRAINING_CREATE_REQUEST = getTrainingCreateRequest();
-    private static final TrainingSaveRequest TRAINING_SAVE_REQUEST = getTrainingSaveRequest();
 
     @Mock
     private HttpServletRequest request;
@@ -447,6 +445,7 @@ class GymFacadeTest {
                 .userId(USER_ID)
                 .address(ADDRESS)
                 .dateOfBirth(DATE_OF_BIRTH)
+                .isActive(true)
                 .build();
     }
 
@@ -515,12 +514,12 @@ class GymFacadeTest {
         return new TraineeAssignedTrainersUpdateRequest(list);
     }
 
-    private static AuthenticatedUser buildAuthUser() {
+    private static AuthenticatedUser buildAdmin() {
         return AuthenticatedUser.builder()
                 .userId(GymFacadeTest.SIMPLE_USER.getId())
                 .username(GymFacadeTest.SIMPLE_USER.getUsername())
                 .password(GymFacadeTest.SIMPLE_USER.getPassword())
-                .isActive(GymFacadeTest.SIMPLE_USER.isActive())
+                .isActive(GymFacadeTest.SIMPLE_USER.getIsActive())
                 .role(UserRole.valueOf("ADMIN")).build();
     }
 

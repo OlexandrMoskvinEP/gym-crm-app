@@ -1,11 +1,10 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.TrainingType;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.repository.TraineeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainees.xml", cleanBefore = true, cleanAfter = true)
-public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRepository> {
+public class TraineeRepositoryTest extends AbstractRepositoryTest<TraineeRepository> {
 
     @Test
     void shouldReturnAllTrainees() {
@@ -82,7 +81,7 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
     @ParameterizedTest
     @MethodSource("provideUsernames")
     void shouldFindByUsername(String username, Long expectedId) {
-        Optional<Trainee> actual = repository.findByUsername(username);
+        Optional<Trainee> actual = repository.findByUserUsername(username);
 
         assertTrue(actual.isPresent());
         assertEquals(expectedId, actual.get().getId());
@@ -108,16 +107,16 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
 
     @Test
     void shouldUpdateTrainee() {
-        Trainee original = repository.findByUsername("olga.ivanova")
+        Trainee original = repository.findByUserUsername("olga.ivanova")
                 .orElseThrow(() -> new IllegalArgumentException("Test user was not found"));
         Trainee toUpdate = original.toBuilder()
                 .address("Updated Address")
                 .dateOfBirth(LocalDate.of(2001, 2, 2))
                 .build();
 
-        repository.update(toUpdate);
+        repository.save(toUpdate);
 
-        Trainee updated = repository.findByUsername("olga.ivanova").orElse(null);
+        Trainee updated = repository.findByUserUsername("olga.ivanova").orElse(null);
 
         assertNotNull(updated);
         assertEquals(2L, updated.getId());
@@ -133,7 +132,7 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
     void shouldDeleteEntityById() {
         repository.deleteById(1L);
 
-        Optional<Trainee> foundTrainee = repository.findByUsername("john.smith");
+        Optional<Trainee> foundTrainee = repository.findByUserUsername("john.smith");
         assertFalse(foundTrainee.isPresent());
     }
 
@@ -141,56 +140,10 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
     void shouldDeleteEntityByUsername() {
         String existUsername = "john.smith";
 
-        repository.deleteByUsername(existUsername);
+        repository.deleteByUserUsername(existUsername);
 
-        Optional<Trainee> foundTrainee = repository.findByUsername("john.smith");
+        Optional<Trainee> foundTrainee = repository.findByUserUsername("john.smith");
         assertFalse(foundTrainee.isPresent());
-    }
-
-    @Test
-    @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
-    void shouldUpdateTraineeTrainersById() {
-        String username = "olga.ivanova";
-        List<Long> newTrainerIds = List.of(1L, 2L);
-        Set<Trainer> expectedTrainers = buildExpectedTrainers();
-        Trainer arnoldTrainer = buildArnoldTrainer();
-
-        repository.updateTraineeTrainersById(username, newTrainerIds);
-
-        Optional<Trainee> updated = entityManager
-                .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
-                .setParameter("username", username)
-                .getResultStream()
-                .findFirst();
-        assertTrue(updated.isPresent());
-        Set<Trainer> actualTrainers = updated.get().getTrainers();
-
-        assertEquals(2, actualTrainers.size());
-        assertTrue(actualTrainers.containsAll(expectedTrainers));
-        assertFalse(actualTrainers.contains(arnoldTrainer));
-    }
-
-    @Test
-    @DataSet(value = "datasets/trainers-trainees.xml", cleanBefore = true, cleanAfter = true)
-    void shouldUpdateTraineeTrainersByUsername() {
-        String username = "olga.ivanova";
-        List<String> newTrainerUsernames = List.of("john.doe", "mike.tyson");
-        Set<Trainer> expectedTrainers = buildExpectedTrainers();
-        Trainer arnoldTrainer = buildArnoldTrainer();
-
-        repository.updateTraineeTrainersByUsername(username, newTrainerUsernames);
-
-        Optional<Trainee> updated = entityManager
-                .createQuery("SELECT t FROM Trainee t JOIN FETCH t.trainers WHERE t.user.username = :username", Trainee.class)
-                .setParameter("username", username)
-                .getResultStream()
-                .findFirst();
-        assertTrue(updated.isPresent());
-        Set<Trainer> actualTrainers = updated.get().getTrainers();
-
-        assertEquals(2, actualTrainers.size());
-        assertTrue(actualTrainers.containsAll(expectedTrainers));
-        assertFalse(actualTrainers.contains(arnoldTrainer));
     }
 
     private static Stream<Arguments> provideTraineesForIdTest() {
@@ -232,10 +185,6 @@ public class TraineeRepositoryImplTest extends AbstractRepositoryTest<TraineeRep
         trainers.add(buildTrainer(2L, "Mike", "Tyson", "mike.tyson", 2L, "Crossfit"));
 
         return trainers;
-    }
-
-    private Trainer buildArnoldTrainer() {
-        return buildTrainer(6L, "Arnold", "Schwarzenegger", "arnold.schwarzenegger", 6L, "Bodybuilding");
     }
 
     private Trainer buildTrainer(Long trainerId,

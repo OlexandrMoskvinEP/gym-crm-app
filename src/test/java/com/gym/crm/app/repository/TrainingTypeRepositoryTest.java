@@ -1,8 +1,7 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/training_types.xml", cleanBefore = true, cleanAfter = true)
-class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingTypeRepository> {
+class TrainingTypeRepositoryTest extends AbstractRepositoryTest<TrainingTypeRepository> {
 
     @ParameterizedTest
     @CsvSource({
@@ -26,7 +25,7 @@ class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingType
             "Bodybuilding, 6"
     })
     void shouldFindByName(String typeName, Long expectedId) {
-        Optional<TrainingType> actual = repository.findByName(typeName);
+        Optional<TrainingType> actual = repository.findByTrainingTypeName(typeName);
 
         assertTrue(actual.isPresent());
         assertEquals(expectedId, actual.get().getId());
@@ -55,7 +54,7 @@ class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingType
 
     @Test
     void shouldReturnEmptyIfNotFound() {
-        Optional<TrainingType> result = repository.findByName("NonExistingType");
+        Optional<TrainingType> result = repository.findByTrainingTypeName("NonExistingType");
 
         assertTrue(result.isEmpty());
     }

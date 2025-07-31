@@ -5,14 +5,15 @@ import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.CoreServiceException;
+import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,9 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,34 +72,44 @@ class UserProfileServiceTest {
 
     @Test
     void shouldSuccessfullyChangePassword() {
-        doNothing().when(userRepository).updatePassword(anyString(), anyString());
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(User.builder().password("111").build()));
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(User.builder().username("username").password("111").build()));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(passwordEncoder.encode(anyString())).thenReturn("qwerty321");
 
         service.changePassword("username", "111", "qwerty321");
 
-        verify(userRepository).updatePassword("username", "qwerty321");
+        verify(userRepository).save(captor.capture());
+
+        User savedUser = captor.getValue();
+        assertEquals("qwerty321", savedUser.getPassword());
+        assertEquals("username", savedUser.getUsername());
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void shouldSuccessfullySwitchUserStatus(boolean isActive) {
+    void shouldSuccessfullySwitchUserStatus(boolean targetStatus) {
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         User user = constructUser("Ioanne", "Vergilis").toBuilder()
-                .isActive(!isActive)
+                .isActive(!targetStatus)
                 .build();
         String username = user.getUsername();
         ChangeActivationStatusDto activationStatusDto = ChangeActivationStatusDto.builder()
                 .username(user.getUsername())
-                .isActive(isActive)
+                .isActive(targetStatus)
                 .build();
 
-        doNothing().when(userRepository).changeStatus(anyString());
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         service.switchActivationStatus(activationStatusDto);
+        service.switchActivationStatus(activationStatusDto);
 
-        verify(userRepository).changeStatus(username);
+        verify(userRepository, times(2)).save(captor.capture());
+        User savedUser = captor.getValue();
+
+        assertEquals(username, savedUser.getUsername());
+        assertEquals(targetStatus, savedUser.getIsActive());
     }
 
     @ParameterizedTest
@@ -120,7 +132,7 @@ class UserProfileServiceTest {
                 () -> service.switchActivationStatus(activationStatusDto));
 
         assertEquals(expectedMessage, ex.getMessage());
-        verify(userRepository, never()).changeStatus(SIMPLE_USERNAME);
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
@@ -133,11 +145,11 @@ class UserProfileServiceTest {
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+        RuntimeException ex = assertThrows(DataBaseErrorException.class,
                 () -> service.switchActivationStatus(activationStatusDto));
 
-        assertEquals("User Ioanne.Vergilis not found", ex.getMessage());
-        verify(userRepository, never()).changeStatus(SIMPLE_USERNAME);
+        assertEquals("User with username Ioanne.Vergilis not found", ex.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @ParameterizedTest()
@@ -149,8 +161,8 @@ class UserProfileServiceTest {
         boolean actual = service.isUsernameAlreadyExists(username);
 
         assertTrue(actual);
-        verify(traineeRepository, never()).findByUsername(username);
-        verify(trainerRepository, never()).findByUsername(username);
+        verify(traineeRepository, never()).findByUserUsername(username);
+        verify(trainerRepository, never()).findByUserUsername(username);
         verify(userRepository, never()).findByUsername(username);
     }
 
@@ -162,8 +174,8 @@ class UserProfileServiceTest {
         boolean actual = service.isUsernameAlreadyExists(NEW_USERNAME);
 
         assertFalse(actual);
-        verify(traineeRepository, never()).findByUsername(NEW_USERNAME);
-        verify(trainerRepository, never()).findByUsername(NEW_USERNAME);
+        verify(traineeRepository, never()).findByUserUsername(NEW_USERNAME);
+        verify(trainerRepository, never()).findByUserUsername(NEW_USERNAME);
         verify(userRepository, never()).findByUsername(NEW_USERNAME);
     }
 

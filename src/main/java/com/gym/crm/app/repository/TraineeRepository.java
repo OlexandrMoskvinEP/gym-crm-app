@@ -2,29 +2,29 @@ package com.gym.crm.app.repository;
 
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TraineeRepository {
+public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 
-    List<Trainee> findAll();
+    Optional<Trainee> findByUserUsername(String username);
 
-    Trainee save(Trainee trainee);
+    @Transactional
+    void deleteByUserUsername(String userName);
 
-    void update(Trainee trainee);
-
-    Optional<Trainee> findById(Long id);
-
-    void deleteById(Long id);
-
-    Optional<Trainee> findByUsername(String username);
-
-    void deleteByUsername(String userName);
-
-    List<Trainer> findUnassignedTrainersByTraineeUsername(String username);
-
-    void updateTraineeTrainersById(String username, List<Long> trainerIds);
-
-    List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames);
+    @Query("""
+                SELECT t FROM Trainer t
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM Trainee trn
+                    JOIN trn.trainers tr
+                    WHERE trn.user.username = :username
+                    AND tr.id = t.id
+                )
+            """)
+    List<Trainer> findUnassignedTrainersByTraineeUsername(@Param("username") String username);
 }
