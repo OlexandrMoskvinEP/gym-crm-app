@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_crm_db
+    driver-class-name: org.postgresql.Driver
+    username: gym
+    password: gym
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        hbm2ddl.auto: none
+  liquibase:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.gcs.app: INFO
