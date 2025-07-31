@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/users.xml", cleanBefore = true, cleanAfter = true)
-public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepository> {
+public class UserRepositoryTest extends AbstractRepositoryTest<UserRepository> {
 
     @Test
     void shouldReturnAllUsers() {

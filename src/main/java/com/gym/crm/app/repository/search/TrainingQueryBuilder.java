@@ -20,6 +20,7 @@ public abstract class TrainingQueryBuilder {
             addUsernamePredicate(cb, root, filter, predicates);
             addDateRange(cb, root, filter, predicates);
             addSpecificPredicates(cb, root, filter, predicates);
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

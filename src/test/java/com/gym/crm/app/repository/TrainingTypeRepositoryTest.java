@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/training_types.xml", cleanBefore = true, cleanAfter = true)
-class TrainingTypeRepositoryImplTest extends AbstractRepositoryTest<TrainingTypeRepository> {
+class TrainingTypeRepositoryTest extends AbstractRepositoryTest<TrainingTypeRepository> {
 
     @ParameterizedTest
     @CsvSource({
