@@ -1,8 +1,7 @@
-package com.gym.crm.app.repository.impl;
+package com.gym.crm.app.repository;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.gym.crm.app.domain.model.TrainingType;
-import com.gym.crm.app.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

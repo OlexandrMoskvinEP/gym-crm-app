@@ -11,6 +11,8 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
+import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
+import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.impl.TrainingServiceImpl;
@@ -21,8 +23,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,6 +73,10 @@ class TrainingServiceImplTest {
     TraineeRepository traineeRepository;
     @Mock
     private TrainingMapper trainingMapper;
+    @Spy
+    private TraineeTrainingQueryBuilder traineeTrainingQueryBuilder;
+    @Spy
+    private TrainerTrainingQueryBuilder trainerTrainingQueryBuilder;
 
     @InjectMocks
     private TrainingServiceImpl trainingService;
@@ -146,7 +155,7 @@ class TrainingServiceImplTest {
         TraineeTrainingSearchFilter filter = TraineeTrainingSearchFilter.builder().build();
 
         when(trainingMapper.toDto(training)).thenReturn(buildTrainingDto());
-        when(repository.findByTraineeCriteria(filter)).thenReturn(List.of(training));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(training));
 
         List<TrainingDto> result = trainingService.getTraineeTrainingsByFilter(filter);
 
@@ -160,7 +169,8 @@ class TrainingServiceImplTest {
         assertEquals(LocalDate.of(2024, 1, 1), dto.getTrainingDate());
         assertEquals(BigDecimal.TEN, dto.getTrainingDuration());
 
-        verify(repository).findByTraineeCriteria(filter);
+        verify(repository).findAll(any(Specification.class));
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -169,7 +179,7 @@ class TrainingServiceImplTest {
         TrainerTrainingSearchFilter filter = TrainerTrainingSearchFilter.builder().build();
 
         when(trainingMapper.toDto(training)).thenReturn(buildTrainingDto());
-        when(repository.findByTrainerCriteria(filter)).thenReturn(List.of(training));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(training));
 
         List<TrainingDto> result = trainingService.getTrainerTrainingsByFilter(filter);
 
@@ -183,7 +193,8 @@ class TrainingServiceImplTest {
         assertEquals(LocalDate.of(2024, 1, 1), dto.getTrainingDate());
         assertEquals(BigDecimal.TEN, dto.getTrainingDuration());
 
-        verify(repository).findByTrainerCriteria(filter);
+        verify(repository).findAll(any(Specification.class));
+        verifyNoMoreInteractions(repository);
     }
 
     private TrainingSaveRequest getTrainingDtoFromEntity(Training training) {

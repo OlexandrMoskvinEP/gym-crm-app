@@ -12,14 +12,20 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.TrainingRepository;
 import com.gym.crm.app.repository.TrainingTypeRepository;
+import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
+import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
 import com.gym.crm.app.service.TrainingService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +42,8 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingMapper trainingMapper;
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
+    private final TraineeTrainingQueryBuilder traineeQueryBuilder;
+    private final TrainerTrainingQueryBuilder trainerQueryBuilder;
 
     @Setter
     private ModelMapper modelMapper;
@@ -101,7 +109,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<TrainingDto> getTraineeTrainingsByFilter(TraineeTrainingSearchFilter filter) {
-        return repository.findByTraineeCriteria(filter)
+        return repository.findAll(traineeQueryBuilder.build(filter))
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();
@@ -109,7 +117,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<TrainingDto> getTrainerTrainingsByFilter(TrainerTrainingSearchFilter filter) {
-        return repository.findByTrainerCriteria(filter)
+        return repository.findAll(trainerQueryBuilder.build(filter))
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();

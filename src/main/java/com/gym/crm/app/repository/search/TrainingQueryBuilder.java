@@ -8,24 +8,21 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class TrainingQueryBuilder {
-    public CriteriaQuery<Training> build(CriteriaBuilder cb, TrainingSearchFilter criteria) {
-        CriteriaQuery<Training> query = cb.createQuery(Training.class);
-        Root<Training> root = query.from(Training.class);
-        List<Predicate> predicates = new ArrayList<>();
-
-        addUsernamePredicate(cb, root, criteria, predicates);
-        addDateRange(cb, root, criteria, predicates);
-        addSpecificPredicates(cb, root, criteria, predicates);
-
-        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
-
-        return query;
+    public Specification<Training> build(TrainingSearchFilter filter) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            addUsernamePredicate(cb, root, filter, predicates);
+            addDateRange(cb, root, filter, predicates);
+            addSpecificPredicates(cb, root, filter, predicates);
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
 
     protected abstract void addSpecificPredicates(CriteriaBuilder cb, Root<Training> root,
