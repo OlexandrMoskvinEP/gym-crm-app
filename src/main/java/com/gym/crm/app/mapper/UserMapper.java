@@ -1,7 +1,6 @@
 package com.gym.crm.app.mapper;
 
 import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
-import com.gym.crm.app.domain.dto.user.UserCreateRequest;
 import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.rest.ActivationStatusRequest;

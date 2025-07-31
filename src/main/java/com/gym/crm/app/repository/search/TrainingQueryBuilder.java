@@ -3,7 +3,6 @@ package com.gym.crm.app.repository.search;
 import com.gym.crm.app.domain.model.Training;
 import com.gym.crm.app.repository.search.filters.TrainingSearchFilter;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
