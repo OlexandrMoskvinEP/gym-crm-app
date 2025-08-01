@@ -26,3 +26,17 @@ spring:
     enabled: true
     contexts: dev
     drop-first: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+  health:
+    memory:
+      threshold: 10485760
+    disk:
+      threshold: 1073741824
