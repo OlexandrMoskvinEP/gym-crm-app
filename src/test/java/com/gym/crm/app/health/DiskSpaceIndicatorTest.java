@@ -24,7 +24,7 @@ class DiskSpaceIndicatorTest {
     @Test
     void shouldReturnUpIfSpaceEnough() {
         Health.Builder builder = new Health.Builder();
-        ReflectionTestUtils.setField(indicator, "threshold", 100_000L);
+        ReflectionTestUtils.setField(indicator, "threshold", 500_000L);
 
         when(discSpaceProvider.getFreeSpace()).thenReturn(550_000L);
 

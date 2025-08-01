@@ -10,9 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DiskSpaceIndicator extends AbstractHealthIndicator {
+    private final DiscSpaceProvider discSpaceProvider;
+
     @Value("${management.health.disk.threshold:1073741824}")
     private long threshold;
-    private  final DiscSpaceProvider discSpaceProvider;
 
     @Override
     protected void doHealthCheck(Health.Builder builder) {

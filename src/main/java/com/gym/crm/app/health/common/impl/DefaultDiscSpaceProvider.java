@@ -1,5 +1,6 @@
-package com.gym.crm.app.health.common;
+package com.gym.crm.app.health.common.impl;
 
+import com.gym.crm.app.health.common.DiscSpaceProvider;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
