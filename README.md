@@ -39,22 +39,39 @@ Alternatively, run the packaged jar located in the `target` directory:
 
 The application supports multiple Spring profiles to manage environment-specific configurations. All profiles use PostgreSQL as the database backend.
 
-| Profile   | Purpose              | Description                                                                 |
-|-----------|----------------------|-----------------------------------------------------------------------------|
-| `local`   | Local testing         | Uses PostgreSQL instance for local development. Liquibase is disabled. Actuator fully enabled. Full `DEBUG` logging. |
-| `dev`     | Development profile   | PostgreSQL-based environment with Liquibase enabled. Suitable for developers working with real data. Logging level is `DEBUG`. |
-| `stg`     | Staging environment   | Pre-production PostgreSQL setup. Liquibase enabled. Logging level is reduced to `INFO`. Mimics production behavior for final testing. |
-| `prod`    | Production            | Production-grade PostgreSQL environment. Liquibase is enabled. Logging is minimal. Actuator endpoints are restricted. Optimized for security and stability. |
+| Profile   | Purpose              | 
+|-----------|----------------------|
+| `local`   | Local testing         |
+| `dev`     | Development profile   | 
+| `stg`     | Staging environment   | 
+| `prod`    | Production            | 
 
-###  How to activate a profile
+###  How to activate a Spring profile
 
-You can activate a profile using:
+You can activate a profile in different ways depending on how you run the application:
 
-** Command line:**
-```  bash
+#### ▶️ Via command line (JVM parameter)
+
+```bash
   -Dspring.profiles.active=dev
-
 ```
+
+### Using Maven Spring Boot plugin:
+```bash
+  -mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+### From IntelliJ IDEA:
+You can activate a profile by editing the Run/Debug Configuration:
+
+Go to Run → Edit Configurations
+
+Select your run target (e.g., GymCrmApplication)
+
+In the "VM options" field, add:
+```bash
+  -Dspring.profiles.active=dev
+```
+
 ## 📚 API Documentation
 
 Interactive and downloadable documentation for the Gym CRM REST API.
