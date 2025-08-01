@@ -10,7 +10,6 @@
             <level>DEBUG</level>
         </filter>
     </appender>
-
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -21,6 +20,22 @@
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>50KB</maxFileSize>
         </triggeringPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%X{transactionId}] %-5level %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/app-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%X{transactionId}] %-5level %logger{20} - %msg%n</pattern>
         </encoder>
@@ -29,5 +44,6 @@
     <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE_ERROR"/>
     </root>
 </configuration>
