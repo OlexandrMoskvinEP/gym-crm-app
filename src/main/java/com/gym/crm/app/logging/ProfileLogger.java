@@ -1,4 +1,4 @@
-package com.gym.crm.app;
+package com.gym.crm.app.logging;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class ProfileLogger {
     private static final Logger log = LoggerFactory.getLogger(ProfileLogger.class);
+
     private final Environment env;
 
     @EventListener(ApplicationReadyEvent.class)
