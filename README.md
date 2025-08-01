@@ -21,7 +21,56 @@ GRANT ALL PRIVILEGES ON DATABASE
 "gym" TO gym;
 ```
 
-+
+### ⚙️ Running the application
+
+After building the project you can start the server using Spring Boot:
+
+```bash
+  mvn spring-boot:run
+```
+
+Alternatively, run the packaged jar located in the `target` directory:
+
+```bash
+   java -jar target/gym-crm-app-1.0-SNAPSHOT.jar
+```
+
+## 🌐 Spring application Profiles
+
+The application supports multiple Spring profiles to manage environment-specific configurations. All profiles use PostgreSQL as the database backend.
+
+| Profile   | Purpose              | 
+|-----------|----------------------|
+| `local`   | Local testing         |
+| `dev`     | Development profile   | 
+| `stg`     | Staging environment   | 
+| `prod`    | Production            | 
+
+###  How to activate a Spring profile
+
+You can activate a profile in different ways depending on how you run the application:
+
+#### ▶️ Via command line (JVM parameter)
+
+```bash
+  -Dspring.profiles.active=dev
+```
+
+### Using Maven Spring Boot plugin:
+```bash
+  -mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+### From IntelliJ IDEA:
+You can activate a profile by editing the Run/Debug Configuration:
+
+Go to Run → Edit Configurations
+
+Select your run target (e.g., GymCrmApplication)
+
+In the "VM options" field, add:
+```bash
+  -Dspring.profiles.active=dev
+```
 
 ## 📚 API Documentation
 
