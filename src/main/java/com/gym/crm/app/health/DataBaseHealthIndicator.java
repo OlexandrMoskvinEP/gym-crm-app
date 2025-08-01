@@ -16,7 +16,7 @@ public class DataBaseHealthIndicator extends AbstractHealthIndicator {
     protected final JdbcTemplate jdbcTemplate;
 
     @Override
-    protected void doHealthCheck(Health.Builder builder) throws Exception {
+    protected void doHealthCheck(Health.Builder builder) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource(), "DataSource must not be null");
 
         try (Connection connection = dataSource.getConnection()) {
