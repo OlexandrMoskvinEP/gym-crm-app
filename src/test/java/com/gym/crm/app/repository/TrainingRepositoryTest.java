@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/trainings.xml", cleanBefore = true, cleanAfter = true)
-public class TrainingRepositoryImplTest extends AbstractRepositoryTest<TrainingRepository> {
+public class TrainingRepositoryTest extends AbstractRepositoryTest<TrainingRepository> {
 
     @Test
     void shouldReturnAllTrainings() {

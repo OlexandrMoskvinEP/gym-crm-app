@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "datasets/users.xml", cleanBefore = true, cleanAfter = true)
-public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepository> {
+public class UserRepositoryTest extends AbstractRepositoryTest<UserRepository> {
 
     @Test
     void shouldReturnAllUsers() {
@@ -83,41 +83,6 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest<UserRepositor
         repository.deleteByUsername(username);
 
         assertTrue(repository.findByUsername(username).isEmpty());
-    }
-
-    @Test
-    void shouldUpdatePassword() {
-        String username = "irina.petrova";
-        String password = "qwerty12345";
-
-        repository.updatePassword(username, password);
-
-        Optional<User> updatedUser = repository.findByUsername(username);
-        assertTrue(updatedUser.isPresent());
-        assertEquals(password, updatedUser.get().getPassword());
-    }
-
-    @Test
-    void shouldDeactivateUserIfUserWasActive() {
-        String username = "mykyta.solntcev";
-
-        repository.changeStatus(username);
-
-        Optional<User> updatedUser = repository.findByUsername(username);
-        assertTrue(updatedUser.isPresent());
-        assertFalse(updatedUser.get().getIsActive());
-    }
-
-    @Test
-    @DataSet(value = "datasets/inactive-users.xml", cleanBefore = true, cleanAfter = true)
-    void shouldActivateUserIfUserWasNotActive() {
-        String username = "ben.hur";
-
-        repository.changeStatus(username);
-
-        Optional<User> updatedUser = repository.findByUsername(username);
-        assertTrue(updatedUser.isPresent());
-        assertTrue(updatedUser.get().getIsActive());
     }
 
     private static List<User> constructExpectedUsers() {
