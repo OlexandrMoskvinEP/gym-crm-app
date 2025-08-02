@@ -21,10 +21,11 @@ public class DiskSpaceIndicator extends AbstractHealthIndicator {
 
         if (freeSpace >= threshold) {
             builder.up().withDetail("freeDiskSpace", freeSpace);
-        } else {
-            builder.down()
-                    .withDetail("freeDiskSpace", freeSpace)
-                    .withDetail("threshold", threshold);
+            return;
         }
+
+        builder.down()
+                .withDetail("freeDiskSpace", freeSpace)
+                .withDetail("threshold", threshold);
     }
 }

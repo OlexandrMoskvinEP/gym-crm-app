@@ -20,11 +20,12 @@ public class DataBaseHealthIndicator extends AbstractHealthIndicator {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource(), "DataSource must not be null");
 
         try (Connection connection = dataSource.getConnection()) {
-            if (connection.isValid(1)) {
-                builder.up().withDetail("database", connection.getMetaData().getDatabaseProductName());
-            } else {
+            if (!connection.isValid(1)) {
                 builder.down().withDetail("error", "Connection is not valid");
+                return;
             }
+
+            builder.up().withDetail("database", connection.getMetaData().getDatabaseProductName());
         } catch (Exception ex) {
             builder.down(ex);
         }

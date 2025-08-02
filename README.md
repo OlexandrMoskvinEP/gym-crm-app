@@ -125,22 +125,6 @@ The `/actuator/health` endpoint provides aggregated status of critical system co
 | `memory`               | 🛠 Custom indicator for free JVM memory (with threshold) |
 | `diskSpaceIndicator`   | 🛠 Custom indicator for free disk space (with threshold) |
 | `ping`                 | Basic always-up check (for liveness probes)             |
-
-Custom indicators are implemented using `AbstractHealthIndicator` and are automatically picked up by Spring Boot under `/actuator/health`.
-
-### 🛠 Configuration
-
-Ensure the following block exists in your `application.yml` to enable full actuator visibility:
-
-```yaml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: always
 ```
 
 

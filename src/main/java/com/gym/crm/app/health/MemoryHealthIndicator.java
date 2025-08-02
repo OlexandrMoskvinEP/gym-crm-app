@@ -21,8 +21,9 @@ public class MemoryHealthIndicator extends AbstractHealthIndicator {
 
         if (free >= threshold) {
             builder.up().withDetail("freeMemory", free).withDetail("threshold", threshold);
-        } else {
-            builder.down().withDetail("freeMemory", free).withDetail("threshold", threshold);
+            return;
         }
+
+        builder.down().withDetail("freeMemory", free).withDetail("threshold", threshold);
     }
 }
