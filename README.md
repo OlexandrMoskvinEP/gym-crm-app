@@ -105,6 +105,28 @@ You can also test the API using Postman.
 - [Download Postman Collection](src/main/resources/postman/gym-crm-api.collection.json)
 
 > To import the collection into Postman, open Postman, click `Import`, then select the `.json` file above.
+> 
+---
+> ## Health Monitoring (Spring Boot Actuator)
+
+The application exposes a health endpoint powered by Spring Boot Actuator:
+
+
+- [🔗Health check you can see here](http://localhost:8080/actuator/health)
+
+### 📋 What it shows:
+
+The `/actuator/health` endpoint provides aggregated status of critical system components:
+
+| Component              | Description                                             |
+|------------------------|---------------------------------------------------------|
+| `db` / `dataBase`      | Database connection check (e.g. PostgreSQL or H2)       |
+| `diskSpace`            | Built-in disk space indicator from Spring Boot          |
+| `memory`               | 🛠 Custom indicator for free JVM memory (with threshold) |
+| `diskSpaceIndicator`   | 🛠 Custom indicator for free disk space (with threshold) |
+| `ping`                 | Basic always-up check (for liveness probes)             |
+```
+
 
 
 
