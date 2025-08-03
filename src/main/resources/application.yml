@@ -31,7 +31,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus
   endpoint:
     health:
       show-details: always
@@ -40,3 +40,7 @@ management:
       threshold: 10485760
     disk:
       threshold: 1073741824
+  prometheus:
+    metrics:
+      export:
+        enabled: true

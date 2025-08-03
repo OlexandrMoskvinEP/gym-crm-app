@@ -7,7 +7,11 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.rest.ErrorResponse;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +25,19 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger("com.gym.crm.app");
+    private final MeterRegistry meterRegistry;
+
+    @PostConstruct
+    public void init() {
+        meterRegistry.counter("db.error.occurred");
+        meterRegistry.counter("error.authentication.count");
+        meterRegistry.counter("error.authorization.count");
+    }
+
 
     @ExceptionHandler(CoreServiceException.class)
     public ResponseEntity<ErrorResponse> handleCoreServiceException(CoreServiceException exception) {
@@ -42,6 +56,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataBaseErrorException.class)
     public ResponseEntity<ErrorResponse> handleDataBaseException(DataBaseErrorException exception) {
         log.error("DataBase exception occurred : {}", exception.getMessage(), exception);
+        meterRegistry.counter("db.error.occurred").increment();
 
         ErrorCode errorCode = ErrorCode.DATABASE_ERROR;
         ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
@@ -138,6 +153,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthentificationErrorException.class)
     public ResponseEntity<ErrorResponse> handleAuthentificationException(AuthentificationErrorException exception) {
         log.error("Authentification exception occurred : {}", exception.getMessage(), exception);
+        meterRegistry.counter("error.authentication.count").increment();
 
         ErrorCode errorCode = ErrorCode.AUTHENTICATION_ERROR;
         ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
@@ -148,6 +164,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthorizationErrorException.class)
     public ResponseEntity<ErrorResponse> handleAuthorisationException(AuthorizationErrorException exception) {
         log.error("Authorisation exception occurred : {}", exception.getMessage(), exception);
+        meterRegistry.counter("error.authorisation.count").increment();
 
         ErrorCode errorCode = ErrorCode.AUTHORIZATION_ERROR;
         ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
