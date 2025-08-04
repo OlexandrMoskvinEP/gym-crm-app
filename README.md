@@ -37,16 +37,17 @@ Alternatively, run the packaged jar located in the `target` directory:
 
 ## 🌐 Spring application Profiles
 
-The application supports multiple Spring profiles to manage environment-specific configurations. All profiles use PostgreSQL as the database backend.
+The application supports multiple Spring profiles to manage environment-specific configurations. All profiles use
+PostgreSQL as the database backend.
 
-| Profile   | Purpose              | 
-|-----------|----------------------|
-| `local`   | Local testing         |
-| `dev`     | Development profile   | 
-| `stg`     | Staging environment   | 
-| `prod`    | Production            | 
+| Profile | Purpose             | 
+|---------|---------------------|
+| `local` | Local testing       |
+| `dev`   | Development profile | 
+| `stg`   | Staging environment | 
+| `prod`  | Production          | 
 
-###  How to activate a Spring profile
+### How to activate a Spring profile
 
 You can activate a profile in different ways depending on how you run the application:
 
@@ -57,10 +58,13 @@ You can activate a profile in different ways depending on how you run the applic
 ```
 
 ### Using Maven Spring Boot plugin:
+
 ```bash
   -mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
+
 ### From IntelliJ IDEA:
+
 You can activate a profile by editing the Run/Debug Configuration:
 
 Go to Run → Edit Configurations
@@ -68,6 +72,7 @@ Go to Run → Edit Configurations
 Select your run target (e.g., GymCrmApplication)
 
 In the "VM options" field, add:
+
 ```bash
   -Dspring.profiles.active=dev
 ```
@@ -105,12 +110,11 @@ You can also test the API using Postman.
 - [Download Postman Collection](src/main/resources/postman/gym-crm-api.collection.json)
 
 > To import the collection into Postman, open Postman, click `Import`, then select the `.json` file above.
-> 
+>
 ---
-> ## Health Monitoring (Spring Boot Actuator)
+> ## 📊 Health Monitoring (Spring Boot Actuator)
 
 The application exposes a health endpoint powered by Spring Boot Actuator:
-
 
 - [🔗Health check you can see here](http://localhost:8080/actuator/health)
 
@@ -118,15 +122,45 @@ The application exposes a health endpoint powered by Spring Boot Actuator:
 
 The `/actuator/health` endpoint provides aggregated status of critical system components:
 
-| Component              | Description                                             |
-|------------------------|---------------------------------------------------------|
-| `db` / `dataBase`      | Database connection check (e.g. PostgreSQL or H2)       |
-| `diskSpace`            | Built-in disk space indicator from Spring Boot          |
-| `memory`               | 🛠 Custom indicator for free JVM memory (with threshold) |
-| `diskSpaceIndicator`   | 🛠 Custom indicator for free disk space (with threshold) |
-| `ping`                 | Basic always-up check (for liveness probes)             |
+| Component            | Description                                              |
+|----------------------|----------------------------------------------------------|
+| `db` / `dataBase`    | Database connection check (e.g. PostgreSQL or H2)        |
+| `diskSpace`          | Built-in disk space indicator from Spring Boot           |
+| `memory`             | 🛠 Custom indicator for free JVM memory (with threshold) |
+| `diskSpaceIndicator` | 🛠 Custom indicator for free disk space (with threshold) |
+| `ping`               | Basic always-up check (for liveness probes)              |
+
+### Prometheus
+
+Prometheus collects application metrics via the Spring Boot Actuator endpoint `/actuator/prometheus`.
+
+- **Prometheus UI**: [http://localhost:9090](http://localhost:9090)
+- **Application Metrics Endpoint
+  **: [http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus)
+
+### Grafana
+
+Grafana is used to visualize metrics collected by Prometheus.
+
+- **Grafana UI**: [http://localhost:3000](http://localhost:3000)  
+  Default credentials: `admin` / `admin`
+- Dashboard **GYM_CRM** displays runtime statistics such as login success/failure counts, DB errors, request rates, and
+  more.
+
+---
+> ## Monitoring & Containerized Environment
+
+This project includes full containerized monitoring and infrastructure:
+
+- Spring Boot application
+- PostgreSQL database
+- Prometheus metrics collection
+- Grafana dashboards
+
+All services are launched together using:
+
+```bash
+   docker compose up -d
 ```
-
-
 
 

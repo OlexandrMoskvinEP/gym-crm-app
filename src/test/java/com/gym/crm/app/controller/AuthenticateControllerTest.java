@@ -7,6 +7,8 @@ import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +20,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -31,6 +36,10 @@ class AuthenticateControllerTest {
 
     private MockMvc mockMvc;
 
+    @Mock
+    private Counter meterCounter;
+    @Mock
+    private MeterRegistry meterRegistry;
     @Mock
     AuthenticationService authenticationService;
     @Mock
@@ -46,6 +55,9 @@ class AuthenticateControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(authenticateController)
                 .setMessageConverters(converter)
                 .build();
+
+        lenient().when(meterRegistry.counter(anyString(), any(String[].class)))
+                .thenReturn(meterCounter);
     }
 
     @Test

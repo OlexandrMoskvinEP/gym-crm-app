@@ -5,11 +5,13 @@ import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.ErrorResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,12 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 public class AuthenticateController {
     private final GymFacade facade;
     private final AuthenticationService authenticationService;
+    private final MeterRegistry meterRegistry;
+
+    @PostConstruct
+    public void init() {
+        meterRegistry.counter("login.success.count");
+    }
 
     @Operation(
             summary = "User login",
@@ -59,6 +67,7 @@ public class AuthenticateController {
         log.info("Login attempt: username={}", loginRequest.getUsername());
         authenticationService.login(loginRequest);
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
+        meterRegistry.counter("login.success.count").increment();
 
         return ResponseEntity.ok().build();
     }

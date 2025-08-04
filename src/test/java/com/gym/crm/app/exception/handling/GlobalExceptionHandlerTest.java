@@ -7,6 +7,9 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.rest.ErrorResponse;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -14,8 +17,11 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
@@ -38,7 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +59,18 @@ class GlobalExceptionHandlerTest {
     private static final ErrorResponse UNHANDLED_ERROR_RESPONSE = buildUnhandledErrorsResponse();
     private static final ErrorResponse INVALID_JSON_RESPONSE = buildInvalidJsonResponse();
 
-    private final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
+    @Mock
+    private Counter meterCounter;
+    @Mock
+    private MeterRegistry meterRegistry;
+    @InjectMocks
+    private GlobalExceptionHandler exceptionHandler;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(meterRegistry.counter(anyString(), any(String[].class)))
+                .thenReturn(meterCounter);
+    }
 
     @Test
     void shouldReturnDatabaseError() {
@@ -58,6 +80,8 @@ class GlobalExceptionHandlerTest {
         assertNotNull(entity.getBody());
         assertSame(DATABASE_ERROR.getErrorMessage(), entity.getBody().getErrorMessage());
         assertEquals(DATABASE_ERROR.getErrorCode(), entity.getBody().getErrorCode());
+
+        verify(meterCounter).increment();
     }
 
     @Test
@@ -157,6 +181,8 @@ class GlobalExceptionHandlerTest {
         assertNotNull(entity.getBody());
         assertSame(AUTHENTICATION_ERROR.getErrorMessage(), entity.getBody().getErrorMessage());
         assertEquals(AUTHENTICATION_ERROR.getErrorCode(), entity.getBody().getErrorCode());
+
+        verify(meterCounter).increment();
     }
 
     @Test
@@ -169,6 +195,8 @@ class GlobalExceptionHandlerTest {
         assertNotNull(entity.getBody());
         assertSame(AUTHORIZATION_ERROR.getErrorMessage(), entity.getBody().getErrorMessage());
         assertEquals(AUTHORIZATION_ERROR.getErrorCode(), entity.getBody().getErrorCode());
+
+        verify(meterCounter).increment();
     }
 
     @Test
