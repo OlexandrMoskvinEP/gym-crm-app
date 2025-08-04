@@ -12,7 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.projectKey>OlexandrMoskvinEP_gym-crm-app</sonar.projectKey>
+        <sonar.projectKey>gym-crm-app</sonar.projectKey>
         <sonar.organization>olexandrmoskvinep</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
