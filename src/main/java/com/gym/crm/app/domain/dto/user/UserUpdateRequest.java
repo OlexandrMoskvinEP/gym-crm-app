@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class UserUpdateRequest {
-    private static final String VALID_PASSWORD_PATTERN = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*";
+    private static final String VALID_CHAR_PATTERN = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*";
 
     @NotBlank(message = "First name should not be blank")
     @Size(min = 3, max = 16, message = "First name should not be blank and should have 3 - 16 characters")
@@ -30,7 +30,7 @@ public class UserUpdateRequest {
     private String username;
 
     @Size(min = 10, max = 20)
-    @Pattern(regexp = VALID_PASSWORD_PATTERN, message = "Password should have at least one special character")
+    @Pattern(regexp = VALID_CHAR_PATTERN, message = "Password should have at least one special character")
     private String password;
 
     @NotNull(message = "isActive can`t be null")
