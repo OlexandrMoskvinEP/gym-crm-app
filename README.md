@@ -162,7 +162,6 @@ All services are launched together using:
 ```bash
    docker compose up -d
 ```
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=OlexandrMoskvinEP_gym-crm-app&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=OlexandrMoskvinEP_gym-crm-app)
