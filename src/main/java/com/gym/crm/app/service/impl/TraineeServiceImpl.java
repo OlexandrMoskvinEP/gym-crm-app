@@ -29,12 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
+    private static final String NOT_FOUND_ERROR_RESPONSE = "Trainee with username %s not found";
 
     private final PasswordService passwordService;
     private final UserProfileService userProfileService;
@@ -52,13 +52,13 @@ public class TraineeServiceImpl implements TraineeService {
         return repository.findAll()
                 .stream()
                 .map(trainee -> modelMapper.map(trainee, TraineeDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public TraineeDto getTraineeByUsername(String username) {
         Trainee trainee = repository.findByUserUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username)));
 
         return traineeMapper.toDto(trainee);
     }
@@ -79,7 +79,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee persistedTrainee = repository.save(entityToAdd);
 
-        logger.info("Trainee {} successfully added", username);
+        logger.info("Trainee was successfully added");
         authenticationService.login(new LoginRequest(username, password));
 
         TraineeDto traineeDto = getTraineeDtoFromEntity(persistedTrainee);
@@ -91,12 +91,12 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeDto updateTraineeByUsername(String username, TraineeUpdateRequest updateRequest) {
         Trainee existTrainee = repository.findByUserUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username)));
 
         Trainee entityToUpdate = mapUpdatedTraineeWithUser(updateRequest, existTrainee);
 
         Trainee persistedTrainee = repository.save(entityToUpdate);
-        logger.info("Trainee {} updated", username);
+        logger.info("Trainee was successfully updated");
 
         return modelMapper.map(persistedTrainee, TraineeDto.class);
     }
@@ -104,11 +104,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void deleteTraineeByUsername(String username) {
         if (repository.findByUserUsername(username).isEmpty()) {
-            throw new DataBaseErrorException(String.format("Trainee with username %s not found", username));
+            throw new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username));
         }
 
         repository.deleteByUserUsername(username);
-        logger.info("Trainee {} deleted", username);
+        logger.info("Trainee was successfully deleted");
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<Trainer> updateTraineeTrainersByUsername(String username, List<String> usernames) {
         Trainee trainee = repository.findByUserUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainee with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username)));
 
         List<Trainer> trainers = trainerRepository.findByUserUsernameIn(usernames);
         if (trainers.size() != usernames.size()) {

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
+    private static final String NOT_FOUND_ERROR_RESPONSE = "Trainer with username %s not found";
 
     private final TrainerRepository repository;
     private final PasswordService passwordService;
@@ -49,7 +50,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerDto getTrainerByUsername(String username) {
         Trainer trainer = repository.findByUserUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username)));
 
         return trainerMapper.toDto(trainer);
     }
@@ -69,7 +70,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer entityToAdd = mapTrainerWithUser(trainerCreateRequest, username, encodedPassword);
         Trainer persistedTrainer = repository.save(entityToAdd);
 
-        logger.info("Trainer {} successfully added", username);
+        logger.info("Trainer was successfully added");
         authenticationService.login(new LoginRequest(username, password));
 
         TrainerDto trainerDto = getTrainerDtoFromEntity(persistedTrainer);
@@ -81,12 +82,12 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerDto updateTrainerByUsername(String username, TrainerUpdateRequest updateRequest) {
         Trainer existTrainer = repository.findByUserUsername(username)
-                .orElseThrow(() -> new DataBaseErrorException(String.format("Trainer with username %s not found", username)));
+                .orElseThrow(() -> new DataBaseErrorException(String.format(NOT_FOUND_ERROR_RESPONSE, username)));
 
         Trainer entityToUpdate = mapUpdatedTrainerWithUser(updateRequest, existTrainer);
 
         repository.save(entityToUpdate);
-        logger.info("Trainer {} updated", username);
+        logger.info("Trainer was successfully updated");
 
         return modelMapper.map(repository.findByUserUsername(username), TrainerDto.class);
     }
@@ -101,11 +102,11 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public void deleteTrainerByUsername(String username) {
         if (repository.findByUserUsername(username).isEmpty()) {
-            throw new DataBaseErrorException(String.format("Trainer with username %s not found", username));
+            throw new DataBaseErrorException(String.format( NOT_FOUND_ERROR_RESPONSE, username));
         }
 
         repository.deleteByUserUsername(username);
-        logger.info("Trainer {} deleted", username);
+        logger.info("Trainer was successfully deleted");
     }
 
     private Trainer mapTrainerWithUser(TrainerCreateRequest createRequest, String username, String password) {
