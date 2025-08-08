@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 public class CurrentUserHolder {
     private static final ThreadLocal<AuthenticatedUser> CURRENT_USER = new ThreadLocal<>();
 
-    private final HttpServletRequest request;
-
     public void set(AuthenticatedUser user) {
         CURRENT_USER.set(user);
     }

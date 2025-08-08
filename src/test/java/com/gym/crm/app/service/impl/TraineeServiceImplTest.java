@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.Impl;
+package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.data.TestData;
 import com.gym.crm.app.domain.dto.trainee.TraineeCreateRequest;
@@ -17,7 +17,6 @@ import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
-import com.gym.crm.app.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -128,7 +127,7 @@ class TraineeServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
-        doNothing().when(authenticationService).login(any());
+        when(authenticationService.login(any())).thenReturn("some.jwt.token");
 
         TraineeDto actual = traineeService.addTrainee(createRequest);
 

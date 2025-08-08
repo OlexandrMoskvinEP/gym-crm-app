@@ -11,8 +11,10 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.gym.crm.app.security.UserRole.ADMIN;
 import static com.gym.crm.app.security.UserRole.TRAINEE;
@@ -43,6 +46,7 @@ class AuthenticationServiceTest {
     private static final User PLAIN_USER = buildUserWithPassword();
     private static final LoginRequest LOGIN_REQUEST = new LoginRequest(USERNAME, PLAIN_PASSWORD);
     private static final LoginRequest WRONG_LOGIN_REQUEST = new LoginRequest(USERNAME, INVALID_PASSWORD);
+    private static final String TEST_JWT_TOKEN = "test.jwt.token";
 
     @Mock
     private UserRepository userRepository;
@@ -56,6 +60,8 @@ class AuthenticationServiceTest {
     TraineeRepository traineeRepository;
     @Mock
     private UserMapper userMapper;
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
     @InjectMocks
     private AuthenticationService authenticationService;
 
@@ -122,13 +128,17 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
+        AtomicReference<String> actual = new AtomicReference<>();
+
+        when(jwtTokenProvider.generateToken(any())).thenReturn(TEST_JWT_TOKEN);
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
         when(trainerRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
-        assertDoesNotThrow(() -> authenticationService.login(LOGIN_REQUEST), "Invalid username or password");
+        assertDoesNotThrow(() -> actual.set(authenticationService.login(LOGIN_REQUEST)), "Invalid username or password");
 
+        assertEquals(TEST_JWT_TOKEN, actual.get());
         verify(currentUserHolder).set(any(AuthenticatedUser.class));
     }
 
