@@ -43,7 +43,6 @@ public class JwtTokenProvider {
                     .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MILLIS))
                     .signWith(secretKey)
                     .compact();
-
         } catch (JsonProcessingException e) {
             throw new UnacceptableOperationException("Error serializing user to JWT");
         }
@@ -58,8 +57,8 @@ public class JwtTokenProvider {
                     .getBody();
 
             String userJson = claims.get("user", String.class);
-            return objectMapper.readValue(userJson, AuthenticatedUser.class);
 
+            return objectMapper.readValue(userJson, AuthenticatedUser.class);
         } catch (Exception e) {
             throw new UnacceptableOperationException("Invalid or expired JWT token");
         }

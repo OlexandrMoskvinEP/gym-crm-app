@@ -38,23 +38,13 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
         <!--JWT + Aux ===-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -69,13 +59,10 @@
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId> <!-- для сериализации/десериализации через Jackson -->
+            <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
-
-
         <!-- === JDBC + Connection Pool === -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -93,7 +80,6 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.32.0</version>
         </dependency>
-
         <!-- === Utils & Mapping === -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -136,8 +122,15 @@
             <artifactId>swagger-annotations</artifactId>
             <version>2.2.20</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
         <!-- === Testing === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
