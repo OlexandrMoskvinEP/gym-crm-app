@@ -19,7 +19,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
-    private static final long EXPIRATION_MILLIS = 60 * 60 * 1000;
+    private static final long EXPIRATION_MILLIS = 60 * 60 * 1000L;
 
     private final ObjectMapper objectMapper;
 
