@@ -5,6 +5,7 @@ import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.ErrorResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.jwt.JwtTokenResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -63,13 +64,15 @@ public class AuthenticateController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtTokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
-        authenticationService.login(loginRequest);
+
+       String token =  authenticationService.login(loginRequest);
+
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
         meterRegistry.counter("login.success.count").increment();
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new JwtTokenResponse(token));
     }
 
     @Operation(

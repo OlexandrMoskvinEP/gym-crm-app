@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.Impl;
+package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.dto.training.TrainingDto;
 import com.gym.crm.app.domain.dto.training.TrainingSaveRequest;
@@ -15,7 +15,6 @@ import com.gym.crm.app.repository.search.TraineeTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.TrainerTrainingQueryBuilder;
 import com.gym.crm.app.repository.search.filters.TraineeTrainingSearchFilter;
 import com.gym.crm.app.repository.search.filters.TrainerTrainingSearchFilter;
-import com.gym.crm.app.service.impl.TrainingServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: "Gym CRM"
+  main:
+    log-startup-info: false
 
   datasource:
     url: jdbc:postgresql://localhost:5432/gym_crm_db
@@ -44,3 +46,11 @@ management:
     metrics:
       export:
         enabled: true
+
+security:
+  jwt:
+    secret: SecuredSecretKeyThatIsLongEnough123456
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure: WARN

@@ -130,12 +130,10 @@ class GymFacadeTest {
 
     @BeforeEach
     void setup() {
-        when(request.getSession(true)).thenReturn(session);
-
         lenient().when(request.getSession(false)).thenReturn(session);
         lenient().when(session.getAttribute("AUTHENTICATED_USER")).thenReturn(getAuthenticatedUser());
 
-        CurrentUserHolder currentUserHolder = spy(new CurrentUserHolder(request));
+        CurrentUserHolder currentUserHolder = spy(new CurrentUserHolder());
         currentUserHolder.set(getAuthenticatedUser());
 
         ReflectionTestUtils.setField(facade, "currentUserHolder", currentUserHolder);

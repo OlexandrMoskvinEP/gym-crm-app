@@ -44,7 +44,7 @@ public class TrainerServiceImpl implements TrainerService {
         return repository.findAll()
                 .stream()
                 .map(trainer -> modelMapper.map(trainer, TrainerDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
