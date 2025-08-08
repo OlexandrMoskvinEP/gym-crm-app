@@ -10,30 +10,24 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CurrentUserHolder {
-    private static final String SESSION_USER_KEY = "AUTHENTICATED_USER";
-    private static final int AUTH_EXPIRATION_TIME = 3600;
+    private static final ThreadLocal<AuthenticatedUser> CURRENT_USER = new ThreadLocal<>();
 
     private final HttpServletRequest request;
 
     public void set(AuthenticatedUser user) {
-        HttpSession session = request.getSession(true);
-        session.setAttribute(SESSION_USER_KEY, user);
-        session.setMaxInactiveInterval(AUTH_EXPIRATION_TIME);
+        CURRENT_USER.set(user);
     }
 
     public AuthenticatedUser get() {
-        HttpSession session = request.getSession(false);
+        AuthenticatedUser user = CURRENT_USER.get();
 
-        if (session == null || session.getAttribute(SESSION_USER_KEY) == null) {
+        if (user == null) {
             throw new AuthentificationErrorException("No user is currently authenticated");
         }
-        return (AuthenticatedUser) session.getAttribute(SESSION_USER_KEY);
+        return user;
     }
 
     public void clear() {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(SESSION_USER_KEY);
-        }
+        CURRENT_USER.remove();
     }
 }
