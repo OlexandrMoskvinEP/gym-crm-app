@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class JwtTokenProviderTest {
-    private final static AuthenticatedUser AUTHENTICATED_USER = buildAuthUser();
-    private final static String TEST_TOKEN = getToken();
+    private static final AuthenticatedUser AUTHENTICATED_USER = buildAuthUser();
+    private static final String TEST_TOKEN = getToken();
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;

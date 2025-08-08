@@ -14,7 +14,6 @@ import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

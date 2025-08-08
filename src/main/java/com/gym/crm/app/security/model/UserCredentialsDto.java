@@ -1,6 +1,5 @@
 package com.gym.crm.app.security.model;
 
-import com.gym.crm.app.security.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -77,7 +78,7 @@ public class UserProfileService {
                 .orElseThrow(() -> new DataBaseErrorException(
                         String.format("User with username %s not found", username)));
 
-        if (user.getIsActive() == dto.getIsActive()) {
+        if (Objects.equals(user.getIsActive(), dto.getIsActive())) {
             String status = dto.getIsActive() ? "activate" : "deactivate";
             throw new CoreServiceException(format(
                     "Could not %s user %s: user is already %sed", status, username, status));

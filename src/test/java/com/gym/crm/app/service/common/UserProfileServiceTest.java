@@ -38,7 +38,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileServiceTest {
-    private static final String SIMPLE_USERNAME = "michael.goodman";
     private static final String TRAINEE_EXISTING_USERNAME = "Alice.Smith";
     private static final String TRAINER_EXISTING_USERNAME = "Sophie.Taylor";
     private static final String NEW_USERNAME = "Billie.Eilish";
