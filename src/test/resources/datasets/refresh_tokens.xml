@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <refresh_token token="token111" user_id="1" issued_at="2025-08-09 10:00:00" expires_at="2025-08-16 10:00:00"/>
+    <refresh_token token="token222" user_id="2" issued_at="2025-09-09 10:00:00" expires_at="2025-09-16 10:00:00"/>
+    <refresh_token token="token333" user_id="3" issued_at="2025-10-09 10:00:00" expires_at="2025-10-16 10:00:00"/>
+    <refresh_token token="schwarzToken" user_id="6" issued_at="2025-10-09 10:00:00" expires_at="2025-10-16 10:00:00"/>
+</dataset>
