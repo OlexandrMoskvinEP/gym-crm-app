@@ -1,5 +1,6 @@
 package com.gym.crm.app.security.jwt;
 
+import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.Duration;
 
 import static com.gym.crm.app.security.UserRole.ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,10 +40,17 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void shouldGenerateRawRefreshToken() {
-        String token = jwtTokenProvider.generateRawRefreshToken();
+    void shouldGenerateRefreshToken() {
+        long userId = 42L;
+        Duration ttl = Duration.ofHours(2);
 
-        assertNotNull(token);
+        RefreshToken rt = jwtTokenProvider.generateRefreshToken(userId, ttl);
+
+        assertNotNull(rt);
+        assertEquals(userId, rt.getUserId());
+        assertNotNull(rt.getToken());
+        assertNotNull(rt.getIssuedAt());
+        assertNotNull(rt.getExpiresAt());
     }
 
     private static AuthenticatedUser buildAuthUser() {

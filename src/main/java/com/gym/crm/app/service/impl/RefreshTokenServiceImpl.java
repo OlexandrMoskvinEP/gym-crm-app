@@ -3,6 +3,7 @@ package com.gym.crm.app.service.impl;
 import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.repository.RefreshTokenRepository;
+import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String saveRefreshToken(RefreshToken refreshToken, Long userId) {
