@@ -9,6 +9,7 @@ import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.service.RefreshTokenService;
@@ -17,11 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -41,7 +45,8 @@ class TokenServiceImplTest {
     private UserMapper userMapper;
     @Mock
     private TrainerRepository trainerRepository;
-
+    @Mock
+    private CurrentUserHolder currentUserHolder;
     @InjectMocks
     private TokenServiceImpl tokenService;
 
@@ -84,5 +89,19 @@ class TokenServiceImplTest {
         assertEquals("new-access", resp.getAccessToken());
         assertEquals("new-raw", resp.getRefreshToken());
         verify(refreshTokenService).delete(oldRefresh);
+    }
+
+    @Test
+    void logout_ShouldDeleteToken_AndClearContext() {
+        String token = "refresh-xyz";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, null)
+        );
+
+        tokenService.logout(token);
+
+        verify(refreshTokenService).delete(token);
+        verify(currentUserHolder).clear();
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 }

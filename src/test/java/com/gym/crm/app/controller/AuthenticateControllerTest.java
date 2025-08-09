@@ -9,6 +9,7 @@ import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
+import com.gym.crm.app.rest.RefreshRequest;
 import com.gym.crm.app.service.TokenService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -110,7 +111,7 @@ class AuthenticateControllerTest {
         tokens.setAccessToken("new-access");
         tokens.setRefreshToken("new-refresh");
 
-        when(tokenService.refresh(eq(oldRefresh))).thenReturn(tokens);
+        when(tokenService.refresh(oldRefresh)).thenReturn(tokens);
 
         mockMvc.perform(post("/api/v1/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,14 +120,14 @@ class AuthenticateControllerTest {
                 .andExpect(jsonPath("$.accessToken").value("new-access"))
                 .andExpect(jsonPath("$.refreshToken").value("new-refresh"));
 
-        verify(tokenService).refresh(eq(oldRefresh));
+        verify(tokenService).refresh(oldRefresh);
     }
 
     @Test
     void shouldReturn4xx_WhenRefreshTokenInvalid() throws Exception {
         String badRefresh = "invalid-refresh-token";
 
-        when(tokenService.refresh(eq(badRefresh)))
+        when(tokenService.refresh(badRefresh))
                 .thenThrow(new AuthorizationErrorException("Invalid or expired refresh token"));
 
         mockMvc.perform(post("/api/v1/refresh")
@@ -134,7 +135,7 @@ class AuthenticateControllerTest {
                         .content(objectMapper.writeValueAsString(Map.of("refreshToken", badRefresh))))
                 .andExpect(status().isForbidden());
 
-        verify(tokenService).refresh(eq(badRefresh));
+        verify(tokenService).refresh(badRefresh);
     }
 
     @Test
@@ -147,6 +148,20 @@ class AuthenticateControllerTest {
                 .andExpect(status().isOk());
 
         verify(gymFacade).changePassword(request);
+    }
+
+    @Test
+    void shouldReturn200AndProvideLogoutSuccessfully() throws Exception {
+        RefreshRequest request = new RefreshRequest("someRefreshToken#124457564");
+
+        doNothing().when(tokenService).logout(anyString());
+
+        mockMvc.perform(post("/api/v1/logout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(tokenService).logout("someRefreshToken#124457564");
     }
 
     private static ChangePasswordRequest getChangePasswordRequest() {
