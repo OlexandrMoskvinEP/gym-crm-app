@@ -31,7 +31,7 @@ public class AuthenticationService {
     private final TrainerRepository trainerRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public String login(LoginRequest loginRequest) {
+    public String authenticate(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));
 

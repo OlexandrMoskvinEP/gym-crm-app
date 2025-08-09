@@ -135,7 +135,7 @@ class AuthenticationServiceTest {
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
-        assertDoesNotThrow(() -> actual.set(authenticationService.login(LOGIN_REQUEST)), "Invalid username or password");
+        assertDoesNotThrow(() -> actual.set(authenticationService.authenticate(LOGIN_REQUEST)), "Invalid username or password");
 
         assertEquals(TEST_JWT_TOKEN, actual.get());
         verify(currentUserHolder).set(any(AuthenticatedUser.class));
@@ -145,7 +145,7 @@ class AuthenticationServiceTest {
     void shouldNotAuthoriseIfWrongCredentials() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
 
-        assertThrows(AuthentificationErrorException.class, () -> authenticationService.login(WRONG_LOGIN_REQUEST),
+        assertThrows(AuthentificationErrorException.class, () -> authenticationService.authenticate(WRONG_LOGIN_REQUEST),
                 "Invalid password");
         verify(currentUserHolder, never()).set(any(AuthenticatedUser.class));
     }

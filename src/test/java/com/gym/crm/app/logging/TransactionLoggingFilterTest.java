@@ -124,7 +124,7 @@ class TransactionLoggingFilterTest {
     @Test
     void shouldMaskPasswordFieldsInLoginRequestBody() throws Exception {
         String body = buildAuthCredentials();
-        MockHttpServletRequest request = buildRequest("POST", "/api/v1/login", body);
+        MockHttpServletRequest request = buildRequest("POST", "/api/v1/authenticate", body);
         FilterChain filterChain = buildFilterChain(body);
 
         filter.doFilterInternal(request, buildWrappedResponse(), filterChain);

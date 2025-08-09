@@ -36,11 +36,11 @@ public class AuthenticateController {
 
     @PostConstruct
     public void init() {
-        meterRegistry.counter("login.success.count");
+        meterRegistry.counter("authenticate.success.count");
     }
 
     @Operation(
-            summary = "User login",
+            summary = "User authenticate",
             description = "Authenticates user with username and password",
             tags = {"Authentication"}
     )
@@ -67,10 +67,10 @@ public class AuthenticateController {
     public ResponseEntity<JwtTokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
 
-       String token =  authenticationService.login(loginRequest);
+       String token =  authenticationService.authenticate(loginRequest);
 
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
-        meterRegistry.counter("login.success.count").increment();
+        meterRegistry.counter("authenticate.success.count").increment();
 
         return ResponseEntity.ok(new JwtTokenResponse(token));
     }

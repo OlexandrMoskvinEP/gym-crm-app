@@ -67,7 +67,7 @@ class AuthenticateControllerTest {
         LoginRequest request = getCorrectLoginRequest();
         String expectedToken = "test.jwt.token";
 
-        when(authenticationService.login(request)).thenReturn(expectedToken);
+        when(authenticationService.authenticate(request)).thenReturn(expectedToken);
 
         mockMvc.perform(post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -75,7 +75,7 @@ class AuthenticateControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value(expectedToken));
 
-        verify(authenticationService).login(request);
+        verify(authenticationService).authenticate(request);
     }
 
     @Test

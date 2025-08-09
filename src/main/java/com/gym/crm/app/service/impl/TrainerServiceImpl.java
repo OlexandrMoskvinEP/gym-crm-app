@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -71,7 +70,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer persistedTrainer = repository.save(entityToAdd);
 
         logger.info("Trainer was successfully added");
-        authenticationService.login(new LoginRequest(username, password));
+        authenticationService.authenticate(new LoginRequest(username, password));
 
         TrainerDto trainerDto = getTrainerDtoFromEntity(persistedTrainer);
         trainerDto.setPassword(password);
