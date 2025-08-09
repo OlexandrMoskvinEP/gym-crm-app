@@ -74,11 +74,11 @@ public class TokenServiceImpl implements TokenService {
 
         refreshTokenService.delete(refreshToken);
 
-        JwtTokenResponse resp = new JwtTokenResponse();
-        resp.setAccessToken(newAccess);
-        resp.setRefreshToken(rawNewRefresh);
+        JwtTokenResponse response = new JwtTokenResponse();
+        response.setAccessToken(newAccess);
+        response.setRefreshToken(rawNewRefresh);
 
-        return resp;
+        return response;
     }
 
     @Override

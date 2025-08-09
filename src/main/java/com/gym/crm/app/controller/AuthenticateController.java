@@ -129,8 +129,8 @@ public class AuthenticateController {
             @ApiResponse(description = "Unexpected error")
     })
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest req) {
-        tokenService.logout(req.getRefreshToken());
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest refreshRequest) {
+        tokenService.logout(refreshRequest.getRefreshToken());
         meterRegistry.counter("auth.logout.success.count").increment();
 
         return ResponseEntity.ok().build();
