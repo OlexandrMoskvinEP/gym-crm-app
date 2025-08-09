@@ -4,7 +4,6 @@ import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
@@ -41,8 +40,6 @@ class TokenServiceImplTest {
     @Mock
     private UserMapper userMapper;
     @Mock
-    private TraineeRepository traineeRepository;
-    @Mock
     private TrainerRepository trainerRepository;
 
     @InjectMocks
@@ -59,10 +56,10 @@ class TokenServiceImplTest {
         when(jwtTokenProvider.generateRefreshToken(1L, Duration.ofDays(14))).thenReturn(refreshToken);
         when(refreshTokenService.saveRefreshToken(refreshToken, 1L)).thenReturn("raw-refresh");
 
-        JwtTokenResponse resp = tokenService.login(loginRequest);
+        JwtTokenResponse actual = tokenService.login(loginRequest);
 
-        assertEquals("access", resp.getAccessToken());
-        assertEquals("raw-refresh", resp.getRefreshToken());
+        assertEquals("access", actual.getAccessToken());
+        assertEquals("raw-refresh", actual.getRefreshToken());
     }
 
     @Test
