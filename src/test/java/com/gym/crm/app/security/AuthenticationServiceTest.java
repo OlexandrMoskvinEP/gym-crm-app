@@ -23,12 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.gym.crm.app.security.UserRole.ADMIN;
 import static com.gym.crm.app.security.UserRole.TRAINEE;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -45,7 +45,6 @@ class AuthenticationServiceTest {
     private static final User PLAIN_USER = buildUserWithPassword();
     private static final LoginRequest LOGIN_REQUEST = new LoginRequest(USERNAME, PLAIN_PASSWORD);
     private static final LoginRequest WRONG_LOGIN_REQUEST = new LoginRequest(USERNAME, INVALID_PASSWORD);
-    private static final String TEST_JWT_TOKEN = "test.jwt.token";
 
     @Mock
     private UserRepository userRepository;
@@ -127,25 +126,45 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
-        AtomicReference<String> actual = new AtomicReference<>();
-
-        when(jwtTokenProvider.generateToken(any())).thenReturn(TEST_JWT_TOKEN);
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
-        when(trainerRepository.findByUserUsername(USERNAME)).thenReturn(Optional.of(new Trainer()));
         when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
-        when(userMapper.toAuthenticatedUser(PLAIN_USER)).thenReturn(AuthenticatedUser.builder().username(USERNAME).build());
 
-        assertDoesNotThrow(() -> actual.set(authenticationService.login(LOGIN_REQUEST)), "Invalid username or password");
+        assertDoesNotThrow(() -> authenticationService.checkAuthorities(LOGIN_REQUEST), "Invalid username or password");
+    }
 
-        assertEquals(TEST_JWT_TOKEN, actual.get());
-        verify(currentUserHolder).set(any(AuthenticatedUser.class));
+    @Test
+    void shouldReturnAuthenticatedUser() {
+        LoginRequest loginRequest = new LoginRequest("john", "secret");
+        User userEntity = User.builder().username("john").password("hashed-pass").build();
+
+        AuthenticatedUser mappedUser = AuthenticatedUser.builder()
+                .username("john")
+                .password("hashed-pass")
+                .role(UserRole.TRAINER)
+                .isActive(true)
+                .build();
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(userEntity));
+        when(passwordEncoder.matches("secret", "hashed-pass")).thenReturn(true);
+        when(userMapper.toAuthenticatedUser(userEntity)).thenReturn(mappedUser);
+        when(trainerRepository.findByUserUsername("john")).thenReturn(Optional.of(new Trainer()));
+
+        AuthenticatedUser result = authenticationService.getAuthenticatedUser(loginRequest);
+
+        assertNotNull(result);
+        assertEquals("john", result.getUsername());
+        assertEquals(UserRole.TRAINER, result.getRole());
+
+        verify(userRepository).findByUsername("john");
+        verify(passwordEncoder).matches("secret", "hashed-pass");
+        verify(userMapper).toAuthenticatedUser(userEntity);
     }
 
     @Test
     void shouldNotAuthoriseIfWrongCredentials() {
         when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
 
-        assertThrows(AuthentificationErrorException.class, () -> authenticationService.login(WRONG_LOGIN_REQUEST),
+        assertThrows(AuthentificationErrorException.class, () -> authenticationService.checkAuthorities(WRONG_LOGIN_REQUEST),
                 "Invalid password");
         verify(currentUserHolder, never()).set(any(AuthenticatedUser.class));
     }

@@ -80,7 +80,7 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee persistedTrainee = repository.save(entityToAdd);
 
         logger.info("Trainee was successfully added");
-        authenticationService.login(new LoginRequest(username, password));
+        authenticationService.checkAuthorities(new LoginRequest(username, password));
 
         TraineeDto traineeDto = getTraineeDtoFromEntity(persistedTrainee);
         traineeDto.setPassword(password);

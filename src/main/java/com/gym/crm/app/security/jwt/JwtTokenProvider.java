@@ -2,6 +2,7 @@ package com.gym.crm.app.security.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import io.jsonwebtoken.Claims;
@@ -14,6 +15,10 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -22,6 +27,7 @@ public class JwtTokenProvider {
     private static final long EXPIRATION_MILLIS = 60 * 60 * 1000L;
 
     private final ObjectMapper objectMapper;
+    private final SecureRandom random;
 
     @Value("${security.jwt.secret}")
     private String secret;
@@ -47,6 +53,20 @@ public class JwtTokenProvider {
             throw new UnacceptableOperationException("Error serializing user to JWT");
         }
     }
+
+    public RefreshToken generateRefreshToken(Long userId, Duration ttl) {
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+
+        String rawToken =  Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+
+            return RefreshToken.builder()
+                    .token(rawToken)
+                    .userId(userId)
+                    .issuedAt(Instant.now())
+                    .expiresAt(Instant.now().plus(ttl))
+                    .build();
+        }
 
     public AuthenticatedUser parseToken(String token) {
         try {

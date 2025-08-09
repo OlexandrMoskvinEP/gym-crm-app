@@ -3,10 +3,13 @@ package com.gym.crm.app.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gym.crm.app.exception.AuthorizationErrorException;
+import com.gym.crm.app.exception.handling.GlobalExceptionHandler;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ChangePasswordRequest;
+import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.service.TokenService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +23,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,9 +49,9 @@ class AuthenticateControllerTest {
     @Mock
     private MeterRegistry meterRegistry;
     @Mock
-    AuthenticationService authenticationService;
-    @Mock
     private GymFacade gymFacade;
+    @Mock
+    private TokenService tokenService;
     @InjectMocks
     private AuthenticateController authenticateController;
 
@@ -56,6 +62,7 @@ class AuthenticateControllerTest {
 
         mockMvc = MockMvcBuilders.standaloneSetup(authenticateController)
                 .setMessageConverters(converter)
+                .setControllerAdvice(new GlobalExceptionHandler(meterRegistry))
                 .build();
 
         lenient().when(meterRegistry.counter(anyString(), any(String[].class)))
@@ -63,19 +70,71 @@ class AuthenticateControllerTest {
     }
 
     @Test
-    void shouldReturn2xxOnSuccessfulLogin() throws Exception {
-        LoginRequest request = getCorrectLoginRequest();
-        String expectedToken = "test.jwt.token";
+    void shouldReturn200_AndTokens() throws Exception {
+        LoginRequest req = new LoginRequest("john.connor", "Skynet#2029");
+        JwtTokenResponse tokens = new JwtTokenResponse();
+        tokens.setAccessToken("access-xyz");
+        tokens.setRefreshToken("refresh-xyz");
 
-        when(authenticationService.login(request)).thenReturn(expectedToken);
+        when(tokenService.login(any(LoginRequest.class))).thenReturn(tokens);
 
         mockMvc.perform(post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(expectedToken));
+                .andExpect(jsonPath("$.accessToken").value("access-xyz"))
+                .andExpect(jsonPath("$.refreshToken").value("refresh-xyz"));
 
-        verify(authenticationService).login(request);
+        verify(tokenService).login(any(LoginRequest.class));
+    }
+
+    @Test
+    void ShouldReturn403_WhenInvalidCredentials() throws Exception {
+        LoginRequest req = new LoginRequest("john.connor", "wrong1234567890"); // мин длина ок
+
+        when(tokenService.login(any(LoginRequest.class)))
+                .thenThrow(new AuthorizationErrorException("Invalid credentials"));
+
+        mockMvc.perform(post("/api/v1/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isForbidden());
+
+        verify(tokenService).login(any(LoginRequest.class));
+    }
+
+    @Test
+    void shouldReturn200_AndNewRefreshToken() throws Exception {
+        String oldRefresh = "old-refresh-token";
+        JwtTokenResponse tokens = new JwtTokenResponse();
+        tokens.setAccessToken("new-access");
+        tokens.setRefreshToken("new-refresh");
+
+        when(tokenService.refresh(eq(oldRefresh))).thenReturn(tokens);
+
+        mockMvc.perform(post("/api/v1/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("refreshToken", oldRefresh))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").value("new-access"))
+                .andExpect(jsonPath("$.refreshToken").value("new-refresh"));
+
+        verify(tokenService).refresh(eq(oldRefresh));
+    }
+
+    @Test
+    void shouldReturn4xx_WhenRefreshTokenInvalid() throws Exception {
+        String badRefresh = "invalid-refresh-token";
+
+        when(tokenService.refresh(eq(badRefresh)))
+                .thenThrow(new AuthorizationErrorException("Invalid or expired refresh token"));
+
+        mockMvc.perform(post("/api/v1/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("refreshToken", badRefresh))))
+                .andExpect(status().isForbidden());
+
+        verify(tokenService).refresh(eq(badRefresh));
     }
 
     @Test
@@ -95,14 +154,6 @@ class AuthenticateControllerTest {
         request.setUsername("john.smith");
         request.setOldPassword("oldPass123");
         request.setNewPassword("newPass456");
-
-        return request;
-    }
-
-    private static LoginRequest getCorrectLoginRequest() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("john.smith");
-        request.setPassword("password123");
 
         return request;
     }

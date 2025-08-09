@@ -3,9 +3,10 @@ package com.gym.crm.app.controller;
 import com.gym.crm.app.facade.GymFacade;
 import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.ErrorResponse;
+import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.security.jwt.JwtTokenResponse;
+import com.gym.crm.app.rest.RefreshRequest;
+import com.gym.crm.app.service.TokenService;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,16 +32,16 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 @RequestMapping(ROOT_PATH)
 public class AuthenticateController {
     private final GymFacade facade;
-    private final AuthenticationService authenticationService;
     private final MeterRegistry meterRegistry;
+    private final TokenService tokenService;
 
     @PostConstruct
     public void init() {
-        meterRegistry.counter("login.success.count");
+        meterRegistry.counter("checkAuthorities.success.count");
     }
 
     @Operation(
-            summary = "User login",
+            summary = "User checkAuthorities",
             description = "Authenticates user with username and password",
             tags = {"Authentication"}
     )
@@ -67,12 +68,44 @@ public class AuthenticateController {
     public ResponseEntity<JwtTokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
 
-       String token =  authenticationService.login(loginRequest);
+        JwtTokenResponse tokens = tokenService.login(loginRequest);
 
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
-        meterRegistry.counter("login.success.count").increment();
+        meterRegistry.counter("checkAuthorities.success.count").increment();
 
-        return ResponseEntity.ok(new JwtTokenResponse(token));
+        return ResponseEntity.ok(tokens);
+    }
+
+    @Operation(
+            operationId = "refresh",
+            summary = "Refresh JWT access token",
+            description = "Generates a new access token using a valid refresh token",
+            tags = {"Authentication"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Token refreshed successfully",
+                    content = @Content(schema = @Schema(implementation = JwtTokenResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid or expired refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(description = "Unexpected error")
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtTokenResponse> refresh(@Valid @RequestBody RefreshRequest req) {
+        JwtTokenResponse tokens = tokenService.refresh(req.getRefreshToken());
+        meterRegistry.counter("auth.refresh.success.count").increment();
+
+        return ResponseEntity.ok(tokens);
     }
 
     @Operation(

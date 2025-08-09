@@ -126,7 +126,6 @@ class TraineeServiceImplTest {
         when(passwordService.generatePassword()).thenReturn(trainee.getUser().getPassword());
         when(userProfileService.createUsername(anyString(), anyString())).thenReturn(username);
         when(repository.save(any(Trainee.class))).thenReturn(entityToReturn);
-        when(authenticationService.login(any())).thenReturn("some.jwt.token");
 
         TraineeDto actual = traineeService.addTrainee(createRequest);
 
