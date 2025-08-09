@@ -36,6 +36,13 @@ class JwtTokenProviderTest {
         assertEquals(AUTHENTICATED_USER.getIsActive(), decodedUser.getIsActive());
     }
 
+    @Test
+    void shouldGenerateRawRefreshToken() {
+        String token = jwtTokenProvider.generateRawRefreshToken();
+
+        assertNotNull(token);
+    }
+
     private static AuthenticatedUser buildAuthUser() {
         return AuthenticatedUser.builder()
                 .role(ADMIN)

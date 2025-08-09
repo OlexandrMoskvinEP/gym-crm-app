@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -22,6 +24,7 @@ public class JwtTokenProvider {
     private static final long EXPIRATION_MILLIS = 60 * 60 * 1000L;
 
     private final ObjectMapper objectMapper;
+    private final SecureRandom random;
 
     @Value("${security.jwt.secret}")
     private String secret;
@@ -46,6 +49,13 @@ public class JwtTokenProvider {
         } catch (JsonProcessingException e) {
             throw new UnacceptableOperationException("Error serializing user to JWT");
         }
+    }
+
+    public String generateRawRefreshToken() {
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     public AuthenticatedUser parseToken(String token) {
