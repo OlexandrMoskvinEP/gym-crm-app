@@ -70,7 +70,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer persistedTrainer = repository.save(entityToAdd);
 
         logger.info("Trainer was successfully added");
-        authenticationService.authenticate(new LoginRequest(username, password));
+        authenticationService.checkAuthorities(new LoginRequest(username, password));
 
         TrainerDto trainerDto = getTrainerDtoFromEntity(persistedTrainer);
         trainerDto.setPassword(password);

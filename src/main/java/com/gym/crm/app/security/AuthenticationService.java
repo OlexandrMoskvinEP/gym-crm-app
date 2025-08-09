@@ -9,7 +9,6 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +28,17 @@ public class AuthenticationService {
     private final UserMapper userMapper;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public String authenticate(LoginRequest loginRequest) {
+    public void checkAuthorities(LoginRequest loginRequest) {
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new AuthentificationErrorException("Invalid password");
+        }
+    }
+
+    public AuthenticatedUser getAuthenticatedUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));
 
@@ -40,14 +47,11 @@ public class AuthenticationService {
         }
 
         UserRole role = defineUserRole(user);
-        AuthenticatedUser authenticatedUser = userMapper.toAuthenticatedUser(user)
+
+        return userMapper.toAuthenticatedUser(user)
                 .toBuilder()
                 .role(role)
                 .build();
-
-        currentUserHolder.set(authenticatedUser);
-
-        return jwtTokenProvider.generateToken(authenticatedUser);
     }
 
     public void checkUserAuthorisation(UserCredentialsDto credentials, UserRole... allowedRoles) {
