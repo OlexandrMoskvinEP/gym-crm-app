@@ -297,9 +297,9 @@ paths:
     post:
       tags:
         - Authentication
-      summary: User login
+      summary: User checkLogin
       description: Authenticates user with username and password
-      operationId: login
+      operationId: checkLogin
       requestBody:
         required: true
         content:
@@ -354,6 +354,72 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+
+  /refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT access token
+      description: Generates a new access token using a valid refresh token
+      operationId: refresh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtTokenResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      description: Invalidates the provided refresh token
+      operationId: logout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Logout successful
+        '401':
+          description: Invalid or expired refresh token
           content:
             application/json:
               schema:
@@ -1122,7 +1188,7 @@ components:
           description: Id of the training type
           example: 1
     LoginRequest:
-      description: User login request
+      description: User checkLogin request
       allOf:
         - $ref: '#/components/schemas/UserCredentials'
     UserCredentials:
@@ -1134,7 +1200,7 @@ components:
         username:
           type: string
           pattern: '^[a-zA-Z]+\.[a-zA-Z]+(\d+)?$'
-          description: Username for login
+          description: Username for checkLogin
           example: "kevin.jackson"
         password:
           type: string
@@ -1172,7 +1238,29 @@ components:
           type: string
           description: Human-readable description of the error
           example: "Error occurred while processing the request"
-
+    RefreshRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token issued on checkLogin
+      example:
+        refreshToken: "t8nvc3JkLW5vLXBhZGRpbmc"
+    JwtTokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        accessTokenExpiresAt:
+          type: string
+          format: date-time
+        refreshToken:
+          type: string
+        refreshTokenExpiresAt:
+          type: string
+          format: date-time
   securitySchemes:
     basicAuth:
       type: http
