@@ -9,7 +9,6 @@ import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.service.RefreshTokenService;
@@ -45,8 +44,6 @@ class TokenServiceImplTest {
     private UserMapper userMapper;
     @Mock
     private TrainerRepository trainerRepository;
-    @Mock
-    private CurrentUserHolder currentUserHolder;
     @InjectMocks
     private TokenServiceImpl tokenService;
 
@@ -101,7 +98,6 @@ class TokenServiceImplTest {
         tokenService.logout(token);
 
         verify(refreshTokenService).delete(token);
-        verify(currentUserHolder).clear();
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 }

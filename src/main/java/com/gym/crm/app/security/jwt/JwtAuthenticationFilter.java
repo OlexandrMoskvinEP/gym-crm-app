@@ -1,6 +1,5 @@
 package com.gym.crm.app.security.jwt;
 
-import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -21,7 +20,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-    private final CurrentUserHolder currentUserHolder;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(user, null, null);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                currentUserHolder.set(user);
 
                 log.debug("JWT authentication successful for user: {}", user.getUsername());
             }
@@ -47,9 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.warn("JWT authentication failed: {}", e.getMessage());
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
-
-        } finally {
-            currentUserHolder.clear();
         }
     }
 }

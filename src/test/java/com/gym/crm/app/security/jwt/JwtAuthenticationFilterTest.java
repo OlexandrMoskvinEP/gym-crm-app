@@ -1,6 +1,5 @@
 package com.gym.crm.app.security.jwt;
 
-import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +22,6 @@ import static org.mockito.Mockito.when;
 class JwtAuthenticationFilterTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
-    @Mock
-    private CurrentUserHolder currentUserHolder;
     @Mock
     private FilterChain filterChain;
     @Mock
@@ -49,7 +46,6 @@ class JwtAuthenticationFilterTest {
 
         assertNotNull(authentication);
         assertEquals(mockUser, authentication.getPrincipal());
-        verify(currentUserHolder).clear();
         verify(filterChain).doFilter(request, response);
     }
 
