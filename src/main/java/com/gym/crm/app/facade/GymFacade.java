@@ -35,9 +35,6 @@ import com.gym.crm.app.rest.TrainingCreateRequest;
 import com.gym.crm.app.rest.TrainingTypeGetResponse;
 import com.gym.crm.app.rest.TrainingWithTraineeName;
 import com.gym.crm.app.rest.TrainingWithTrainerName;
-import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.security.CurrentUserHolder;
-import com.gym.crm.app.security.model.UserCredentialsDto;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.TrainingService;
@@ -50,10 +47,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.gym.crm.app.security.UserRole.ADMIN;
-import static com.gym.crm.app.security.UserRole.TRAINEE;
-import static com.gym.crm.app.security.UserRole.TRAINER;
-
 @Getter
 @RequiredArgsConstructor
 @Component
@@ -62,53 +55,38 @@ public class GymFacade {
     private final TrainerService trainerService;
     private final TrainingService trainingService;
     private final UserProfileService userProfileService;
-    private final AuthenticationService authService;
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
     private final TrainingTypeMapper trainingTypeMapper;
-
     private final UserMapper userMapper;
-    private final CurrentUserHolder currentUserHolder;
 
     public TrainerCreateResponse addTrainer(@Valid TrainerCreateRequest createRequest) {
-
         return trainerMapper.toCreateResponse(trainerService.addTrainer(createRequest));
     }
 
     public TraineeCreateResponse addTrainee(@Valid TraineeCreateRequest createRequest) {
-
         return traineeMapper.dtoToCreateResponse(traineeService.addTrainee(createRequest));
     }
 
-    public List<TrainerDto> getAllTrainers(UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN);
-
+    public List<TrainerDto> getAllTrainers() {
         return trainerService.getAllTrainers();
     }
 
-    public List<TraineeDto> getAllTrainees(UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN);
-
+    public List<TraineeDto> getAllTrainees() {
         return traineeService.getAllTrainees();
     }
 
     public TrainerGetResponse getTrainerByUsername(String username) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
-
         return trainerMapper.toGetResponse(trainerService.getTrainerByUsername(username));
     }
 
     public TraineeGetResponse getTraineeByUsername(String username) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
-
         return traineeMapper.dtoToGetResponse(traineeService.getTraineeByUsername(username));
     }
 
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainersList(String username,
                                                                            TraineeAssignedTrainersUpdateRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
-
         List<Trainer> trainers = traineeService.updateTraineeTrainersByUsername(username, request.getTrainerUsernames()).stream()
                 .map(trainerMapper::entityToRestTrainer).toList();
 
@@ -117,33 +95,23 @@ public class GymFacade {
 
     public TraineeUpdateResponse updateTraineeByUsername(String username,
                                                          @Valid TraineeUpdateRequest updateRequest) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
-
         return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
     public TrainerUpdateResponse updateTrainerByUsername(String username,
                                                          @Valid TrainerUpdateRequest updateRequest) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER);
-
         return trainerMapper.toUpdateResponse(trainerService.updateTrainerByUsername(username, updateRequest));
     }
 
-    public void deleteTrainerByUsername(String username, UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN, TRAINER);
-
+    public void deleteTrainerByUsername(String username) {
         trainerService.deleteTrainerByUsername(username);
     }
 
     public void deleteTraineeByUsername(String username) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
-
         traineeService.deleteTraineeByUsername(username);
     }
 
     public TrainerTrainingGetResponse getTrainerTrainingsByFilter(@Valid TrainerTrainingSearchFilter criteria) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER);
-
         List<TrainingDto> trainings = trainingService.getTrainerTrainingsByFilter(criteria);
 
         List<TrainingWithTraineeName> trainingWithTraineeNames = trainings.stream()
@@ -154,8 +122,6 @@ public class GymFacade {
     }
 
     public TraineeTrainingGetResponse getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
-
         List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
 
         List<TrainingWithTrainerName> trainingWithTrainerNames = trainings.stream()
@@ -166,23 +132,17 @@ public class GymFacade {
     }
 
     public AvailableTrainerGetResponse getUnassignedTrainersByTraineeUsername(String username) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE);
-
         List<Trainer> trainers = traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
                 .map(trainerMapper::toEntity).toList();
 
         return new AvailableTrainerGetResponse(trainers);
     }
 
-    public List<TrainingDto> getAllTrainings(UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN);
-
+    public List<TrainingDto> getAllTrainings() {
         return trainingService.getAllTrainings();
     }
 
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), TRAINER, ADMIN);
-
         TrainerDto trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
         TraineeDto trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
 
@@ -198,35 +158,24 @@ public class GymFacade {
     }
 
     public TrainingTypeGetResponse getAllTrainingsTypes() {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINEE, TRAINER);
-
         List<TrainingType> trainingTypes = trainingService.getTrainingTypes();
         var trainingTypesRest = trainingTypes.stream().map(trainingTypeMapper::toRestTrainingType).toList();
 
         return new TrainingTypeGetResponse().trainingTypes(trainingTypesRest);
     }
 
-    public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest, UserCredentialsDto userCredentials) {
-        authService.checkUserAuthorisation(userCredentials, ADMIN);
-
+    public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest) {
         return trainingService.updateTraining(updateRequest);
     }
 
     public void switchActivationStatus(String username, ActivationStatusRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
         ChangeActivationStatusDto changeActivation = userMapper.toChangeActivationStatusDto(username, request);
 
         userProfileService.switchActivationStatus(changeActivation);
     }
 
     public void changePassword(ChangePasswordRequest request) {
-        authService.checkUserAuthorisation(getCurrentCredentials(), ADMIN, TRAINER, TRAINEE);
-
         userProfileService.changePassword(request.getUsername(), request.getOldPassword(), request.getNewPassword());
-    }
-
-    private UserCredentialsDto getCurrentCredentials() {
-        return userMapper.toCredentialsDto(currentUserHolder.get());
     }
 
     private TrainingWithTrainerName buildTrainingWithTrainerName(TrainingDto trainingDto) {
