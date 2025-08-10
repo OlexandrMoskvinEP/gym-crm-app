@@ -7,4 +7,5 @@ import com.gym.crm.app.rest.LoginRequest;
 public interface TokenService {
     JwtTokenResponse login(LoginRequest loginRequest);
     JwtTokenResponse refresh(String refreshToken);
+    void  logout(String token);
 }

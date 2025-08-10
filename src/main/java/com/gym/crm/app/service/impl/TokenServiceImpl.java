@@ -10,12 +10,14 @@ import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.CurrentUserHolder;
 import com.gym.crm.app.security.UserRole;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.service.RefreshTokenService;
 import com.gym.crm.app.service.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,7 @@ public class TokenServiceImpl implements TokenService {
     private final UserMapper userMapper;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
+    private final CurrentUserHolder currentUserHolder;
 
     @Override
     public JwtTokenResponse login(LoginRequest loginRequest) {
@@ -71,11 +74,18 @@ public class TokenServiceImpl implements TokenService {
 
         refreshTokenService.delete(refreshToken);
 
-        JwtTokenResponse resp = new JwtTokenResponse();
-        resp.setAccessToken(newAccess);
-        resp.setRefreshToken(rawNewRefresh);
+        JwtTokenResponse response = new JwtTokenResponse();
+        response.setAccessToken(newAccess);
+        response.setRefreshToken(rawNewRefresh);
 
-        return resp;
+        return response;
+    }
+
+    @Override
+    public void logout(String token) {
+        refreshTokenService.delete(token);
+        currentUserHolder.clear();
+        SecurityContextHolder.clearContext();
     }
 
     private UserRole defineUserRole(String username) {

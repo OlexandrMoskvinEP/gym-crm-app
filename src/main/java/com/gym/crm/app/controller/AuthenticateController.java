@@ -109,6 +109,34 @@ public class AuthenticateController {
     }
 
     @Operation(
+            operationId = "logout",
+            summary = "Logout user",
+            description = "Invalidates the provided refresh token",
+            tags = {"Authentication"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout successful"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid or expired refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(description = "Unexpected error")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest refreshRequest) {
+        tokenService.logout(refreshRequest.getRefreshToken());
+        meterRegistry.counter("auth.logout.success.count").increment();
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
             summary = "Change user password",
             description = "Changes user password with old password verification",
             tags = {"Profile services"}
