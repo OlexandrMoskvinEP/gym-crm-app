@@ -29,15 +29,6 @@ public class AuthenticationService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
 
-    public void checkAuthorities(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new AuthentificationErrorException("Invalid password");
-        }
-    }
-
     public AuthenticatedUser getAuthenticatedUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new AuthentificationErrorException("Invalid credentials"));

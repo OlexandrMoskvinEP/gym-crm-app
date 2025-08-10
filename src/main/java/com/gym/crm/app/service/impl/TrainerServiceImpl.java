@@ -9,7 +9,6 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -70,7 +69,6 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer persistedTrainer = repository.save(entityToAdd);
 
         logger.info("Trainer was successfully added");
-        authenticationService.checkAuthorities(new LoginRequest(username, password));
 
         TrainerDto trainerDto = getTrainerDtoFromEntity(persistedTrainer);
         trainerDto.setPassword(password);

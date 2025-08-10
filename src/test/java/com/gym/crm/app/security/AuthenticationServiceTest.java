@@ -3,7 +3,6 @@ package com.gym.crm.app.security;
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
-import com.gym.crm.app.exception.AuthentificationErrorException;
 import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.mapper.UserMapper;
@@ -30,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,9 +39,6 @@ class AuthenticationServiceTest {
     private static final String INVALID_PASSWORD = "PASSWORD321";
     private static final String ENCODED_PASSWORD = "gfjSl34so$#1";
     private static final String USER_ROLE = ADMIN.name();
-    private static final User PLAIN_USER = buildUserWithPassword();
-    private static final LoginRequest LOGIN_REQUEST = new LoginRequest(USERNAME, PLAIN_PASSWORD);
-    private static final LoginRequest WRONG_LOGIN_REQUEST = new LoginRequest(USERNAME, INVALID_PASSWORD);
 
     @Mock
     private UserRepository userRepository;
@@ -125,14 +119,6 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void shouldSuccessfullyAuthoriseIfCorrectCredentials() {
-        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
-        when(passwordEncoder.matches(PLAIN_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
-
-        assertDoesNotThrow(() -> authenticationService.checkAuthorities(LOGIN_REQUEST), "Invalid username or password");
-    }
-
-    @Test
     void shouldReturnAuthenticatedUser() {
         LoginRequest loginRequest = new LoginRequest("john", "secret");
         User userEntity = User.builder().username("john").password("hashed-pass").build();
@@ -158,15 +144,6 @@ class AuthenticationServiceTest {
         verify(userRepository).findByUsername("john");
         verify(passwordEncoder).matches("secret", "hashed-pass");
         verify(userMapper).toAuthenticatedUser(userEntity);
-    }
-
-    @Test
-    void shouldNotAuthoriseIfWrongCredentials() {
-        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(PLAIN_USER));
-
-        assertThrows(AuthentificationErrorException.class, () -> authenticationService.checkAuthorities(WRONG_LOGIN_REQUEST),
-                "Invalid password");
-        verify(currentUserHolder, never()).set(any(AuthenticatedUser.class));
     }
 
     private static User buildUserWithPassword() {

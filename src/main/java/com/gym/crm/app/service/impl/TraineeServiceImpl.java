@@ -13,7 +13,6 @@ import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.security.AuthenticationService;
 import com.gym.crm.app.service.TraineeService;
 import com.gym.crm.app.service.common.PasswordService;
@@ -80,7 +79,6 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee persistedTrainee = repository.save(entityToAdd);
 
         logger.info("Trainee was successfully added");
-        authenticationService.checkAuthorities(new LoginRequest(username, password));
 
         TraineeDto traineeDto = getTraineeDtoFromEntity(persistedTrainee);
         traineeDto.setPassword(password);
