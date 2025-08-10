@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationServiceTest {
+class AuthenticatedUserServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -38,7 +38,7 @@ class AuthenticationServiceTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
     @InjectMocks
-    private AuthenticationService authenticationService;
+    private AuthenticatedUserService authenticatedUserService;
 
     @Test
     void shouldReturnAuthenticatedUser() {
@@ -57,7 +57,7 @@ class AuthenticationServiceTest {
         when(userMapper.toAuthenticatedUser(userEntity)).thenReturn(mappedUser);
         when(trainerRepository.findByUserUsername("john")).thenReturn(Optional.of(new Trainer()));
 
-        AuthenticatedUser result = authenticationService.getAuthenticatedUser(loginRequest);
+        AuthenticatedUser result = authenticatedUserService.getAuthenticatedUser(loginRequest);
 
         assertNotNull(result);
         assertEquals("john", result.getUsername());

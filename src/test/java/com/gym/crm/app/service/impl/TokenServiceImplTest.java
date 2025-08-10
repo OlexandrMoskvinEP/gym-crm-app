@@ -8,7 +8,7 @@ import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.service.RefreshTokenService;
@@ -37,7 +37,7 @@ class TokenServiceImplTest {
     @Mock
     private RefreshTokenService refreshTokenService;
     @Mock
-    private AuthenticationService authenticationService;
+    private AuthenticatedUserService authenticatedUserService;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -53,7 +53,7 @@ class TokenServiceImplTest {
         AuthenticatedUser user = AuthenticatedUser.builder().userId(1L).username("john").build();
         RefreshToken refreshToken = RefreshToken.builder().token("raw-refresh").build();
 
-        when(authenticationService.getAuthenticatedUser(loginRequest)).thenReturn(user);
+        when(authenticatedUserService.getAuthenticatedUser(loginRequest)).thenReturn(user);
         when(jwtTokenProvider.generateToken(user)).thenReturn("access");
         when(jwtTokenProvider.generateRefreshToken(1L, Duration.ofDays(14))).thenReturn(refreshToken);
         when(refreshTokenService.saveRefreshToken(refreshToken, 1L)).thenReturn("raw-refresh");

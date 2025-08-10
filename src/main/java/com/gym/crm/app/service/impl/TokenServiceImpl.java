@@ -9,7 +9,7 @@ import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.UserRole;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticatedUserService authenticatedUserService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final TraineeRepository traineeRepository;
@@ -37,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public JwtTokenResponse login(LoginRequest loginRequest) {
-        AuthenticatedUser user = authenticationService.getAuthenticatedUser(loginRequest);
+        AuthenticatedUser user = authenticatedUserService.getAuthenticatedUser(loginRequest);
 
         String accessToken = jwtTokenProvider.generateToken(user);
 

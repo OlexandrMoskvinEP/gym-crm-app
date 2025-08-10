@@ -9,7 +9,7 @@ import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.security.AuthenticationService;
+import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.service.TrainerService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
@@ -31,7 +31,7 @@ public class TrainerServiceImpl implements TrainerService {
     private final TrainerRepository repository;
     private final PasswordService passwordService;
     private final UserProfileService userProfileService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticatedUserService authenticatedUserService;
     private final TrainerMapper trainerMapper;
 
     @Setter
