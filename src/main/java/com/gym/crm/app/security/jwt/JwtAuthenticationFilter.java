@@ -2,7 +2,6 @@ package com.gym.crm.app.security.jwt;
 
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.security.AuthenticatedUserService;
-import com.gym.crm.app.security.UserRole;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -12,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -31,14 +30,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String authorizationHeader = request.getHeader("Authorization");
+            String token = extractToken(request);
 
-            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            if (token == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            String token = authorizationHeader.substring(7);
             AuthenticatedUser user = jwtTokenProvider.parseToken(token);
 
             Boolean isActive = user.getIsActive();
@@ -46,24 +44,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new UnacceptableOperationException("User is not active, any operations not allowed");
             }
 
-            UserRole role = authenticatedUserService.resolveUserRole(user.getUsername());
-            user = user.toBuilder().build();
-
-            String springRole = role.name().startsWith("ROLE_") ? role.name() : "ROLE_" + role.name();
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(springRole));
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(user, null, authorities);
-
+            Authentication authentication = buildAuthentication(user);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
             log.debug("JWT authentication successfully for user: {} with role {}", user.getUsername(), user.getRole());
 
             filterChain.doFilter(request, response);
-
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("JWT authentication failed: {}", e.getMessage());
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
         }
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+
+        return (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
+    }
+
+    private Authentication buildAuthentication(AuthenticatedUser user) {
+        String userRole = authenticatedUserService.resolveUserRole(user.getUsername()).name();
+        String springRole = userRole.startsWith("ROLE_") ? userRole : "ROLE_" + userRole;
+        var authorities = List.of(new SimpleGrantedAuthority(springRole));
+
+        return new UsernamePasswordAuthenticationToken(user, null, authorities);
     }
 }
