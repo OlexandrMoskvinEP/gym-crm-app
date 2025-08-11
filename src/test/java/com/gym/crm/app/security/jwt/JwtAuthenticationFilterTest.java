@@ -60,6 +60,20 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
+    void shouldRejectInvalidToken() throws Exception {
+        String jwt = "bad.jwt.token";
+
+        when(request.getHeader("Authorization")).thenReturn(" " + jwt);
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        assertNull(authentication);
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
     void shouldThrowExceptionWhenValidTokenButUserIsNotActive() throws Exception {
         String jwt = "valid.jwt.token";
 
