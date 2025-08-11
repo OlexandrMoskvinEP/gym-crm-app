@@ -67,4 +67,8 @@ class AuthenticatedUserServiceTest {
         verify(passwordEncoder).matches("secret", "hashed-pass");
         verify(userMapper).toAuthenticatedUser(userEntity);
     }
+
+    @Test
+    void defineUserRole() {
+    }
 }

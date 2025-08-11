@@ -39,7 +39,7 @@ public class AuthenticatedUserService {
                 .build();
     }
 
-    private UserRole defineUserRole(User user) {
+    public UserRole defineUserRole(User user) {
         if (trainerRepository.findByUserUsername(user.getUsername()).isPresent()) {
             return UserRole.TRAINER;
         } else if (traineeRepository.findByUserUsername(user.getUsername()).isPresent()) {

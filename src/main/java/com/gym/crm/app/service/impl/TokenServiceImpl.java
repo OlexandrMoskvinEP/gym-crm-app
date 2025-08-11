@@ -32,8 +32,6 @@ public class TokenServiceImpl implements TokenService {
     private final AuthenticatedUserService authenticatedUserService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final TraineeRepository traineeRepository;
-    private final TrainerRepository trainerRepository;
 
     @Override
     public JwtTokenResponse login(LoginRequest loginRequest) {
@@ -60,7 +58,7 @@ public class TokenServiceImpl implements TokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthorizationErrorException("User not found: " + userId));
 
-        UserRole role = defineUserRole(user.getUsername());
+        UserRole role = authenticatedUserService.defineUserRole(user);
         AuthenticatedUser authUser = userMapper.toAuthenticatedUser(user).toBuilder()
                 .role(role)
                 .build();
@@ -83,11 +81,5 @@ public class TokenServiceImpl implements TokenService {
     public void logout(String token) {
         refreshTokenService.delete(token);
         SecurityContextHolder.clearContext();
-    }
-
-    private UserRole defineUserRole(String username) {
-        if (trainerRepository.findByUserUsername(username).isPresent()) return UserRole.TRAINER;
-        if (traineeRepository.findByUserUsername(username).isPresent()) return UserRole.TRAINEE;
-        throw new AuthorizationErrorException("User has no role assigned");
     }
 }

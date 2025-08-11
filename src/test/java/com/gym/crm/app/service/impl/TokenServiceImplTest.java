@@ -1,10 +1,8 @@
 package com.gym.crm.app.service.impl;
 
 import com.gym.crm.app.domain.model.RefreshToken;
-import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
@@ -42,8 +40,6 @@ class TokenServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private UserMapper userMapper;
-    @Mock
-    private TrainerRepository trainerRepository;
     @InjectMocks
     private TokenServiceImpl tokenService;
 
@@ -75,7 +71,6 @@ class TokenServiceImplTest {
 
         when(refreshTokenService.validateAndGetUserId(oldRefresh)).thenReturn(Optional.of(userId));
         when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
-        when(trainerRepository.findByUserUsername("john.connor")).thenReturn(Optional.of(new Trainer()));
         when(userMapper.toAuthenticatedUser(userEntity)).thenReturn(authUser);
         when(jwtTokenProvider.generateToken(any())).thenReturn("new-access");
         when(jwtTokenProvider.generateRefreshToken(eq(userId), any())).thenReturn(newRefresh);
