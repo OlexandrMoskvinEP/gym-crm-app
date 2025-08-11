@@ -178,7 +178,6 @@ public class GlobalExceptionHandler {
         meterRegistry.counter("error.too_many_requests.count").increment();
 
         ErrorCode errorCode = ErrorCode.TOO_MANY_ATTEMPTS;
-
         ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
         return ResponseEntity

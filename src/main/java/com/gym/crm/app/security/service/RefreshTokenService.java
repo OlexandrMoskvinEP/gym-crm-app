@@ -5,11 +5,11 @@ import com.gym.crm.app.domain.model.RefreshToken;
 import java.util.Optional;
 
 public interface RefreshTokenService {
-    public String saveRefreshToken(RefreshToken refreshToken, Long userId);
+    String saveRefreshToken(RefreshToken refreshToken, Long userId);
 
-    public Optional<Long> validateAndGetUserId(String refreshToken);
+    Optional<Long> validateAndGetUserId(String refreshToken);
 
-    public void delete(String refreshToken);
+    void delete(String refreshToken);
 
-    public void deleteAllByUserId(Long userId);
+    void deleteAllByUserId(Long userId);
 }

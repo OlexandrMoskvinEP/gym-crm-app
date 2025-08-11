@@ -88,8 +88,7 @@ class LoginServiceImplTest {
     void logout_ShouldDeleteToken_AndClearContext() {
         String token = "refresh-xyz";
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("user", null, null)
-        );
+                new UsernamePasswordAuthenticationToken("user", null, null));
 
         tokenService.logout(token);
 

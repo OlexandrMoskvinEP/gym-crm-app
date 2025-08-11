@@ -58,9 +58,8 @@ public class AuthenticatedUserServiceImpl implements AuthenticatedUserService {
             return UserRole.TRAINER;
         } else if (traineeRepository.findByUserUsername(username).isPresent()) {
             return UserRole.TRAINEE;
-        } else {
-            throw new AuthentificationErrorException("User does not belong to trainer or trainee roles");
         }
+        throw new AuthentificationErrorException("User does not belong to trainer or trainee roles");
     }
 
     private void checkCredentials(LoginRequest loginRequest, User user) {

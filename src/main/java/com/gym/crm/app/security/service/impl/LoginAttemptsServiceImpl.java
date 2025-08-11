@@ -37,9 +37,12 @@ public class LoginAttemptsServiceImpl implements LoginAttemptsService {
     public boolean isBlocked(String username) {
         Attempt attempt = attempts.getIfPresent(username);
 
-        if (attempt == null || attempt.blockedUntil == null) return false;
-        if (Instant.now().isBefore(attempt.blockedUntil)) return true;
-
+        if (attempt == null || attempt.blockedUntil == null) {
+            return false;
+        }
+        if (Instant.now().isBefore(attempt.blockedUntil)) {
+            return true;
+        }
         attempts.invalidate(username);
 
         return false;
@@ -48,8 +51,12 @@ public class LoginAttemptsServiceImpl implements LoginAttemptsService {
     @Override
     public long getRetryAfterSeconds(String username) {
         Attempt attempt = attempts.getIfPresent(username);
-        if (attempt == null || attempt.blockedUntil == null) return 0;
+
+        if (attempt == null || attempt.blockedUntil == null) {
+            return 0;
+        }
         long sec = Duration.between(Instant.now(), attempt.blockedUntil).getSeconds();
+
         return Math.max(0, sec);
     }
 
