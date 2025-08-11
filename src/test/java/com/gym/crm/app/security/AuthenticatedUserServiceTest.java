@@ -1,5 +1,6 @@
 package com.gym.crm.app.security;
 
+import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.mapper.UserMapper;
@@ -69,6 +70,15 @@ class AuthenticatedUserServiceTest {
     }
 
     @Test
-    void defineUserRole() {
+    void shouldDefineUserRole() {
+        String username = "john.connor";
+
+        when(trainerRepository.findByUserUsername(username)).thenReturn(Optional.empty());
+        when(traineeRepository.findByUserUsername(username)).thenReturn(Optional.of(Trainee.builder().build()));
+
+        UserRole actual = authenticatedUserService.defineUserRole(username);
+
+        assertNotNull(actual);
+        assertEquals(UserRole.TRAINEE, actual);
     }
 }
