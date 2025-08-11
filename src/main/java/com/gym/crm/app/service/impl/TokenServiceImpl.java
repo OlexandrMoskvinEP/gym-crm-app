@@ -4,8 +4,6 @@ import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.repository.TraineeRepository;
-import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
@@ -58,11 +56,11 @@ public class TokenServiceImpl implements TokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthorizationErrorException("User not found: " + userId));
 
-        UserRole role = authenticatedUserService.defineUserRole(user);
+        UserRole role = authenticatedUserService.defineUserRole(user.getUsername());
+
         AuthenticatedUser authUser = userMapper.toAuthenticatedUser(user).toBuilder()
                 .role(role)
                 .build();
-
 
         String newAccess = jwtTokenProvider.generateToken(authUser);
         RefreshToken newRefresh = jwtTokenProvider.generateRefreshToken(userId, REFRESH_TTL);

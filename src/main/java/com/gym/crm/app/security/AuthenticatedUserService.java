@@ -31,7 +31,7 @@ public class AuthenticatedUserService {
             throw new AuthentificationErrorException("Invalid password");
         }
 
-        UserRole role = defineUserRole(user);
+        UserRole role = defineUserRole(user.getUsername());
 
         return userMapper.toAuthenticatedUser(user)
                 .toBuilder()
@@ -39,10 +39,10 @@ public class AuthenticatedUserService {
                 .build();
     }
 
-    public UserRole defineUserRole(User user) {
-        if (trainerRepository.findByUserUsername(user.getUsername()).isPresent()) {
+    public UserRole defineUserRole(String username) {
+        if (trainerRepository.findByUserUsername(username).isPresent()) {
             return UserRole.TRAINER;
-        } else if (traineeRepository.findByUserUsername(user.getUsername()).isPresent()) {
+        } else if (traineeRepository.findByUserUsername(username).isPresent()) {
             return UserRole.TRAINEE;
         } else {
             throw new AuthentificationErrorException("User does not belong to trainer or trainee roles");

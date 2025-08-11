@@ -1,5 +1,6 @@
 package com.gym.crm.app.security.jwt;
 
+import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import static com.gym.crm.app.security.UserRole.ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +24,8 @@ import static org.mockito.Mockito.when;
 class JwtAuthenticationFilterTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+    @Mock
+    private AuthenticatedUserService authenticatedUserService;
     @Mock
     private FilterChain filterChain;
     @Mock
@@ -39,6 +43,7 @@ class JwtAuthenticationFilterTest {
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + jwt);
         when(jwtTokenProvider.parseToken(jwt)).thenReturn(mockUser);
+        when(authenticatedUserService.defineUserRole(anyString())).thenReturn(ADMIN);
 
         filter.doFilterInternal(request, response, filterChain);
 
