@@ -42,6 +42,7 @@ import com.gym.crm.app.service.common.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -69,22 +70,27 @@ public class GymFacade {
         return traineeMapper.dtoToCreateResponse(traineeService.addTrainee(createRequest));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public List<TrainerDto> getAllTrainers() {
         return trainerService.getAllTrainers();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public List<TraineeDto> getAllTrainees() {
         return traineeService.getAllTrainees();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TrainerGetResponse getTrainerByUsername(String username) {
         return trainerMapper.toGetResponse(trainerService.getTrainerByUsername(username));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TraineeGetResponse getTraineeByUsername(String username) {
         return traineeMapper.dtoToGetResponse(traineeService.getTraineeByUsername(username));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainersList(String username,
                                                                            TraineeAssignedTrainersUpdateRequest request) {
         List<Trainer> trainers = traineeService.updateTraineeTrainersByUsername(username, request.getTrainerUsernames()).stream()
@@ -93,24 +99,29 @@ public class GymFacade {
         return new TraineeAssignedTrainersUpdateResponse(trainers);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINEE')")
     public TraineeUpdateResponse updateTraineeByUsername(String username,
                                                          @Valid TraineeUpdateRequest updateRequest) {
         return traineeMapper.dtoToUpdateResponse(traineeService.updateTraineeByUsername(username, updateRequest));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TrainerUpdateResponse updateTrainerByUsername(String username,
                                                          @Valid TrainerUpdateRequest updateRequest) {
         return trainerMapper.toUpdateResponse(trainerService.updateTrainerByUsername(username, updateRequest));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public void deleteTrainerByUsername(String username) {
         trainerService.deleteTrainerByUsername(username);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINEE')")
     public void deleteTraineeByUsername(String username) {
         traineeService.deleteTraineeByUsername(username);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TrainerTrainingGetResponse getTrainerTrainingsByFilter(@Valid TrainerTrainingSearchFilter criteria) {
         List<TrainingDto> trainings = trainingService.getTrainerTrainingsByFilter(criteria);
 
@@ -121,6 +132,7 @@ public class GymFacade {
         return new TrainerTrainingGetResponse(trainingWithTraineeNames);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER','TRAINEE')")
     public TraineeTrainingGetResponse getTraineeTrainingsByFilter(@Valid TraineeTrainingSearchFilter filter) {
         List<TrainingDto> trainings = trainingService.getTraineeTrainingsByFilter(filter);
 
@@ -131,6 +143,7 @@ public class GymFacade {
         return new TraineeTrainingGetResponse(trainingWithTrainerNames);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER','TRAINEE')")
     public AvailableTrainerGetResponse getUnassignedTrainersByTraineeUsername(String username) {
         List<Trainer> trainers = traineeService.getUnassignedTrainersByTraineeUsername(username).stream()
                 .map(trainerMapper::toEntity).toList();
@@ -138,10 +151,12 @@ public class GymFacade {
         return new AvailableTrainerGetResponse(trainers);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public List<TrainingDto> getAllTrainings() {
         return trainingService.getAllTrainings();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public TrainingDto addTraining(@Valid TrainingCreateRequest request) {
         TrainerDto trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
         TraineeDto trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
@@ -157,6 +172,7 @@ public class GymFacade {
         return trainingService.addTraining(saveRequest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER','TRAINEE')")
     public TrainingTypeGetResponse getAllTrainingsTypes() {
         List<TrainingType> trainingTypes = trainingService.getTrainingTypes();
         var trainingTypesRest = trainingTypes.stream().map(trainingTypeMapper::toRestTrainingType).toList();
@@ -164,16 +180,19 @@ public class GymFacade {
         return new TrainingTypeGetResponse().trainingTypes(trainingTypesRest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINEE')")
     public TrainingDto updateTraining(@Valid TrainingSaveRequest updateRequest) {
         return trainingService.updateTraining(updateRequest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
     public void switchActivationStatus(String username, ActivationStatusRequest request) {
         ChangeActivationStatusDto changeActivation = userMapper.toChangeActivationStatusDto(username, request);
 
         userProfileService.switchActivationStatus(changeActivation);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER','TRAINEE')")
     public void changePassword(ChangePasswordRequest request) {
         userProfileService.changePassword(request.getUsername(), request.getOldPassword(), request.getNewPassword());
     }
