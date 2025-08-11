@@ -31,7 +31,7 @@ public class AuthenticatedUserService {
             throw new AuthentificationErrorException("Invalid password");
         }
 
-        UserRole role = defineUserRole(user.getUsername());
+        UserRole role = resolveUserRole(user.getUsername());
 
         return userMapper.toAuthenticatedUser(user)
                 .toBuilder()
@@ -39,7 +39,7 @@ public class AuthenticatedUserService {
                 .build();
     }
 
-    public UserRole defineUserRole(String username) {
+    public UserRole resolveUserRole(String username) {
         if (trainerRepository.findByUserUsername(username).isPresent()) {
             return UserRole.TRAINER;
         } else if (traineeRepository.findByUserUsername(username).isPresent()) {

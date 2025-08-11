@@ -1,6 +1,5 @@
 package com.gym.crm.app.security.jwt;
 
-import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.UserRole;
@@ -34,28 +33,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String authorizationHeader = request.getHeader("Authorization");
 
-
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                String token = authorizationHeader.substring(7);
-                AuthenticatedUser user = jwtTokenProvider.parseToken(token);
-
-                Boolean isActive = user.getIsActive();
-                if (isActive!=null && !isActive) {
-                    throw new UnacceptableOperationException("User is not active, any operations not allowed");
-                }
-
-                UserRole role = authenticatedUserService.defineUserRole(user.getUsername());
-                user = user.toBuilder().build();
-
-                String springRole = role.name().startsWith("ROLE_") ? role.name() : "ROLE_" + role.name();
-                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(springRole));
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null, authorities);
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.debug("JWT authentication successfully for user: {} with role {}", user.getUsername(), user.getRole());
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            String token = authorizationHeader.substring(7);
+            AuthenticatedUser user = jwtTokenProvider.parseToken(token);
+
+            Boolean isActive = user.getIsActive();
+            if (isActive != null && !isActive) {
+                throw new UnacceptableOperationException("User is not active, any operations not allowed");
+            }
+
+            UserRole role = authenticatedUserService.resolveUserRole(user.getUsername());
+            user = user.toBuilder().build();
+
+            String springRole = role.name().startsWith("ROLE_") ? role.name() : "ROLE_" + role.name();
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(springRole));
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("JWT authentication successfully for user: {} with role {}", user.getUsername(), user.getRole());
 
             filterChain.doFilter(request, response);
 

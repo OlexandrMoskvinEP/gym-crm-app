@@ -56,7 +56,7 @@ public class TokenServiceImpl implements TokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthorizationErrorException("User not found: " + userId));
 
-        UserRole role = authenticatedUserService.defineUserRole(user.getUsername());
+        UserRole role = authenticatedUserService.resolveUserRole(user.getUsername());
 
         AuthenticatedUser authUser = userMapper.toAuthenticatedUser(user).toBuilder()
                 .role(role)

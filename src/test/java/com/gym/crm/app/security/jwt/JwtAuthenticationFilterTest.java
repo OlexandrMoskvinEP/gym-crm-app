@@ -48,7 +48,7 @@ class JwtAuthenticationFilterTest {
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + jwt);
         when(jwtTokenProvider.parseToken(jwt)).thenReturn(mockUser);
-        when(authenticatedUserService.defineUserRole(anyString())).thenReturn(ADMIN);
+        when(authenticatedUserService.resolveUserRole(anyString())).thenReturn(ADMIN);
 
         filter.doFilterInternal(request, response, filterChain);
 

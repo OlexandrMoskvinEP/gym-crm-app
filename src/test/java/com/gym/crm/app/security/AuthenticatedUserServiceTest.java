@@ -58,11 +58,11 @@ class AuthenticatedUserServiceTest {
         when(userMapper.toAuthenticatedUser(userEntity)).thenReturn(mappedUser);
         when(trainerRepository.findByUserUsername("john")).thenReturn(Optional.of(new Trainer()));
 
-        AuthenticatedUser result = authenticatedUserService.getAuthenticatedUser(loginRequest);
+        AuthenticatedUser actual = authenticatedUserService.getAuthenticatedUser(loginRequest);
 
-        assertNotNull(result);
-        assertEquals("john", result.getUsername());
-        assertEquals(UserRole.TRAINER, result.getRole());
+        assertNotNull(actual);
+        assertEquals("john", actual.getUsername());
+        assertEquals(UserRole.TRAINER, actual.getRole());
 
         verify(userRepository).findByUsername("john");
         verify(passwordEncoder).matches("secret", "hashed-pass");
@@ -70,13 +70,13 @@ class AuthenticatedUserServiceTest {
     }
 
     @Test
-    void shouldDefineUserRole() {
+    void shouldResolveUserRole() {
         String username = "john.connor";
 
         when(trainerRepository.findByUserUsername(username)).thenReturn(Optional.empty());
         when(traineeRepository.findByUserUsername(username)).thenReturn(Optional.of(Trainee.builder().build()));
 
-        UserRole actual = authenticatedUserService.defineUserRole(username);
+        UserRole actual = authenticatedUserService.resolveUserRole(username);
 
         assertNotNull(actual);
         assertEquals(UserRole.TRAINEE, actual);
