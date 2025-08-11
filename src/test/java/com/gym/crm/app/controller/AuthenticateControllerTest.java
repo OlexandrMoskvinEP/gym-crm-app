@@ -10,7 +10,7 @@ import com.gym.crm.app.rest.ChangePasswordRequest;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.rest.RefreshRequest;
-import com.gym.crm.app.service.TokenService;
+import com.gym.crm.app.security.service.LoginService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ class AuthenticateControllerTest {
     @Mock
     private GymFacade gymFacade;
     @Mock
-    private TokenService tokenService;
+    private LoginService loginService;
     @InjectMocks
     private AuthenticateController authenticateController;
 
@@ -77,7 +77,7 @@ class AuthenticateControllerTest {
         tokens.setAccessToken("access-xyz");
         tokens.setRefreshToken("refresh-xyz");
 
-        when(tokenService.login(any(LoginRequest.class))).thenReturn(tokens);
+        when(loginService.login(any(LoginRequest.class))).thenReturn(tokens);
 
         mockMvc.perform(post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,14 +86,14 @@ class AuthenticateControllerTest {
                 .andExpect(jsonPath("$.accessToken").value("access-xyz"))
                 .andExpect(jsonPath("$.refreshToken").value("refresh-xyz"));
 
-        verify(tokenService).login(any(LoginRequest.class));
+        verify(loginService).login(any(LoginRequest.class));
     }
 
     @Test
     void ShouldReturn403_WhenInvalidCredentials() throws Exception {
         LoginRequest req = new LoginRequest("john.connor", "wrong1234567890"); // мин длина ок
 
-        when(tokenService.login(any(LoginRequest.class)))
+        when(loginService.login(any(LoginRequest.class)))
                 .thenThrow(new AuthorizationErrorException("Invalid credentials"));
 
         mockMvc.perform(post("/api/v1/login")
@@ -101,7 +101,7 @@ class AuthenticateControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isForbidden());
 
-        verify(tokenService).login(any(LoginRequest.class));
+        verify(loginService).login(any(LoginRequest.class));
     }
 
     @Test
@@ -111,7 +111,7 @@ class AuthenticateControllerTest {
         tokens.setAccessToken("new-access");
         tokens.setRefreshToken("new-refresh");
 
-        when(tokenService.refresh(oldRefresh)).thenReturn(tokens);
+        when(loginService.refresh(oldRefresh)).thenReturn(tokens);
 
         mockMvc.perform(post("/api/v1/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,14 +120,14 @@ class AuthenticateControllerTest {
                 .andExpect(jsonPath("$.accessToken").value("new-access"))
                 .andExpect(jsonPath("$.refreshToken").value("new-refresh"));
 
-        verify(tokenService).refresh(oldRefresh);
+        verify(loginService).refresh(oldRefresh);
     }
 
     @Test
     void shouldReturn4xx_WhenRefreshTokenInvalid() throws Exception {
         String badRefresh = "invalid-refresh-token";
 
-        when(tokenService.refresh(badRefresh))
+        when(loginService.refresh(badRefresh))
                 .thenThrow(new AuthorizationErrorException("Invalid or expired refresh token"));
 
         mockMvc.perform(post("/api/v1/refresh")
@@ -135,7 +135,7 @@ class AuthenticateControllerTest {
                         .content(objectMapper.writeValueAsString(Map.of("refreshToken", badRefresh))))
                 .andExpect(status().isForbidden());
 
-        verify(tokenService).refresh(badRefresh);
+        verify(loginService).refresh(badRefresh);
     }
 
     @Test
@@ -154,14 +154,14 @@ class AuthenticateControllerTest {
     void shouldReturn200AndProvideLogoutSuccessfully() throws Exception {
         RefreshRequest request = new RefreshRequest("someRefreshToken#124457564");
 
-        doNothing().when(tokenService).logout(anyString());
+        doNothing().when(loginService).logout(anyString());
 
         mockMvc.perform(post("/api/v1/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        verify(tokenService).logout("someRefreshToken#124457564");
+        verify(loginService).logout("someRefreshToken#124457564");
     }
 
     private static ChangePasswordRequest getChangePasswordRequest() {

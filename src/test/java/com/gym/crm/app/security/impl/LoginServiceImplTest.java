@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.impl;
+package com.gym.crm.app.security.impl;
 
 import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.domain.model.User;
@@ -6,10 +6,11 @@ import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
-import com.gym.crm.app.service.RefreshTokenService;
+import com.gym.crm.app.security.service.AuthenticatedUserService;
+import com.gym.crm.app.security.service.RefreshTokenService;
+import com.gym.crm.app.security.service.impl.LoginServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TokenServiceImplTest {
+class LoginServiceImplTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
     @Mock
@@ -41,7 +42,7 @@ class TokenServiceImplTest {
     @Mock
     private UserMapper userMapper;
     @InjectMocks
-    private TokenServiceImpl tokenService;
+    private LoginServiceImpl tokenService;
 
     @Test
     void login_ShouldReturnTokens() {

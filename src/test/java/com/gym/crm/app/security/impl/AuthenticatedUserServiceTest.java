@@ -1,4 +1,4 @@
-package com.gym.crm.app.security;
+package com.gym.crm.app.security.impl;
 
 import com.gym.crm.app.domain.model.Trainee;
 import com.gym.crm.app.domain.model.Trainer;
@@ -8,8 +8,10 @@ import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
+import com.gym.crm.app.security.model.UserRole;
+import com.gym.crm.app.security.service.LoginAttemptsService;
+import com.gym.crm.app.security.service.impl.AuthenticatedUserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,9 +40,9 @@ class AuthenticatedUserServiceTest {
     @Mock
     private UserMapper userMapper;
     @Mock
-    private JwtTokenProvider jwtTokenProvider;
+    private LoginAttemptsService loginAttemptsService;
     @InjectMocks
-    private AuthenticatedUserService authenticatedUserService;
+    private AuthenticatedUserServiceImpl authenticatedUserService;
 
     @Test
     void shouldReturnAuthenticatedUser() {
@@ -57,6 +60,7 @@ class AuthenticatedUserServiceTest {
         when(passwordEncoder.matches("secret", "hashed-pass")).thenReturn(true);
         when(userMapper.toAuthenticatedUser(userEntity)).thenReturn(mappedUser);
         when(trainerRepository.findByUserUsername("john")).thenReturn(Optional.of(new Trainer()));
+        when(loginAttemptsService.isBlocked(anyString())).thenReturn(false);
 
         AuthenticatedUser actual = authenticatedUserService.getAuthenticatedUser(loginRequest);
 

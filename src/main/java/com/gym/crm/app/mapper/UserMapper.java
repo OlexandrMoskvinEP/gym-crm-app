@@ -4,7 +4,7 @@ import com.gym.crm.app.domain.dto.user.ChangeActivationStatusDto;
 import com.gym.crm.app.domain.dto.user.UserUpdateRequest;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.rest.ActivationStatusRequest;
-import com.gym.crm.app.security.UserRole;
+import com.gym.crm.app.security.model.UserRole;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import com.gym.crm.app.security.model.UserCredentialsDto;
 import org.mapstruct.BeanMapping;

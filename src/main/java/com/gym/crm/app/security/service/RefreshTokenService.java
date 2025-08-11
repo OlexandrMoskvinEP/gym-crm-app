@@ -1,4 +1,4 @@
-package com.gym.crm.app.service;
+package com.gym.crm.app.security.service;
 
 import com.gym.crm.app.domain.model.RefreshToken;
 

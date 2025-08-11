@@ -1,7 +1,8 @@
-package com.gym.crm.app.service.impl;
+package com.gym.crm.app.security.impl;
 
 import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.repository.RefreshTokenRepository;
+import com.gym.crm.app.security.service.impl.RefreshTokenServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RefreshTokenServiceImplTest {
+class RefreshLoginServiceImplTest {
     private static final String RAW_TOKEN = "rawToken123";
     private static final Long USER_ID = 42L;
 

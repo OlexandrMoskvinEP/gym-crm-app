@@ -6,7 +6,7 @@ import com.gym.crm.app.rest.ErrorResponse;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
 import com.gym.crm.app.rest.RefreshRequest;
-import com.gym.crm.app.service.TokenService;
+import com.gym.crm.app.security.service.LoginService;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +33,7 @@ import static com.gym.crm.app.controller.ApiConstants.ROOT_PATH;
 public class AuthenticateController {
     private final GymFacade facade;
     private final MeterRegistry meterRegistry;
-    private final TokenService tokenService;
+    private final LoginService loginService;
 
     @PostConstruct
     public void init() {
@@ -68,7 +68,7 @@ public class AuthenticateController {
     public ResponseEntity<JwtTokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Login attempt: username={}", loginRequest.getUsername());
 
-        JwtTokenResponse tokens = tokenService.login(loginRequest);
+        JwtTokenResponse tokens = loginService.login(loginRequest);
 
         log.info("User successfully authenticated: username={}", loginRequest.getUsername());
         meterRegistry.counter("checkAuthorities.success.count").increment();
@@ -102,7 +102,7 @@ public class AuthenticateController {
     })
     @PostMapping("/refresh")
     public ResponseEntity<JwtTokenResponse> refresh(@Valid @RequestBody RefreshRequest req) {
-        JwtTokenResponse tokens = tokenService.refresh(req.getRefreshToken());
+        JwtTokenResponse tokens = loginService.refresh(req.getRefreshToken());
         meterRegistry.counter("auth.refresh.success.count").increment();
 
         return ResponseEntity.ok(tokens);
@@ -130,7 +130,7 @@ public class AuthenticateController {
     })
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest refreshRequest) {
-        tokenService.logout(refreshRequest.getRefreshToken());
+        loginService.logout(refreshRequest.getRefreshToken());
         meterRegistry.counter("auth.logout.success.count").increment();
 
         return ResponseEntity.ok().build();

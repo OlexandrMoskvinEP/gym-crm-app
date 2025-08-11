@@ -5,6 +5,7 @@ import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
+import com.gym.crm.app.exception.TooManyRequestsAuthExceptions;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.rest.ErrorResponse;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -12,8 +13,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -170,5 +170,20 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(TooManyRequestsAuthExceptions.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequestsException(TooManyRequestsAuthExceptions exception) {
+        log.error("Too Many Requests exception occurred : {}", exception.getMessage(), exception);
+        meterRegistry.counter("error.too_many_requests.count").increment();
+
+        ErrorCode errorCode = ErrorCode.TOO_MANY_ATTEMPTS;
+
+        ErrorResponse response = new ErrorResponse(errorCode.getErrorCode(), errorCode.getErrorMessage());
+
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(exception.getRetryAfterSeconds()))
+                .body(response);
     }
 }

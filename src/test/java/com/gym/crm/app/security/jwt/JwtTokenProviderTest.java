@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 
-import static com.gym.crm.app.security.UserRole.ADMIN;
+import static com.gym.crm.app.security.model.UserRole.ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
