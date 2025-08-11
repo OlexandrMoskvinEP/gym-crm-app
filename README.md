@@ -20,7 +20,7 @@ USER gym WITH PASSWORD 'gym';
 GRANT ALL PRIVILEGES ON DATABASE
 "gym" TO gym;
 ```
-
+ 
 ### ⚙️ Running the application
 
 After building the project you can start the server using Spring Boot:

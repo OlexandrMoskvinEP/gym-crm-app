@@ -4,13 +4,10 @@ import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.domain.model.User;
 import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.mapper.UserMapper;
-import com.gym.crm.app.repository.TraineeRepository;
-import com.gym.crm.app.repository.TrainerRepository;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticationService;
-import com.gym.crm.app.security.CurrentUserHolder;
+import com.gym.crm.app.security.AuthenticatedUserService;
 import com.gym.crm.app.security.UserRole;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
@@ -30,16 +27,13 @@ public class TokenServiceImpl implements TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticatedUserService authenticatedUserService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final TraineeRepository traineeRepository;
-    private final TrainerRepository trainerRepository;
-    private final CurrentUserHolder currentUserHolder;
 
     @Override
     public JwtTokenResponse login(LoginRequest loginRequest) {
-        AuthenticatedUser user = authenticationService.getAuthenticatedUser(loginRequest);
+        AuthenticatedUser user = authenticatedUserService.getAuthenticatedUser(loginRequest);
 
         String accessToken = jwtTokenProvider.generateToken(user);
 
@@ -62,11 +56,11 @@ public class TokenServiceImpl implements TokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthorizationErrorException("User not found: " + userId));
 
-        UserRole role = defineUserRole(user.getUsername());
+        UserRole role = authenticatedUserService.resolveUserRole(user.getUsername());
+
         AuthenticatedUser authUser = userMapper.toAuthenticatedUser(user).toBuilder()
                 .role(role)
                 .build();
-
 
         String newAccess = jwtTokenProvider.generateToken(authUser);
         RefreshToken newRefresh = jwtTokenProvider.generateRefreshToken(userId, REFRESH_TTL);
@@ -84,13 +78,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public void logout(String token) {
         refreshTokenService.delete(token);
-        currentUserHolder.clear();
         SecurityContextHolder.clearContext();
-    }
-
-    private UserRole defineUserRole(String username) {
-        if (trainerRepository.findByUserUsername(username).isPresent()) return UserRole.TRAINER;
-        if (traineeRepository.findByUserUsername(username).isPresent()) return UserRole.TRAINEE;
-        throw new AuthorizationErrorException("User has no role assigned");
     }
 }
