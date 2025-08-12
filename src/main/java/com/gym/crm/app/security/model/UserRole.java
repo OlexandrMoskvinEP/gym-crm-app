@@ -1,4 +1,4 @@
-package com.gym.crm.app.security;
+package com.gym.crm.app.security.model;
 
 public enum UserRole {
     TRAINER,

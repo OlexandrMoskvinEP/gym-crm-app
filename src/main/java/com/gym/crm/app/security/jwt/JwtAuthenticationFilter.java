@@ -1,7 +1,7 @@
 package com.gym.crm.app.security.jwt;
 
 import com.gym.crm.app.exception.UnacceptableOperationException;
-import com.gym.crm.app.security.AuthenticatedUserService;
+import com.gym.crm.app.security.service.AuthenticatedUserService;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

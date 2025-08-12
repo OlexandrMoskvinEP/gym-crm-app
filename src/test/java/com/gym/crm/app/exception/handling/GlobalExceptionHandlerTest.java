@@ -5,6 +5,7 @@ import com.gym.crm.app.exception.AuthorizationErrorException;
 import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.exception.DataBaseErrorException;
 import com.gym.crm.app.exception.RegistrationConflictException;
+import com.gym.crm.app.exception.TooManyRequestsAuthExceptions;
 import com.gym.crm.app.exception.UnacceptableOperationException;
 import com.gym.crm.app.rest.ErrorResponse;
 import io.micrometer.core.instrument.Counter;
@@ -21,9 +22,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -209,9 +213,24 @@ class GlobalExceptionHandlerTest {
         assertEquals("Invalid request data: core service exception", response.getBody().getErrorMessage());
     }
 
-    private static ErrorResponse buildUnacceptableErrorResponse() {
-        return new ErrorResponse().errorCode(2910)
-                .errorMessage("Unacceptable operation attempted");
+    @Test
+    void shouldReturnTooManyRequestsResponse() {
+        Counter counter = Mockito.mock(Counter.class);
+        TooManyRequestsAuthExceptions ex = new TooManyRequestsAuthExceptions(ErrorCode.TOO_MANY_ATTEMPTS.getErrorMessage(), 120L);
+
+        when(meterRegistry.counter("error.too_many_requests.count")).thenReturn(counter);
+
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleTooManyRequestsException(ex);
+
+        ErrorResponse body = response.getBody();
+
+        assertEquals(HttpStatus.TOO_MANY_REQUESTS, response.getStatusCode());
+        assertEquals("120", response.getHeaders().getFirst(HttpHeaders.RETRY_AFTER));
+        assertNotNull(body);
+        assertEquals(ErrorCode.TOO_MANY_ATTEMPTS.getErrorCode(), body.getErrorCode());
+        assertEquals(ErrorCode.TOO_MANY_ATTEMPTS.getErrorMessage(), body.getErrorMessage());
+
+        verify(counter).increment();
     }
 
     private static ErrorResponse buildInvalidJsonResponse() {
@@ -248,13 +267,17 @@ class GlobalExceptionHandlerTest {
     }
 
     @Getter
-    static
-    private class WrongRequest {
+    private static class WrongRequest {
         @NotBlank
         private String name;
 
         public WrongRequest(String name) {
             this.name = name;
         }
+    }
+
+    private static ErrorResponse buildUnacceptableErrorResponse() {
+        return new ErrorResponse().errorCode(2910)
+                .errorMessage("Unacceptable operation attempted");
     }
 }

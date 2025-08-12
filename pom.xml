@@ -15,6 +15,9 @@
         <sonar.projectKey>OlexandrMoskvinEP_gym-crm-app</sonar.projectKey>
         <sonar.organization>olexandrmoskvinep</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions>
+            **/mapper/**,**/openapi/**,**/dto/**,**/model/**,**/config/**
+        </sonar.coverage.exclusions>
     </properties>
 
     <parent>
@@ -62,6 +65,11 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.8</version>
         </dependency>
         <!-- === JDBC + Connection Pool === -->
         <dependency>

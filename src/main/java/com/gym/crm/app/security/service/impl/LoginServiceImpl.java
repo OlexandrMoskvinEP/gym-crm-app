@@ -1,4 +1,4 @@
-package com.gym.crm.app.service.impl;
+package com.gym.crm.app.security.service.impl;
 
 import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.domain.model.User;
@@ -7,12 +7,12 @@ import com.gym.crm.app.mapper.UserMapper;
 import com.gym.crm.app.repository.UserRepository;
 import com.gym.crm.app.rest.JwtTokenResponse;
 import com.gym.crm.app.rest.LoginRequest;
-import com.gym.crm.app.security.AuthenticatedUserService;
-import com.gym.crm.app.security.UserRole;
+import com.gym.crm.app.security.service.AuthenticatedUserService;
+import com.gym.crm.app.security.model.UserRole;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
 import com.gym.crm.app.security.model.AuthenticatedUser;
-import com.gym.crm.app.service.RefreshTokenService;
-import com.gym.crm.app.service.TokenService;
+import com.gym.crm.app.security.service.RefreshTokenService;
+import com.gym.crm.app.security.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
-public class TokenServiceImpl implements TokenService {
+public class LoginServiceImpl implements LoginService {
     private static final Duration REFRESH_TTL = Duration.ofDays(14);
 
     private final JwtTokenProvider jwtTokenProvider;

@@ -14,7 +14,7 @@ import com.gym.crm.app.mapper.TraineeMapper;
 import com.gym.crm.app.mapper.TrainerMapper;
 import com.gym.crm.app.repository.TraineeRepository;
 import com.gym.crm.app.repository.TrainerRepository;
-import com.gym.crm.app.security.AuthenticatedUserService;
+import com.gym.crm.app.security.service.AuthenticatedUserService;
 import com.gym.crm.app.service.common.PasswordService;
 import com.gym.crm.app.service.common.UserProfileService;
 import org.junit.jupiter.api.BeforeEach;

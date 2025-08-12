@@ -1,7 +1,7 @@
 package com.gym.crm.app.security.jwt;
 
 import com.gym.crm.app.exception.UnacceptableOperationException;
-import com.gym.crm.app.security.AuthenticatedUserService;
+import com.gym.crm.app.security.service.AuthenticatedUserService;
 import com.gym.crm.app.security.model.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import static com.gym.crm.app.security.UserRole.ADMIN;
+import static com.gym.crm.app.security.model.UserRole.ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;

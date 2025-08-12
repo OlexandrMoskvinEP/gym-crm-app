@@ -13,7 +13,8 @@ public enum ErrorCode {
     DATABASE_ERROR(3358, "Unexpected database failure", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVER_ERROR(3200, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     UNACCEPTABLE_OPERATION(2910, "Unacceptable operation attempted", HttpStatus.CONFLICT),
-    REGISTRATION_CONFLICT(2911, "Username already exists", HttpStatus.CONFLICT);
+    REGISTRATION_CONFLICT(2911, "Username already exists", HttpStatus.CONFLICT),
+    TOO_MANY_ATTEMPTS(2999, "Too many login attempts. Please try again later", HttpStatus.TOO_MANY_REQUESTS);
 
     private final Integer errorCode;
     private final String errorMessage;

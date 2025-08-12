@@ -1,10 +1,10 @@
-package com.gym.crm.app.service.impl;
+package com.gym.crm.app.security.service.impl;
 
 import com.gym.crm.app.domain.model.RefreshToken;
 import com.gym.crm.app.exception.CoreServiceException;
 import com.gym.crm.app.repository.RefreshTokenRepository;
 import com.gym.crm.app.security.jwt.JwtTokenProvider;
-import com.gym.crm.app.service.RefreshTokenService;
+import com.gym.crm.app.security.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
