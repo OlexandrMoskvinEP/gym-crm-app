@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = AccessToFacadeMethodsTest.Cfg.class)
 class AccessToFacadeMethodsTest {
     @TestConfiguration
-    @EnableMethodSecurity(prePostEnabled = true)
+    @EnableMethodSecurity
     static class Cfg {
         @Bean
         GymFacade facade(TraineeService traineeService,
