@@ -60,6 +60,7 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
         log.info("Response status: {}", status);
 
         byte[] responseContent = response.getContentAsByteArray();
+
         if (responseContent.length > 0) {
             String responseBody = new String(responseContent, response.getCharacterEncoding());
             responseBody = maskSensitiveFields(responseBody);

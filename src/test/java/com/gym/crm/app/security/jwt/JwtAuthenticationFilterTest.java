@@ -26,6 +26,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
+    private final AuthenticatedUser mockUser = getAuthenticatedUser();
+    private final AuthenticatedUser mockNotActiveUser = getNotActiveAuthenticatedUser();
+
     @Mock
     private JwtTokenProvider jwtTokenProvider;
     @Mock
@@ -38,9 +41,6 @@ class JwtAuthenticationFilterTest {
     private HttpServletResponse response;
     @InjectMocks
     private JwtAuthenticationFilter filter;
-
-    private final AuthenticatedUser mockUser = getAuthenticatedUser();
-    private final AuthenticatedUser mockNotActiveUser = getNotActiveAuthenticatedUser();
 
     @Test
     void shouldAuthenticateWhenValidToken() throws Exception {
@@ -68,7 +68,6 @@ class JwtAuthenticationFilterTest {
         filter.doFilterInternal(request, response, filterChain);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         assertNull(authentication);
         verify(filterChain).doFilter(request, response);
     }

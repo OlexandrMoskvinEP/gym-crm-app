@@ -38,7 +38,6 @@ public class GlobalExceptionHandler {
         meterRegistry.counter("error.authorization.count");
     }
 
-
     @ExceptionHandler(CoreServiceException.class)
     public ResponseEntity<ErrorResponse> handleCoreServiceException(CoreServiceException exception) {
         log.error("Core service exception occurred : {}", exception.getMessage(), exception);
